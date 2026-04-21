@@ -1,0 +1,882 @@
+/* static/css/results.css - UIA Design System */
+
+:root {
+    --primary: var(--uia-blue);
+    --primary-dark: #000000;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --info: var(--uia-blue);
+    --dark: var(--uia-dark);
+    --light: #F7F6F6;
+    --gray: #6b7280;
+    /* UIA accent */
+    --uia-red: #AF201C;
+    --uia-blue: #577CB3;
+    --uia-violet: #484675;
+    --uia-dark: #6C6B69;
+}
+
+body {
+    font-family: 'Merriweather', serif;
+    color: var(--dark);
+    background-color: #F7F6F6;
+    line-height: 1.6;
+}
+
+/* Layout improvements */
+.page-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.section-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: none;
+    border: 1px solid #e1e4e8;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.section-title {
+    color: var(--dark);
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+}
+
+.section-title i {
+    margin-right: 0.5rem;
+    color: var(--primary);
+}
+
+/* Chart improvements */
+.chart-container {
+    position: relative;
+    /* Remove fixed height, use min-height instead */
+    min-height: 450px;
+    height: auto;  /* Allow natural height */
+    max-height: 580px;  /* ✅ Prevents unlimited expansion */
+    width: 100%;
+    background-color: white;
+    border-radius: 6px;
+    padding: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 1.5rem;
+    overflow: visible;  /* Allow overflow instead of clipping */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Make Strengths & Improvement Areas Visualized chart taller */
+.chart-container[aria-label="Strengths and Improvement Areas Chart"] {
+    min-height: 550px;  /* Taller for horizontal bar chart */
+    max-height: 650px;  /* ✅ Taller for horizontal bar chart */
+    overflow: visible;
+}
+
+#dimensionsContainer {
+    overflow: visible;  /* Don't clip */
+    min-height: 380px;
+    height: auto;
+    max-height: 480px;  /* ✅ Reasonable limit for dimensions chart */
+    position: relative;
+}
+
+/* Ensure canvas tries to fill the container */
+.chart-container canvas {
+    display: block;
+    box-sizing: border-box;
+    width: 100% !important;
+    height: auto !important;  /* Auto instead of 100% */
+    min-height: 350px;  /* Minimum usable height */
+    /* max-height removed - canvas will respect container's max-height */
+}
+
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+    flex-shrink: 0;  /* Don't shrink header */
+}
+
+.chart-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0; /* Add bottom margin */
+    flex-basis: 100%; /* Take full width initially */
+}
+ @media (min-width: 768px) { /* Adjust breakpoint as needed */
+    .chart-title {
+         flex-basis: auto; /* Allow title and actions on same line */
+         margin-bottom: 0; /* Remove bottom margin on larger screens */
+     }
+ }
+
+
+.chart-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: auto; /* Push actions to the right */
+}
+
+.chart-container > canvas {
+    flex-grow: 1;  /* Canvas takes remaining space */
+}
+
+/* SDG Badge styling */
+.sdg-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: white;
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-right: 8px;
+    flex-shrink: 0; /* Prevent badge from shrinking */
+}
+
+.sdg-badge-sm {
+    width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+}
+
+/* Table improvements */
+.data-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+.data-table th {
+    background-color: #F7F6F6;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.8rem 1rem;
+    text-align: left;
+    color: var(--uia-blue);
+    border-bottom: 2px solid var(--uia-dark);
+    font-family: 'Oswald', sans-serif;
+}
+ /* Remove border from last header cell */
+ .data-table th:last-child {
+     border-right: none;
+ }
+
+.data-table td {
+    padding: 0.8rem 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05); /* Lighter border for rows */
+     border-right: 1px solid rgba(0, 0, 0, 0.05); /* Vertical borders */
+}
+ .data-table td:last-child {
+    border-right: none;
+ }
+ /* Remove bottom border for last row */
+ .data-table tbody tr:last-child td {
+     border-bottom: none;
+ }
+
+.data-table tbody tr:hover {
+    background-color: rgba(50, 55, 60, 0.03);
+}
+
+
+/* Scorecard styles */
+.score-card {
+    border-radius: 8px;
+    padding: 1.25rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    background-color: white;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    height: 100%; /* Ensure all cards have same height in a row */
+    display: flex;
+    flex-direction: column; /* Align content vertically */
+}
+
+.score-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+ .score-card-header {
+     display: flex;
+     justify-content: space-between;
+     align-items: start; /* Align items to top */
+     margin-bottom: 0.5rem;
+ }
+
+.score-card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0; /* Removed bottom margin */
+    display: flex;
+    align-items: center;
+}
+ .score-card-title i {
+     margin-right: 0.5rem; /* Space between icon and text */
+ }
+
+.score-value {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0.5rem 0;
+    color: var(--uia-red);
+    line-height: 1.1;
+    font-family: 'Oswald', sans-serif;
+}
+
+.score-label {
+    font-size: 0.9rem;
+    color: var(--gray);
+    margin-bottom: auto; /* Push progress bar down */
+}
+
+/* Progress bar improvements */
+.score-progress {
+    height: 8px;
+    background-color: rgba(0,0,0,0.05);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 0.75rem; /* Adjusted margin */
+}
+
+.score-progress-bar {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+/* Category pill styles */
+.category-pill {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.8rem; /* Slightly smaller */
+    font-weight: 500;
+    color: white;
+    margin-right: 0.5rem;
+    line-height: 1.4; /* Adjust line height */
+}
+
+/* Top strengths and areas to improve */
+.strength-item, .improve-item {
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s ease;
+}
+ .strength-item:hover, .improve-item:hover {
+     background-color: rgba(0,0,0,0.03); /* Subtle hover */
+ }
+
+.strength-item {
+    background-color: rgba(16, 185, 129, 0.05); /* Lighter background */
+    border-left: 4px solid var(--success);
+}
+
+.improve-item {
+    background-color: rgba(245, 158, 11, 0.05); /* Lighter background */
+    border-left: 4px solid var(--warning);
+}
+
+/* Recommendations */
+.recommendation-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+     border: 1px solid rgba(0,0,0,0.05); /* Subtle border */
+}
+
+.recommendation-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Slightly softer shadow */
+}
+
+.recommendation-header {
+    padding: 0.8rem 1rem; /* Slightly reduced padding */
+    background-color: rgba(37, 99, 235, 0.03); /* Even lighter background */
+    border-bottom: 1px solid rgba(0,0,0,0.05); /* Lighter border */
+    display: flex;
+    align-items: center;
+     flex-wrap: wrap; /* Allow wrap */
+}
+ .recommendation-header .sdg-badge {
+     margin-bottom: 0.25rem; /* Add space below badge if wrapped */
+ }
+ @media (min-width: 576px) {
+     .recommendation-header .sdg-badge {
+         margin-bottom: 0;
+     }
+ }
+
+
+.recommendation-content {
+    padding: 1rem;
+}
+
+.recommendation-list {
+    margin: 0;
+    padding-left: 1.25rem; /* Slightly reduced indent */
+}
+
+.recommendation-list li {
+    margin-bottom: 0.4rem; /* Reduced spacing */
+    font-size: 0.9rem; /* Slightly smaller font */
+    color: var(--gray);
+}
+ .recommendation-list li strong {
+     color: var(--dark); /* Make keywords slightly darker */
+ }
+
+.recommendation-list li:last-child {
+    margin-bottom: 0;
+}
+
+/* Action buttons */
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 0.9rem; /* Slightly smaller */
+    border: 1px solid transparent; /* Base border */
+}
+
+.action-btn-primary {
+    background-color: var(--uia-blue);
+    color: white;
+    border-color: var(--uia-blue);
+    border-radius: 999px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    font-family: 'Oswald', sans-serif;
+}
+
+.action-btn-primary:hover {
+    background-color: var(--uia-violet);
+    border-color: var(--uia-violet);
+    color: white;
+}
+
+.action-btn-outline {
+    background-color: transparent;
+    color: var(--uia-blue);
+    border: 1px solid var(--uia-dark);
+    border-radius: 999px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    font-family: 'Oswald', sans-serif;
+}
+
+.action-btn-outline:hover {
+    background-color: #F7F6F6;
+    color: var(--uia-red);
+    border-color: var(--uia-red);
+}
+
+.action-btn i {
+    margin-right: 0.35rem;
+}
+
+/* Tooltip improvements */
+.custom-tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: help;
+}
+
+.tooltiptext {
+    visibility: hidden;
+    width: 180px;
+    background-color: rgba(31, 41, 55, 0.9); /* Darker, slightly transparent */
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 10px;
+    position: absolute;
+    z-index: 1050; /* Ensure above most elements */
+    bottom: 130%; /* Slightly more space */
+    left: 50%;
+    margin-left: -90px; /* Center tooltip */
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+    font-size: 0.8rem;
+    pointer-events: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+/* Arrow for tooltip */
+.tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: rgba(31, 41, 55, 0.9) transparent transparent transparent;
+}
+
+
+.custom-tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+.tooltip-icon {
+    color: var(--primary);
+    font-size: 0.9rem; /* Slightly larger */
+    opacity: 0.65; /* Less opaque */
+    transition: opacity 0.2s;
+}
+ .custom-tooltip:hover .tooltip-icon {
+     opacity: 1; /* Full opacity on hover */
+ }
+
+
+/* Animation for charts */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px); /* Reduced distance */
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-in {
+    animation: fadeInUp 0.4s ease-out forwards; /* Faster, ease-out */
+     opacity: 0; /* Start hidden */
+}
+
+/* Print-specific styles */
+@media print {
+    body {
+        background-color: white !important;
+        color: #000 !important;
+        font-size: 10pt; /* Adjust print font size */
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    nav, .no-print, #loadingOverlay, .modal, .modal-backdrop, .action-btn, .btn, .navbar, .footer, .chart-actions, .custom-tooltip .tooltiptext {
+        display: none !important; /* Hide more elements */
+    }
+    #results-report, .page-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 1cm !important; /* Add print margins */
+        background: white !important;
+        box-shadow: none !important;
+    }
+    .section-container {
+        page-break-inside: auto;  /* Allow breaks if needed */
+        break-inside: auto;
+        background: white !important;
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+        padding: 1rem !important;
+        margin-bottom: 0.5cm !important;
+    }
+
+    /* Only avoid breaks for small sections */
+    .score-card,
+    .recommendation-card {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+    h1, h2, h3, h4, h5, h6 {
+        color: #000 !important;
+    }
+    a {
+        text-decoration: none !important;
+        color: inherit !important;
+    }
+     /* Print link URLs */
+     a[href^="http"]::after {
+         content: " (" attr(href) ")";
+         font-size: 90%;
+         color: #555;
+     }
+
+    .page-break {
+        page-break-before: always;
+    }
+
+    /* Ensure charts print properly */
+    .chart-container {
+        height: auto !important;
+        min-height: 300px;  /* Increased from 250px */
+        max-height: 450px !important;  /* ✅ Limit for print */
+        page-break-inside: avoid;
+        border: 1px solid #eee;
+        padding: 0.5rem;
+        overflow: visible !important;  /* Show all content */
+        margin-bottom: 0.5cm;
+    }
+
+    .chart-container canvas {
+        max-height: 430px !important;  /* ✅ Limit for print canvas */
+        width: 100% !important;
+        height: auto !important;
+        min-height: 250px;
+    }
+
+    /* Ensure specific charts get enough space */
+    .chart-container[aria-label="Strengths and Improvement Areas Chart"] {
+        min-height: 400px;
+        max-height: 500px !important;  /* ✅ Limit for strengths in print */
+        page-break-before: always;  /* Start on new page */
+    }
+
+    #dimensionsContainer {
+        min-height: 300px;
+        max-height: 400px !important;  /* ✅ Limit for dimensions in print */
+        page-break-inside: avoid;
+    }
+
+    /* Ensure tables print properly */
+    .data-table {
+        width: 100% !important;
+        page-break-inside: avoid;
+        font-size: 9pt;
+    }
+     .data-table th, .data-table td {
+         padding: 0.4rem 0.6rem;
+         border-color: #ddd !important;
+     }
+     .sdg-badge { /* Ensure badges print with color */
+         -webkit-print-color-adjust: exact !important;
+         print-color-adjust: exact !important;
+         border: 1px solid #ccc; /* Add border for clarity */
+     }
+     .score-progress-bar { /* Ensure progress bars print */
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+         /* Rely on inline style colors set in HTML/template */
+     }
+     /* Use inline style colors for progress bars (ensure these match template logic) */
+     .score-progress-bar[style*="--success"] { background-color: var(--success) !important; }
+     .score-progress-bar[style*="--primary"] { background-color: var(--primary) !important; }
+     .score-progress-bar[style*="--warning"] { background-color: var(--warning) !important; }
+     .score-progress-bar[style*="--danger"] { background-color: var(--danger) !important; }
+     .score-progress-bar[style*="--gray"] { background-color: var(--gray) !important; }
+
+
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .chart-container {
+        min-height: 400px;
+        max-height: 550px;  /* ✅ Tablet limit */
+    }
+    .chart-container[aria-label="Strengths and Improvement Areas Chart"] {
+        min-height: 500px;
+        max-height: 620px;  /* ✅ Tablet limit for strengths */
+    }
+    #dimensionsContainer {
+        min-height: 360px;
+        max-height: 460px;  /* ✅ Tablet limit for dimensions */
+    }
+}
+
+@media (max-width: 768px) {
+    .chart-container {
+        min-height: 350px;
+        max-height: 500px;  /* ✅ Small tablet limit */
+    }
+    .chart-container[aria-label="Strengths and Improvement Areas Chart"] {
+        min-height: 450px;
+        max-height: 570px;  /* ✅ Small tablet limit */
+    }
+    #dimensionsContainer {
+        min-height: 300px;
+        max-height: 400px;  /* ✅ Small tablet limit */
+    }
+
+    .score-card {
+        margin-bottom: 1rem;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+    }
+     h1 { font-size: 1.8rem; }
+     h2.h4 { font-size: 1.1rem; }
+}
+ @media (max-width: 576px) {
+     .chart-container {
+          min-height: 320px;
+          max-height: 450px;  /* ✅ Mobile limit */
+      }
+      .chart-container[aria-label="Strengths and Improvement Areas Chart"] {
+          min-height: 400px;
+          max-height: 520px;  /* ✅ Mobile limit */
+      }
+      #dimensionsContainer {
+          min-height: 280px;
+          max-height: 380px;  /* ✅ Mobile limit */
+      }
+
+     .chart-header {
+         flex-direction: column;
+         align-items: flex-start;
+     }
+     .chart-actions {
+         margin-left: 0;
+         margin-top: 0.5rem;
+     }
+     .action-btn {
+         padding: 0.4rem 0.8rem;
+         font-size: 0.85rem;
+     }
+     .section-container { padding: 1rem; }
+     .score-card { padding: 1rem; }
+     .score-value { font-size: 1.8rem; }
+ }
+
+
+/* Enhanced chart tooltip */
+.chart-tooltip {
+    background-color: rgba(0,0,0,0.85); /* More opaque */
+    color: #fff;
+    padding: 6px 10px; /* Compact padding */
+    border-radius: 4px;
+    font-size: 11px; /* Smaller font */
+    z-index: 1060; /* Above modals */
+    pointer-events: none;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    white-space: nowrap; /* Prevent wrapping */
+}
+
+/* Accessibility improvements */
+.sr-only { /* Standard screen reader only class */
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Legend styling */
+.chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem; /* Row and column gap */
+    margin: 0.5rem 0 1rem;
+    padding: 0.5rem 0;
+     justify-content: center; /* Center legend items */
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+}
+
+.legend-btn { /* Button wrapper for interactive legends */
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+     font-size: 0.85rem;
+}
+
+.legend-btn:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
+.legend-btn[aria-pressed="false"] {
+    opacity: 0.6; /* Fade out the whole item */
+}
+ .legend-btn[aria-pressed="false"] .legend-label {
+     text-decoration: line-through;
+ }
+
+.legend-color {
+    display: inline-block;
+    width: 14px; /* Smaller legend color box */
+    height: 14px;
+    border-radius: 3px;
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+.legend-label {
+    color: var(--dark);
+     font-size: inherit; /* Inherit from button */
+}
+
+/* Add your custom styles for the results page here */
+
+/* Styles for SDG Category Explanation Section */
+.category-explanation-list .category-card {
+    padding: 1rem 1rem 1rem 1.25rem; /* Add left padding */
+    border-left: 5px solid var(--bs-gray-300); /* Default border color */
+    background-color: #fdfdfe; /* Slightly off-white */
+    border-radius: 0 6px 6px 0; /* Rounded corners except top-left */
+    height: 100%; /* Ensure cards in a row have same height */
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem; /* Space between cards on smaller screens */
+}
+
+.category-card .category-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.category-card .category-description {
+    color: var(--gray);
+    flex-grow: 1; /* Push SDGs list down */
+    margin-bottom: 0.75rem;
+}
+
+.category-card .category-sdgs {
+    color: var(--dark);
+    font-weight: 500;
+}
+/* Use Bootstrap variables for colors if defined in :root, otherwise use fallback */
+.category-card .text-danger { color: var(--danger, #ef4444) !important; }
+.category-card .text-success { color: var(--success, #10b981) !important; }
+.category-card .text-warning { color: var(--warning, #f59e0b) !important; }
+.category-card .text-primary { color: var(--primary, #2563eb) !important; }
+.category-card .text-info { color: var(--info, #0ea5e9) !important; }
+
+/* Ensure border colors match text colors - requires Bootstrap variables */
+.category-card[style*="--bs-danger"] { border-left-color: var(--danger, #ef4444); }
+.category-card[style*="--bs-success"] { border-left-color: var(--success, #10b981); }
+.category-card[style*="--bs-warning"] { border-left-color: var(--warning, #f59e0b); }
+.category-card[style*="--bs-primary"] { border-left-color: var(--primary, #2563eb); }
+.category-card[style*="--bs-info"] { border-left-color: var(--info, #0ea5e9); }
+
+/* Improve focus states for accessibility */
+/* Using :focus-visible for modern browsers to avoid outline on mouse click */
+a:focus-visible, button:focus-visible, input:focus-visible,
+textarea:focus-visible, select:focus-visible, .action-btn:focus-visible,
+[tabindex]:not([tabindex="-1"]):focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+}
+/* Remove default outline only when custom focus is visible */
+*:focus:not(:focus-visible) {
+   outline: none;
+}
+/* Ensure fallback for older browsers */
+a:focus, button:focus, input:focus, textarea:focus, select:focus, .action-btn:focus {
+   outline: 2px solid var(--primary);
+   outline-offset: 2px;
+   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+}
+
+
+
+/* Resource Hub section */
+.resource-hub {
+    background-color: #F7F6F6;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    border-left: 4px solid #32373c;
+}
+
+.resource-link {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 0.75rem;
+    margin-bottom: 0.75rem;
+    padding: 0.4rem 0.8rem;
+    background-color: white;
+    border-radius: 999px;
+    text-decoration: none;
+    color: #32373c;
+    transition: all 0.2s ease;
+    border: 1px solid #ccc;
+    font-size: 0.85rem;
+}
+
+.resource-link:hover {
+    background-color: #F7F6F6;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-color: #32373c;
+    color: #000000;
+}
+
+.resource-link i {
+    margin-right: 0.4rem; /* Reduced icon margin */
+}
+
+/* Loading overlay and modal improvements */
+#loadingOverlay {
+    display: flex !important; /* Ensure it's visible initially */
+    opacity: 1 !important;
+    transition: opacity 0.3s ease !important;
+    background-color: rgba(255, 255, 255, 0.85); /* Slightly transparent */
+    backdrop-filter: blur(3px); /* Optional blur effect */
+    z-index: 2000; /* Ensure high z-index */
+}
+#loadingOverlay.hidden {
+    opacity: 0 !important; /* Fade out */
+    pointer-events: none !important;
+    /* display: none !important; */ /* Can cause layout shift, rely on opacity and pointer-events */
+    z-index: -1 !important; /* Ensure it's behind content */
+}
+
+.modal-dialog-xl {
+    max-width: 95%; /* Wider modal */
+}
+ @media (min-width: 1200px) {
+     .modal-dialog-xl {
+         max-width: 1140px; /* Standard XL breakpoint */
+     }
+ }

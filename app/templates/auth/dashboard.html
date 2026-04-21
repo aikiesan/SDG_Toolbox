@@ -1,0 +1,1135 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - SDG Assessment Tool{% endblock %}
+
+{% block head %}
+<style>
+    /* Dashboard styles */
+    .dashboard-header {
+        background: linear-gradient(135deg, #0056b3, #004494);
+        color: white;
+        border-radius: 1rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .dashboard-header::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 20.83l2.83-2.83 1.41 1.41L1.41 22.24H0v-1.41zM0 3.07l2.83-2.83 1.41 1.41L1.41 4.48H0V3.07zM17.17 0l2.83 2.83-1.41 1.41L15.76 1.41V0h1.41zM38.59 0l2.83 2.83-1.41 1.41L37.17 1.41V0h1.41zM20.83 0l2.83 2.83-1.41 1.41L19.42 1.41V0h1.41zM3.07 0l2.83 2.83-1.41 1.41L1.66 1.41V0h1.41zM39.9 18.17l-2.83 2.83-1.41-1.41 2.83-2.83h1.41v1.41zM39.9 35.93l-2.83 2.83-1.41-1.41 2.83-2.83h1.41v1.41z'/%3E%3C/g%3E%3C/svg%3E");
+        opacity: 0.1;
+    }
+    
+    .dashboard-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .dashboard-subtitle {
+        opacity: 0.8;
+        margin-bottom: 0;
+    }
+    
+    .dashboard-stats {
+        margin-top: 1.5rem;
+    }
+    
+    .stat-card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 0.75rem;
+        padding: 1rem;
+        backdrop-filter: blur(5px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stat-card .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+    }
+    
+    .stat-card .stat-label {
+        opacity: 0.8;
+        font-size: 0.9rem;
+    }
+    
+    .stat-card .stat-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.75rem;
+        opacity: 0.8;
+    }
+    
+    .dashboard-card {
+        border-radius: 1rem;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        height: 100%;
+        margin-bottom: 2rem;
+    }
+    
+    .dashboard-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+    
+    .dashboard-card .card-header {
+        background-color: white;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        font-weight: 600;
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .dashboard-card .card-header .header-icon {
+        font-size: 1.25rem;
+        color: #0056b3;
+        margin-right: 0.75rem;
+    }
+    
+    .dashboard-card .card-body {
+        padding: 1.5rem;
+    }
+    
+    /* Table styles */
+    .dashboard-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    
+    .dashboard-table th,
+    .dashboard-table td {
+        padding: 1rem 1.25rem;
+        vertical-align: middle;
+    }
+    
+    .dashboard-table thead th {
+        background-color: #f8f9fa;
+        border-bottom: none;
+        font-weight: 600;
+        color: #495057;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    
+    .dashboard-table tbody tr {
+        border-bottom: 1px solid #e9ecef;
+        transition: all 0.2s ease;
+    }
+    
+    .dashboard-table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .dashboard-table tbody tr:last-child {
+        border-bottom: none;
+    }
+    
+    /* Action buttons */
+    .table-action-btn {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.5rem;
+        margin-right: 0.5rem;
+        transition: all 0.2s ease;
+    }
+    
+    .table-action-btn:hover {
+        transform: translateY(-2px);
+    }
+    
+    /* User status toggle */
+    .status-toggle {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 24px;
+    }
+    
+    .status-toggle input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .status-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 24px;
+    }
+    
+    .status-slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+    
+    input:checked + .status-slider {
+        background-color: #0056b3;
+    }
+    
+    input:focus + .status-slider {
+        box-shadow: 0 0 1px #0056b3;
+    }
+    
+    input:checked + .status-slider:before {
+        transform: translateX(26px);
+    }
+    
+    /* Search input */
+    .search-input-group {
+        position: relative;
+        max-width: 300px;
+    }
+    
+    .search-input {
+        padding-left: 2.5rem;
+        height: 38px;
+        border-radius: 0.5rem;
+    }
+    
+    .search-icon {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+        z-index: 10;
+    }
+    
+    /* Tabs styling */
+    .dashboard-tabs {
+        border-bottom: 1px solid #dee2e6;
+        margin-bottom: 1.5rem;
+    }
+    
+    .dashboard-tab {
+        border: none;
+        padding: 0.75rem 1.25rem;
+        border-radius: 0.5rem 0.5rem 0 0;
+        font-weight: 500;
+        color: #495057;
+        background-color: transparent;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+        margin-right: 0.5rem;
+    }
+    
+    .dashboard-tab:hover {
+        color: #0056b3;
+    }
+    
+    .dashboard-tab.active {
+        color: #0056b3;
+        background-color: #f8f9fa;
+    }
+    
+    .dashboard-tab.active::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: #0056b3;
+    }
+    
+    /* Pagination styling */
+    .dashboard-pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 1.5rem;
+    }
+    
+    .page-item .page-link {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 0.25rem;
+        border-radius: 0.5rem;
+        color: #495057;
+        border: 1px solid #dee2e6;
+        transition: all 0.2s ease;
+    }
+    
+    .page-item .page-link:hover {
+        background-color: #f8f9fa;
+        color: #0056b3;
+        border-color: #0056b3;
+    }
+    
+    .page-item.active .page-link {
+        background-color: #0056b3;
+        color: white;
+        border-color: #0056b3;
+    }
+    
+    /* Chart containers */
+    .chart-container {
+        width: 100%;
+        height: 300px;
+        position: relative;
+    }
+    
+    /* Filter dropdown */
+    .filter-dropdown {
+        min-width: 200px;
+    }
+    
+    /* Empty state */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+    }
+    
+    .empty-state-icon {
+        font-size: 4rem;
+        color: #dee2e6;
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Data grid */
+    .data-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 767.98px) {
+        .dashboard-title {
+            font-size: 1.5rem;
+        }
+        
+        .stat-card .stat-value {
+            font-size: 1.5rem;
+        }
+        
+        .dashboard-table th,
+        .dashboard-table td {
+            padding: 0.75rem 1rem;
+        }
+        
+        .dashboard-card .card-header,
+        .dashboard-card .card-body {
+            padding: 1.25rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header mb-4">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="dashboard-title">Admin Dashboard</h1>
+                <p class="dashboard-subtitle">Manage users, monitor activity, and analyze system performance</p>
+                
+                <div class="dashboard-stats">
+                    <div class="row g-3">
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="bi bi-people-fill"></i>
+                                </div>
+                                <div class="stat-value">{{ users|length }}</div>
+                                <div class="stat-label">Total Users</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="bi bi-person-check-fill"></i>
+                                </div>
+                                <div class="stat-value">
+                                    {% set confirmed_count = 0 %}
+                                    {% for user in users %}
+                                        {% if user.email_confirmed %}
+                                            {% set confirmed_count = confirmed_count + 1 %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {{ confirmed_count }}
+                                </div>
+                                <div class="stat-label">Verified Users</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="bi bi-person-plus-fill"></i>
+                                </div>
+                                <div class="stat-value">
+                                    {% set recent_count = 0 %}
+                                    {% for user in users %}
+                                        {% if (now - user.created_at).days < 30 %}
+                                            {% set recent_count = recent_count + 1 %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {{ recent_count }}
+                                </div>
+                                <div class="stat-label">New Users (30 days)</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="bi bi-shield-lock-fill"></i>
+                                </div>
+                                <div class="stat-value">
+                                    {% set admin_count = 0 %}
+                                    {% for user in users %}
+                                        {% if user.is_admin %}
+                                            {% set admin_count = admin_count + 1 %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {{ admin_count }}
+                                </div>
+                                <div class="stat-label">Admin Users</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 d-none d-lg-block">
+                <div class="dashboard-illustration text-center">
+                    <i class="bi bi-speedometer2" style="font-size: 8rem; opacity: 0.5;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dashboard Tabs -->
+    <div class="dashboard-tabs mb-4">
+        <button class="dashboard-tab active" data-tab="users">
+            <i class="bi bi-people me-2"></i>User Management
+        </button>
+        <button class="dashboard-tab" data-tab="projects">
+            <i class="bi bi-folder me-2"></i>Projects
+        </button>
+        <button class="dashboard-tab" data-tab="assessments">
+            <i class="bi bi-clipboard-check me-2"></i>Assessments
+        </button>
+        <button class="dashboard-tab" data-tab="system">
+            <i class="bi bi-gear me-2"></i>System
+        </button>
+    </div>
+    
+    <!-- Tab Content -->
+    <div class="tab-content">
+        <!-- Users Tab -->
+        <div class="tab-pane active" id="users-tab">
+            <div class="card dashboard-card">
+                <div class="card-header">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-people-fill header-icon"></i>
+                        <h5 class="mb-0">User Management</h5>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <div class="search-input-group">
+                            <i class="bi bi-search search-icon"></i>
+                            <input type="text" class="form-control search-input" placeholder="Search users..." id="userSearchInput">
+                        </div>
+                        <div>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                                <i class="bi bi-person-plus me-1"></i> Add User
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
+                        <table class="dashboard-table" id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <div class="d-flex align-items-center">
+                                            <span>ID</span>
+                                            <i class="bi bi-arrow-down-up ms-1 text-muted" style="cursor: pointer;"></i>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="d-flex align-items-center">
+                                            <span>Name</span>
+                                            <i class="bi bi-arrow-down-up ms-1 text-muted" style="cursor: pointer;"></i>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="d-flex align-items-center">
+                                            <span>Email</span>
+                                            <i class="bi bi-arrow-down-up ms-1 text-muted" style="cursor: pointer;"></i>
+                                        </div>
+                                    </th>
+                                    <th>Organization</th>
+                                    <th class="text-center">Verified</th>
+                                    <th class="text-center">Admin</th>
+                                    <th>
+                                        <div class="d-flex align-items-center">
+                                            <span>Created</span>
+                                            <i class="bi bi-arrow-down-up ms-1 text-muted" style="cursor: pointer;"></i>
+                                        </div>
+                                    </th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                <tr>
+                                    <td>{{ user.id }}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-2" style="width: 32px; height: 32px; background-color: #e9ecef; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                <i class="bi bi-person"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-semibold">{{ user.name }}</div>
+                                                {% if user.is_admin %}
+                                                <span class="badge bg-primary">Admin</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ user.email }}</td>
+                                    <td>{{ user.organization or 'N/A' }}</td>
+                                    <td class="text-center">
+                                        <span class="badge bg-{{ 'success' if user.email_confirmed else 'warning' }} rounded-pill px-2 py-1">
+                                            {{ 'Verified' if user.email_confirmed else 'Pending' }}
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <label class="status-toggle">
+                                            <input type="checkbox" {% if user.is_admin %}checked{% endif %} 
+                                                   onchange="toggleAdminStatus({{ user.id }}, this.checked)">
+                                            <span class="status-slider"></span>
+                                        </label>
+                                    </td>
+                                    <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-sm btn-outline-primary table-action-btn" 
+                                                data-bs-toggle="tooltip" title="Edit User" 
+                                                onclick="editUser({{ user.id }})">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger table-action-btn" 
+                                                data-bs-toggle="tooltip" title="Delete User" 
+                                                onclick="confirmDeleteUser({{ user.id }}, '{{ user.name }}')">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-info table-action-btn" 
+                                                data-bs-toggle="tooltip" title="View Details" 
+                                                onclick="viewUserDetails({{ user.id }})">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </button>
+                                        {% if not user.email_confirmed %}
+                                        <button class="btn btn-sm btn-outline-success table-action-btn" 
+                                                data-bs-toggle="tooltip" title="Resend Verification" 
+                                                onclick="resendVerification({{ user.id }})">
+                                            <i class="bi bi-envelope-check-fill"></i>
+                                        </button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <nav aria-label="User pagination" class="mt-3">
+                        <ul class="pagination dashboard-pagination">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="Previous">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Projects Tab (Hidden by default) -->
+        <div class="tab-pane" id="projects-tab" style="display: none;">
+            <div class="card dashboard-card">
+                <div class="card-header">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-folder-fill header-icon"></i>
+                        <h5 class="mb-0">Projects Management</h5>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <div class="search-input-group">
+                            <i class="bi bi-search search-icon"></i>
+                            <input type="text" class="form-control search-input" placeholder="Search projects...">
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="projectFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-funnel me-1"></i> Filter
+                            </button>
+                            <ul class="dropdown-menu filter-dropdown" aria-labelledby="projectFilterDropdown">
+                                <li><h6 class="dropdown-header">Project Type</h6></li>
+                                <li><a class="dropdown-item" href="#">All Types</a></li>
+                                <li><a class="dropdown-item" href="#">Residential</a></li>
+                                <li><a class="dropdown-item" href="#">Commercial</a></li>
+                                <li><a class="dropdown-item" href="#">Industrial</a></li>
+                                <li><div class="dropdown-divider"></div></li>
+                                <li><h6 class="dropdown-header">Status</h6></li>
+                                <li><a class="dropdown-item" href="#">All Statuses</a></li>
+                                <li><a class="dropdown-item" href="#">Active</a></li>
+                                <li><a class="dropdown-item" href="#">Archived</a></li>
+                                <li><a class="dropdown-item" href="#">Draft</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="bi bi-folder"></i>
+                        </div>
+                        <h4>Projects Tab</h4>
+                        <p class="text-muted">This section is currently under development.</p>
+                        <button class="btn btn-outline-primary">
+                            <i class="bi bi-pencil-square me-2"></i>Set Up Projects View
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Assessments Tab (Hidden by default) -->
+        <div class="tab-pane" id="assessments-tab" style="display: none;">
+            <div class="card dashboard-card">
+                <div class="card-header">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-clipboard-check-fill header-icon"></i>
+                        <h5 class="mb-0">Assessments Management</h5>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="bi bi-clipboard-check"></i>
+                        </div>
+                        <h4>Assessments Tab</h4>
+                        <p class="text-muted">This section is currently under development.</p>
+                        <button class="btn btn-outline-primary">
+                            <i class="bi bi-pencil-square me-2"></i>Set Up Assessments View
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- System Tab (Hidden by default) -->
+        <div class="tab-pane" id="system-tab" style="display: none;">
+            <div class="card dashboard-card">
+                <div class="card-header">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-gear-fill header-icon"></i>
+                        <h5 class="mb-0">System Management</h5>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="bi bi-gear"></i>
+                        </div>
+                        <h4>System Tab</h4>
+                        <p class="text-muted">This section is currently under development.</p>
+                        <button class="btn btn-outline-primary">
+                            <i class="bi bi-pencil-square me-2"></i>Set Up System View
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add User Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 1rem; overflow: hidden;">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="addUserModalLabel">Add New User</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="addUserForm">
+                    <div class="mb-3">
+                        <label for="fullName" class="form-label">Full Name</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input type="text" class="form-control" id="fullName" placeholder="Enter full name" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="emailAddress" class="form-label">Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            <input type="email" class="form-control" id="emailAddress" placeholder="Enter email address" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="orgName" class="form-label">Organization</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-building"></i></span>
+                            <input type="text" class="form-control" id="orgName" placeholder="Enter organization name">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                            <input type="password" class="form-control" id="password" placeholder="Enter password" required>
+                            <button class="btn btn-outline-secondary" type="button" id="togglePasswordVisibility">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="isAdmin">
+                            <label class="form-check-label" for="isAdmin">
+                                Admin User
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="sendInvitation" checked>
+                            <label class="form-check-label" for="sendInvitation">
+                                Send email invitation
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="createUser()">
+                    <i class="bi bi-person-plus me-1"></i> Add User
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete User Confirmation Modal -->
+<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 1rem; overflow: hidden;">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteUserModalLabel">Confirm User Deletion</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="text-center mb-4">
+                    <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 3rem;"></i>
+                </div>
+                <p class="mb-1">Are you sure you want to delete the following user?</p>
+                <h5 class="mb-3" id="deleteUserName">User Name</h5>
+                <p class="text-danger mb-0">This action cannot be undone. All user data including projects and assessments will be permanently removed.</p>
+                <input type="hidden" id="deleteUserId" value="">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="deleteUser()">
+                    <i class="bi bi-trash me-1"></i> Delete User
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- User Details Modal -->
+<div class="modal fade" id="userDetailsModal" tabindex="-1" aria-labelledby="userDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="border-radius: 1rem; overflow: hidden;">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="userDetailsModalLabel">User Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="row">
+                    <div class="col-md-4 text-center mb-4 mb-md-0">
+                        <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center mb-3" style="width: 100px; height: 100px;">
+                            <i class="bi bi-person-circle" style="font-size: 3rem; color: #6c757d;"></i>
+                        </div>
+                        <h4 id="detailsUserName">User Name</h4>
+                        <p class="text-muted mb-3" id="detailsUserEmail">lucassnakamura@gmail.com</p>
+                        <div id="detailsUserBadges">
+                            <span class="badge bg-primary mb-1">Admin</span>
+                            <span class="badge bg-success mb-1">Verified</span>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <h5 class="border-bottom pb-2 mb-3">Account Information</h5>
+                        <div class="row mb-2">
+                            <div class="col-sm-4 text-muted">User ID</div>
+                            <div class="col-sm-8 fw-medium" id="detailsUserId">123</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-sm-4 text-muted">Organization</div>
+                            <div class="col-sm-8 fw-medium" id="detailsUserOrg">Company Name</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-sm-4 text-muted">Created On</div>
+                            <div class="col-sm-8 fw-medium" id="detailsUserCreated">2023-01-01</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-sm-4 text-muted">Status</div>
+                            <div class="col-sm-8 fw-medium" id="detailsUserStatus">Active</div>
+                        </div>
+                        
+                        <h5 class="border-bottom pb-2 mb-3 mt-4">Activity Summary</h5>
+                        <div class="row mb-2">
+                            <div class="col-sm-4 text-muted">Projects</div>
+                            <div class="col-sm-8 fw-medium" id="detailsUserProjects">5</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-sm-4 text-muted">Assessments</div>
+                            <div class="col-sm-8 fw-medium" id="detailsUserAssessments">12</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-sm-4 text-muted">Last Login</div>
+                            <div class="col-sm-8 fw-medium" id="detailsUserLastLogin">2023-04-15</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-outline-primary" onclick="editUser(document.getElementById('detailsUserId').textContent)">
+                    <i class="bi bi-pencil me-1"></i> Edit User
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl, {
+                boundary: document.body
+            });
+        });
+        
+        // Tab switching functionality
+        const tabs = document.querySelectorAll('.dashboard-tab');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                tabs.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Get target tab ID
+                const targetId = this.getAttribute('data-tab') + '-tab';
+                
+                // Hide all tab panes
+                tabPanes.forEach(pane => {
+                    pane.style.display = 'none';
+                    pane.classList.remove('active');
+                });
+                
+                // Show target tab pane
+                const targetPane = document.getElementById(targetId);
+                if (targetPane) {
+                    targetPane.style.display = 'block';
+                    targetPane.classList.add('active');
+                }
+            });
+        });
+        
+        // User search functionality
+        const userSearchInput = document.getElementById('userSearchInput');
+        if (userSearchInput) {
+            userSearchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const rows = document.querySelectorAll('#usersTable tbody tr');
+                
+                rows.forEach(row => {
+                    const name = row.cells[1].textContent.toLowerCase();
+                    const email = row.cells[2].textContent.toLowerCase();
+                    const org = row.cells[3].textContent.toLowerCase();
+                    
+                    if (name.includes(searchTerm) || email.includes(searchTerm) || org.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        }
+        
+        // Password visibility toggle in add user modal
+        const togglePasswordBtn = document.getElementById('togglePasswordVisibility');
+        if (togglePasswordBtn) {
+            togglePasswordBtn.addEventListener('click', function() {
+                const passwordInput = document.getElementById('password');
+                const icon = this.querySelector('i');
+                
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    icon.classList.remove('bi-eye');
+                    icon.classList.add('bi-eye-slash');
+                } else {
+                    passwordInput.type = 'password';
+                    icon.classList.remove('bi-eye-slash');
+                    icon.classList.add('bi-eye');
+                }
+            });
+        }
+        
+        // Add animations to dashboard elements
+        const dashboardHeader = document.querySelector('.dashboard-header');
+        const cards = document.querySelectorAll('.dashboard-card');
+        
+        if (dashboardHeader) {
+            dashboardHeader.style.transform = 'translateY(20px)';
+            dashboardHeader.style.opacity = '0';
+            
+            setTimeout(() => {
+                dashboardHeader.style.transition = 'all 0.5s ease';
+                dashboardHeader.style.transform = 'translateY(0)';
+                dashboardHeader.style.opacity = '1';
+            }, 100);
+        }
+        
+        if (cards.length > 0) {
+            cards.forEach((card, index) => {
+                card.style.transform = 'translateY(20px)';
+                card.style.opacity = '0';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.transform = 'translateY(0)';
+                    card.style.opacity = '1';
+                }, 200 + (index * 100));
+            });
+        }
+    });
+    
+    // Function to toggle admin status
+    function toggleAdminStatus(userId, isAdmin) {
+        console.log(`Toggling admin status for user ${userId} to ${isAdmin}`);
+        
+        // In a real implementation, this would make an API call
+        // For demo purposes, we'll just show a toast notification
+        showToast(`Admin status for user ${userId} updated successfully`, 'success');
+    }
+    
+    // Function to edit user
+    function editUser(userId) {
+        console.log(`Editing user ${userId}`);
+        
+        // In a real implementation, this would open a modal with user data
+        showToast(`Editing user ${userId}`, 'info');
+    }
+    
+    // Function to confirm delete user
+    function confirmDeleteUser(userId, userName) {
+        console.log(`Confirming deletion for user ${userId}`);
+        
+        // Set values in the confirmation modal
+        document.getElementById('deleteUserId').value = userId;
+        document.getElementById('deleteUserName').textContent = userName;
+        
+        // Show the confirmation modal
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteUserModal'));
+        deleteModal.show();
+    }
+    
+    // Function to delete user
+    function deleteUser() {
+        const userId = document.getElementById('deleteUserId').value;
+        console.log(`Deleting user ${userId}`);
+        
+        // In a real implementation, this would make an API call
+        // For demo purposes, we'll just show a toast notification
+        showToast(`User ${userId} deleted successfully`, 'success');
+        
+        // Hide the modal
+        bootstrap.Modal.getInstance(document.getElementById('deleteUserModal')).hide();
+    }
+    
+    // Function to view user details
+    function viewUserDetails(userId) {
+        console.log(`Viewing details for user ${userId}`);
+        
+        // Simulate fetching user data
+        // In a real implementation, this would make an API call
+        
+        // Set user details in the modal
+        document.getElementById('detailsUserId').textContent = userId;
+        
+        // Find user in the table
+        const userRow = document.querySelector(`#usersTable tbody tr td:first-child:contains(${userId})`).parentNode;
+        if (userRow) {
+            const userName = userRow.cells[1].querySelector('.fw-semibold').textContent;
+            const userEmail = userRow.cells[2].textContent;
+            const userOrg = userRow.cells[3].textContent;
+            const userCreated = userRow.cells[6].textContent;
+            
+            document.getElementById('detailsUserName').textContent = userName;
+            document.getElementById('detailsUserEmail').textContent = userEmail;
+            document.getElementById('detailsUserOrg').textContent = userOrg;
+            document.getElementById('detailsUserCreated').textContent = userCreated;
+            
+            // Simulate other data
+            document.getElementById('detailsUserProjects').textContent = Math.floor(Math.random() * 10);
+            document.getElementById('detailsUserAssessments').textContent = Math.floor(Math.random() * 20);
+            document.getElementById('detailsUserLastLogin').textContent = '2025-04-' + (Math.floor(Math.random() * 10) + 1);
+        }
+        
+        // Show the modal
+        const detailsModal = new bootstrap.Modal(document.getElementById('userDetailsModal'));
+        detailsModal.show();
+    }
+    
+    // Function to resend verification
+    function resendVerification(userId) {
+        console.log(`Resending verification for user ${userId}`);
+        
+        // In a real implementation, this would make an API call
+        // For demo purposes, we'll just show a toast notification
+        showToast(`Verification email sent to user ${userId}`, 'success');
+    }
+    
+    // Function to create a new user
+    function createUser() {
+        const fullName = document.getElementById('fullName').value;
+        const email = document.getElementById('emailAddress').value;
+        const organization = document.getElementById('orgName').value;
+        const password = document.getElementById('password').value;
+        const isAdmin = document.getElementById('isAdmin').checked;
+        const sendInvitation = document.getElementById('sendInvitation').checked;
+        
+        console.log(`Creating new user: ${fullName} (${email}), Admin: ${isAdmin}, Send Invitation: ${sendInvitation}`);
+        
+        // In a real implementation, this would make an API call
+        // For demo purposes, we'll just show a toast notification
+        showToast(`User ${fullName} created successfully`, 'success');
+        
+        // Hide the modal
+        bootstrap.Modal.getInstance(document.getElementById('addUserModal')).hide();
+    }
+    
+    // Helper function to show toast notifications
+    function showToast(message, type = 'info') {
+        // Check if toast container exists, if not create it
+        let toastContainer = document.querySelector('.toast-container');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+            document.body.appendChild(toastContainer);
+        }
+        
+        // Create toast element
+        const toastId = 'toast-' + Date.now();
+        const toast = document.createElement('div');
+        toast.className = `toast align-items-center text-white bg-${type} border-0`;
+        toast.id = toastId;
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        toast.setAttribute('aria-atomic', 'true');
+        
+        // Create toast content
+        toast.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">
+                    ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        `;
+        
+        // Add to container
+        toastContainer.appendChild(toast);
+        
+        // Initialize and show toast
+        const bsToast = new bootstrap.Toast(toast, {
+            animation: true,
+            autohide: true,
+            delay: 3000
+        });
+        bsToast.show();
+        
+        // Remove from DOM after hidden
+        toast.addEventListener('hidden.bs.toast', function () {
+            toast.remove();
+        });
+    }
+    
+    // Polyfill for :contains selector
+    if (!Element.prototype.matches) {
+        Element.prototype.matches = Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector;
+    }
+    
+    if (!Element.prototype.closest) {
+        Element.prototype.closest = function(s) {
+            var el = this;
+            do {
+                if (el.matches(s)) return el;
+                el = el.parentElement || el.parentNode;
+            } while (el !== null && el.nodeType === 1);
+            return null;
+        };
+    }
+</script>
+{% endblock %}

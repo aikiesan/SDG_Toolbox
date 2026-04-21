@@ -1,0 +1,513 @@
+{% extends "base.html" %}
+
+{% block title %}FAQ - SDG Assessment Tool{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <header class="text-center mb-5">
+        <h1 class="display-5 fw-bold">Frequently Asked Questions (FAQ)</h1>
+        <p class="lead">Find answers to common questions about the Sustainable Development Goals (SDGs) and our Assessment Tool.</p>
+        <p class="text-muted small">Last updated: April 26, 2025</p> <!-- UX: Add last updated date for trust -->
+    </header>
+
+    <!-- UX: Search/Filter Functionality -->
+    <div class="row mb-4">
+        <div class="col-md-8 offset-md-2">
+            <div class="input-group">
+                <span class="input-group-text" id="search-icon"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" id="faqSearchInput" placeholder="Search FAQs..." aria-label="Search FAQs" aria-describedby="search-icon">
+            </div>
+            <div id="noResultsFound" class="alert alert-warning mt-2 d-none" role="alert">
+                No questions found matching your search.
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion" id="faqAccordion">
+
+        <!-- Section: About SDGs -->
+        <div class="faq-section"> <!-- UX: Wrapper for easier search targeting -->
+            <h2 class="h4 mb-3 mt-4 pt-3 border-top faq-section-title">About the Sustainable Development Goals (SDGs)</h2>
+
+            <div class="accordion-item">
+                <h3 class="accordion-header" id="headingSdgWhat"> <!-- UX: Use h3 for accordion headers if h2 is section title for better hierarchy -->
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSdgWhat" aria-expanded="false" aria-controls="collapseSdgWhat">
+                        <i class="bi bi-question-circle-fill me-2"></i> What are the Sustainable Development Goals (SDGs)?
+                    </button>
+                </h3>
+                <div id="collapseSdgWhat" class="accordion-collapse collapse" aria-labelledby="headingSdgWhat" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        <p>The Sustainable Development Goals (SDGs), also known as the Global Goals, were adopted by the United Nations in 2015 as a universal call to action to end poverty, protect the planet, and ensure that by 2030 all people enjoy peace and prosperity.</p>
+                        <p>There are 17 interconnected goals that address the global challenges we face, including those related to <strong>poverty, inequality, climate change, environmental degradation, peace and justice</strong>. They recognize that action in one area will affect outcomes in others, and that development must balance social, economic and environmental sustainability.</p> <!-- UX: Bolding key terms -->
+                        <a href="https://sdgs.un.org/goals" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary mt-2">Learn more at UN SDGs <i class="bi bi-box-arrow-up-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h3 class="accordion-header" id="headingSdgArchitecture">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSdgArchitecture" aria-expanded="false" aria-controls="collapseSdgArchitecture">
+                        <i class="bi bi-building me-2"></i> Why are the SDGs relevant to architecture and the built environment?
+                    </button>
+                </h3>
+                <div id="collapseSdgArchitecture" class="accordion-collapse collapse" aria-labelledby="headingSdgArchitecture" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        <p>The built environment significantly impacts many aspects of sustainability. Buildings and construction account for a large portion of global <strong>energy consumption, resource use, and greenhouse gas emissions</strong> (relevant to SDG 7, 11, 12, 13).</p>
+                        <p>Furthermore, the design of buildings and cities directly affects human <strong>health and well-being</strong> (SDG 3), access to <strong>clean water and sanitation</strong> (SDG 6), <strong>education</strong> (SDG 4), <strong>economic opportunities</strong> (SDG 8), <strong>safety, inclusivity, and equality</strong> (SDG 5, 10, 11, 16).</p>
+                        <p>Architects, planners, and developers have a crucial role and responsibility in designing and constructing spaces that contribute positively to achieving the SDGs.</p>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- /.faq-section -->
+
+        <!-- Section: About the Tool -->
+        <div class="faq-section">
+            <h2 class="h4 mb-3 mt-5 pt-3 border-top faq-section-title">About the SDG Assessment Tool</h2>
+
+            <div class="accordion-item">
+                <h3 class="accordion-header" id="headingToolPurpose">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseToolPurpose" aria-expanded="false" aria-controls="collapseToolPurpose">
+                        <i class="bi bi-tools me-2"></i> What is the purpose of this tool?
+                    </button>
+                </h3>
+                <div id="collapseToolPurpose" class="accordion-collapse collapse" aria-labelledby="headingToolPurpose" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        <p>This tool is designed to help architects, designers, planners, students, and other built environment professionals assess the potential impact of their projects against the 17 Sustainable Development Goals.</p>
+                        <p>Its main purposes are to:</p>
+                        <ul>
+                            <li>Raise awareness about the connection between the built environment and the SDGs.</li>
+                            <li>Provide a structured framework for evaluating a project's sustainability performance.</li>
+                            <li>Help identify areas where a project excels and areas where improvements can be made.</li>
+                            <li>Facilitate communication about a project's sustainability contributions.</li>
+                            <li>Encourage the integration of SDG principles into the design and development process.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h3 class="accordion-header" id="headingToolAudience">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseToolAudience" aria-expanded="false" aria-controls="collapseToolAudience">
+                       <i class="bi bi-people-fill me-2"></i> Who should use this tool?
+                    </button>
+                </h3>
+                <div id="collapseToolAudience" class="accordion-collapse collapse" aria-labelledby="headingToolAudience" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        <p>This tool is intended for anyone involved in the planning, design, construction, or evaluation of built environment projects, including:</p>
+                        <ul>
+                            <li>Architects and Architectural Firms</li>
+                            <li>Urban Planners and Designers</li>
+                            <li>Landscape Architects</li>
+                            <li>Engineers (Civil, Structural, MEP)</li>
+                            <li>Developers and Clients</li>
+                            <li>Students of Architecture, Planning, and related fields</li>
+                            <li>Sustainability Consultants</li>
+                            <li>Policymakers involved in urban development</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h3 class="accordion-header" id="headingToolStructure">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseToolStructure" aria-expanded="false" aria-controls="collapseToolStructure">
+                        <i class="bi bi-diagram-3 me-2"></i> How is the assessment structured?
+                    </button>
+                </h3>
+                <div id="collapseToolStructure" class="accordion-collapse collapse" aria-labelledby="headingToolStructure" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        <p>The assessment is divided into five steps, grouping the 17 SDGs thematically:</p>
+                        <ol>
+                            <li><strong>Foundational Human Needs:</strong> SDGs 1, 2, 3, 6</li>
+                            <li><strong>Enablers and Opportunities:</strong> SDGs 4, 5, 8, 10</li>
+                            <li><strong>Sustainable Infrastructure and Innovation:</strong> SDGs 7, 9, 11, 12</li>
+                            <li><strong>Environmental Stewardship:</strong> SDGs 13, 14, 15</li>
+                            <li><strong>Governance and Implementation:</strong> SDGs 16, 17</li>
+                        </ol>
+                        <p>Within each step, you will evaluate your project against the relevant SDGs by considering specific targets, architectural strategies, providing an impact description, assigning an impact rating, and answering questions based on criteria like those from the UIA (International Union of Architects).</p>
+                    </div>
+                </div>
+            </div>
+
+             <div class="accordion-item">
+                <h3 class="accordion-header" id="headingToolUIA">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseToolUIA" aria-expanded="false" aria-controls="collapseToolUIA">
+                        <i class="bi bi-building-check me-2"></i> What is the "UIA SDG Impact Assessment" section?
+                    </button>
+                </h3>
+                <div id="collapseToolUIA" class="accordion-collapse collapse" aria-labelledby="headingToolUIA" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        <p>The "UIA SDG Impact Assessment" sections within each SDG evaluation refer to specific criteria developed or highlighted by the International Union of Architects (UIA) Commission on the UN Sustainable Development Goals.</p>
+                        <p>These criteria focus on <strong>actionable measures</strong> within the architectural profession that directly contribute to specific SDG targets. Answering these questions provides a more detailed, architecture-focused perspective on your project's impact and may contribute to specific sub-scores or metrics in your final report.</p>
+                         <a href="https://www.uia-architectes.org/en/commission/sdg/" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary mt-2">Learn more at UIA SDG Commission <i class="bi bi-box-arrow-up-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- /.faq-section -->
+
+
+        <!-- Section: Using the Tool -->
+        <div class="faq-section">
+            <h2 class="h4 mb-3 mt-5 pt-3 border-top faq-section-title">Using the Tool</h2>
+
+            <div class="accordion-item">
+                <h3 class="accordion-header" id="headingToolRating">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseToolRating" aria-expanded="false" aria-controls="collapseToolRating">
+                        <i class="bi bi-sliders me-2"></i> How should I interpret the Impact Ratings (0-5)?
+                    </button>
+                </h3>
+                <div id="collapseToolRating" class="accordion-collapse collapse" aria-labelledby="headingToolRating" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        <p>The 0-5 rating scale is a subjective assessment based on your understanding of the project's impact relative to the specific SDG. Use the following as a general guide:</p>
+                        <ul>
+                            <li><strong>0: No Impact / Not Applicable:</strong> The project has no discernible positive or negative impact on this SDG, or the SDG is not relevant to the project's scope.</li>
+                            <li><strong>1-2: Minor / Potential Impact:</strong> The project has a small positive impact, or potential for future impact. Actions taken are limited or indirect.</li>
+                            <li><strong>3: Moderate Impact:</strong> The project makes a noticeable positive contribution to the SDG through specific design features or strategies.</li>
+                            <li><strong>4: Significant Impact:</strong> The project strongly addresses the SDG with clear, measurable outcomes and innovative approaches.</li>
+                            <li><strong>5: Transformative / Maximum Impact:</strong> The project is exemplary in its contribution to this SDG, potentially setting new standards or having a life-changing effect on stakeholders.</li>
+                        </ul>
+                        <div class="alert alert-info mt-3" role="alert"> <!-- UX: Use alert for important notes -->
+                           <i class="bi bi-info-circle-fill me-1"></i> <strong>Important:</strong> Your rating should always be supported by the details provided in the "Impact Description" section.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h3 class="accordion-header" id="headingToolDescription">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseToolDescription" aria-expanded="false" aria-controls="collapseToolDescription">
+                        <i class="bi bi-pencil-square me-2"></i> Why is the "Impact Description" important?
+                    </button>
+                </h3>
+                <div id="collapseToolDescription" class="accordion-collapse collapse" aria-labelledby="headingToolDescription" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        <p>The Impact Description is crucial because it provides the <strong>qualitative evidence and context</strong> for your numerical rating. It's your opportunity to:</p>
+                        <ul>
+                            <li>Explain <em>how</em> your project impacts the specific SDG.</li>
+                            <li>Describe the concrete actions, design features, or strategies implemented.</li>
+                            <li>Mention any measurable outcomes, metrics, or targets achieved (e.g., % energy reduction, number of people served, area of habitat restored).</li>
+                            <li>Justify the rating you assigned.</li>
+                            <li>Detail both direct and indirect impacts.</li>
+                        </ul>
+                        <p>A well-written description adds <strong>credibility and depth</strong> to your assessment.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h3 class="accordion-header" id="headingToolSaving">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseToolSaving" aria-expanded="false" aria-controls="collapseToolSaving">
+                        <i class="bi bi-save me-2"></i> Is my progress saved automatically?
+                    </button>
+                </h3>
+                <div id="collapseToolSaving" class="accordion-collapse collapse" aria-labelledby="headingToolSaving" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        <p>Yes, your progress is saved automatically as you complete each step. When you click "Save & Continue" or "Finalize Assessment", the data for that step is saved to your project.</p>
+                        <p>You can leave the assessment and return later to continue where you left off, provided you are logged in and accessing the same project assessment.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h3 class="accordion-header" id="headingToolEdit">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseToolEdit" aria-expanded="false" aria-controls="collapseToolEdit">
+                        <i class="bi bi-pencil me-2"></i> Can I edit my assessment after submitting it?
+                    </button>
+                </h3>
+                <div id="collapseToolEdit" class="accordion-collapse collapse" aria-labelledby="headingToolEdit" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        <!-- TODO: ADAPT THIS ANSWER based on your tool's functionality. Be very clear. -->
+                        <p><strong>Functionality Varies:</strong> Whether you can edit an assessment after finalization depends on the specific design of this tool.</p>
+                        <p><em>Scenario 1 (Not Editable):</em> Currently, once an assessment is finalized, it may not be directly editable through this interface. We recommend reviewing each step carefully before proceeding and finalizing the assessment only when you are satisfied with your inputs. You might need to start a new assessment or a new version if changes are required.</p>
+                        <p><em>Scenario 2 (Editable):</em> Yes, you can typically revisit your project's assessment page and make changes. Remember to save your updated assessment after making edits.</p>
+                        <p class="mt-2"><strong>[Please check the tool's specific behavior and update this section accordingly.]</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- /.faq-section -->
+
+        <!-- Section: Data and Scoring -->
+        <div class="faq-section">
+            <h2 class="h4 mb-3 mt-5 pt-3 border-top faq-section-title">Data, Scoring, and Results</h2>
+
+            <div class="accordion-item">
+                <h3 class="accordion-header" id="headingToolScoring">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseToolScoring" aria-expanded="false" aria-controls="collapseToolScoring">
+                        <i class="bi bi-calculator me-2"></i> How is the final score or result calculated?
+                    </button>
+                </h3>
+                <div id="collapseToolScoring" class="accordion-collapse collapse" aria-labelledby="headingToolScoring" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                         <!-- TODO: ADAPT THIS ANSWER based on your calculation logic. Be transparent. -->
+                        <p>The tool calculates scores based on your inputs:</p>
+                        <ul>
+                            <li><strong>Individual SDG Impact Rating (0-5):</strong> Your primary subjective rating for each SDG.</li>
+                            <li><strong>UIA Assessment Sub-Scores:</strong> The scores derived from the specific UIA criteria questions (often 0-5 or similar). For SDGs with multiple UIA parts (like SDG 8, 13, 15), these parts might be averaged first.</li>
+                        </ul>
+                        <p>The final summary report might present these scores in various ways:</p>
+                        <ul>
+                            <li>An overall average score across all SDGs.</li>
+                            <li>Scores grouped by the five thematic steps.</li>
+                            <li>A visual representation (like a radar chart) showing strengths and weaknesses across all 17 goals.</li>
+                            <li>Separate reporting of the UIA-based scores alongside your impact ratings.</li>
+                        </ul>
+                         <p>The exact weighting and presentation can be found on the <strong>assessment summary page</strong> generated after finalization. [If possible, link to an example or a page explaining scoring in more detail].</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h3 class="accordion-header" id="headingToolDataPrivacy">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseToolDataPrivacy" aria-expanded="false" aria-controls="collapseToolDataPrivacy">
+                       <i class="bi bi-shield-lock me-2"></i> How is my assessment data used? Is it private?
+                    </button>
+                </h3>
+                <div id="collapseToolDataPrivacy" class="accordion-collapse collapse" aria-labelledby="headingToolDataPrivacy" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        <!-- TODO: ADAPT THIS ANSWER - Be transparent and accurate. This is critical. -->
+                        <p>Your assessment data is associated with your project and user account.</p>
+                        <p><strong>Privacy:</strong> Your individual project assessment data is considered private and will not be shared publicly without your explicit consent. Access to your detailed assessment data is restricted to you (the project owner/editor) and system administrators for support and maintenance purposes.</p>
+                        <p><strong>Usage:</strong> We may use <strong>anonymized and aggregated data</strong> for statistical analysis to understand general trends in sustainable design, to improve the tool itself, or for research purposes. No personally identifiable information or project-specific details that could identify your project will be released in these analyses without permission.</p>
+                        <p>For full details, please refer to our <a href="{{ url_for('main.privacy_policy') }}">Privacy Policy</a>.</p> <!-- UX: Ensure this link works -->
+                    </div>
+                </div>
+            </div>
+        </div> <!-- /.faq-section -->
+
+        <!-- Section: Further Information -->
+        <div class="faq-section">
+            <h2 class="h4 mb-3 mt-5 pt-3 border-top faq-section-title">Further Information & Support</h2>
+
+            <div class="accordion-item">
+                <h3 class="accordion-header" id="headingToolMoreInfo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseToolMoreInfo" aria-expanded="false" aria-controls="collapseToolMoreInfo">
+                        <i class="bi bi-info-lg me-2"></i> Where can I find more detailed information?
+                    </button>
+                </h3>
+                <div id="collapseToolMoreInfo" class="accordion-collapse collapse" aria-labelledby="headingToolMoreInfo" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        <p>For more details on each SDG, its targets, and architectural relevance:</p>
+                        <ul>
+                            <li>Explore the "Resources" section within each SDG assessment card in the <a href="{{ url_for('main.sdg_information_hub') }}">SDG Information Hub</a> page on this site.</li>
+                            <li>Visit the official <a href="https://sdgs.un.org/goals" target="_blank" rel="noopener noreferrer">United Nations SDG website <i class="bi bi-box-arrow-up-right small"></i></a>.</li>
+                            <li>Check resources from the <a href="https://www.uia-architectes.org/en/" target="_blank" rel="noopener noreferrer">International Union of Architects (UIA) <i class="bi bi-box-arrow-up-right small"></i></a>.</li>
+                            <li>Consult publications and resources from organizations like the World Green Building Council (WGBC), Architecture 2030, etc.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h3 class="accordion-header" id="headingToolSupport">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseToolSupport" aria-expanded="false" aria-controls="collapseToolSupport">
+                       <i class="bi bi-envelope-fill me-2"></i> I have a question not answered here or a technical issue. Who can I contact? <!-- UX: More direct icon -->
+                    </button>
+                </h3>
+                <div id="collapseToolSupport" class="accordion-collapse collapse" aria-labelledby="headingToolSupport" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        <!-- TODO: ADAPT THIS ANSWER with your actual contact method. -->
+                        <p>If you have further questions or encounter technical difficulties while using the tool, we're here to help!</p>
+                        <p>The best way to reach us is by using our <a href="{{ url_for('main.contact') }}">Contact Form</a>.</p>
+                        <p>Alternatively, you can email us at: <a href="mailto:lucassnakamura@gmail.com">lucassnakamura@gmail.com</a>.</p>
+                        <p>To help us assist you effectively, please provide as much detail as possible, such as:</p>
+                        <ul>
+                            <li>Your username or email associated with the account.</li>
+                            <li>The project name (if applicable).</li>
+                            <li>The step/SDG you were working on.</li>
+                            <li>A description of the issue or question.</li>
+                            <li>Screenshots if they help illustrate the problem.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- /.faq-section -->
+
+    </div> <!-- /.accordion -->
+
+    <!-- UX: Back to top button (optional but nice for long pages) -->
+    <div class="text-center mt-5">
+        <a href="#" class="btn btn-outline-secondary"><i class="bi bi-arrow-up-circle me-1"></i> Back to Top</a>
+    </div>
+
+</div> <!-- /.container -->
+{% endblock %}
+
+{% block extra_js %}
+{# Ensure Bootstrap JS Bundle is included in base.html or here if not. It's needed for accordion and search functionality. #}
+{# <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> #}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('faqSearchInput');
+    const accordionItems = document.querySelectorAll('#faqAccordion .accordion-item');
+    const sectionTitles = document.querySelectorAll('#faqAccordion .faq-section-title');
+    const faqSections = document.querySelectorAll('#faqAccordion .faq-section');
+    const noResultsDiv = document.getElementById('noResultsFound');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', function () {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            let anyMatchFound = false;
+
+            faqSections.forEach(section => {
+                let sectionHasMatch = false;
+                const itemsInSection = section.querySelectorAll('.accordion-item');
+
+                itemsInSection.forEach(item => {
+                    const button = item.querySelector('.accordion-button');
+                    const body = item.querySelector('.accordion-body');
+                    const questionText = button ? button.textContent.toLowerCase() : '';
+                    const answerText = body ? body.textContent.toLowerCase() : '';
+
+                    // UX: Search both question and answer
+                    if (questionText.includes(searchTerm) || answerText.includes(searchTerm)) {
+                        item.classList.remove('d-none'); // Show item
+                        anyMatchFound = true;
+                        sectionHasMatch = true;
+                    } else {
+                        item.classList.add('d-none'); // Hide item
+                        // UX: Ensure non-matching items are collapsed
+                        const collapseElement = item.querySelector('.accordion-collapse');
+                        if (collapseElement && collapseElement.classList.contains('show')) {
+                            new bootstrap.Collapse(collapseElement).hide();
+                        }
+                    }
+                });
+
+                // Show/hide section title based on whether any item in it matches
+                const titleElement = section.querySelector('.faq-section-title');
+                if (titleElement) {
+                    if (sectionHasMatch) {
+                        titleElement.classList.remove('d-none');
+                    } else {
+                        titleElement.classList.add('d-none');
+                    }
+                }
+                // Show/hide the entire section div as well if needed, or just its content
+                 if (sectionHasMatch) {
+                    section.classList.remove('d-none');
+                } else {
+                    section.classList.add('d-none');
+                }
+            });
+
+            // Show/hide "no results" message
+            if (anyMatchFound) {
+                noResultsDiv.classList.add('d-none');
+            } else {
+                noResultsDiv.classList.remove('d-none');
+            }
+
+            // If search is empty, show all sections and items
+            if (searchTerm === "") {
+                faqSections.forEach(section => {
+                    section.classList.remove('d-none');
+                    const titleElement = section.querySelector('.faq-section-title');
+                     if (titleElement) titleElement.classList.remove('d-none');
+                    section.querySelectorAll('.accordion-item').forEach(item => item.classList.remove('d-none'));
+                });
+                noResultsDiv.classList.add('d-none');
+            }
+        });
+    }
+
+    // UX: Optional: Deep linking to FAQ item if URL has a hash
+    // e.g., faq.html#collapseSdgWhat
+    if (window.location.hash) {
+        const targetId = window.location.hash.substring(1);
+        const elementToOpen = document.getElementById(targetId);
+        if (elementToOpen && elementToOpen.classList.contains('accordion-collapse')) {
+            const accordionButton = document.querySelector(`[data-bs-target="#${targetId}"]`);
+            if (accordionButton && accordionButton.classList.contains('collapsed')) {
+                new bootstrap.Collapse(elementToOpen).show();
+                // Scroll to the item after it's opened
+                setTimeout(() => {
+                    accordionButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 350); // Allow time for collapse animation
+            } else if (accordionButton) {
+                 accordionButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    }
+});
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .accordion-button {
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+    .accordion-button:not(.collapsed) {
+        /* background-color: #e7f1ff; */ /* Lighter primary shade */
+        background-color: rgba(var(--bs-primary-rgb), 0.08); /* UX: Softer highlight */
+        color: var(--bs-primary);
+        box-shadow: inset 0 -1px 0 rgba(0,0,0,.125); /* Keep bottom border */
+    }
+    .accordion-button:focus {
+        /* box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25); */
+        box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25); /* Use BS variable */
+        z-index: 3; /* Ensure focus ring is on top */
+    }
+    .accordion-body {
+        font-size: 1rem;
+        line-height: 1.7; /* UX: Improved readability */
+    }
+    .accordion-body ul, .accordion-body ol {
+        padding-left: 1.5rem; /* More standard indentation */
+        margin-top: 0.75rem;
+    }
+    .accordion-body li {
+        margin-bottom: 0.6rem;
+    }
+    .accordion-button i.bi { /* Target Bootstrap Icons specifically */
+        color: var(--bs-primary);
+        transition: transform 0.2s ease-in-out;
+        font-size: 1.2em; /* Slightly larger icons */
+    }
+    .accordion-button.collapsed i.bi {
+         color: var(--bs-gray-600); /* UX: Muted icon color when collapsed */
+    }
+    /* Bootstrap default arrow is fine, no need to custom rotate icons unless you replace the arrow */
+
+    h2.faq-section-title { /* Style for section headers */
+        color: var(--bs-secondary); /* UX: Use secondary color for distinction or keep primary */
+        font-weight: 500; /* Less heavy than main title */
+        letter-spacing: 0.5px;
+    }
+    .border-top {
+        border-top: 1px solid var(--bs-border-color) !important;
+    }
+
+    /* Search input styling */
+    #faqSearchInput::placeholder {
+        color: var(--bs-gray-500);
+    }
+    .input-group-text {
+        background-color: transparent;
+        border-right: 0;
+    }
+    #faqSearchInput {
+        border-left: 0;
+    }
+    #faqSearchInput:focus {
+        border-color: var(--bs-primary);
+        box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb),0.25);
+    }
+    /* UX: Highlight search matches (optional, advanced) */
+    /* .highlight { background-color: yellow; } */
+
+    /* Developer notes within HTML - easier to spot */
+    /* This is a CSS comment, but you can use similar visual cues in HTML comments for devs */
+    /* For example: <!-- TODO: Update this by [Date] - User Story XYZ --> */
+
+    .alert-info { /* Customizing alert for better visibility */
+        background-color: rgba(var(--bs-info-rgb), 0.1);
+        border-color: rgba(var(--bs-info-rgb), 0.3);
+        color: var(--bs-info-emphasis);
+    }
+     .alert-info strong {
+        color: inherit;
+     }
+</style>
+{% endblock %}

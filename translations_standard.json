@@ -1,0 +1,982 @@
+{
+  "standard_assessment_title": {
+    "en": "Project Sustainability Assessment",
+    "fr": "Évaluation de la Durabilité du Projet",
+    "pt-br": "Avaliação de Sustentabilidade do Projeto"
+  },
+  "standard_assessment_subtitle": {
+    "en": "Evaluate your architectural project against the UN Sustainable Development Goals.",
+    "fr": "Évaluez votre projet architectural au regard des Objectifs de Développement Durable des Nations Unies.",
+    "pt-br": "Avalie o seu projeto arquitetônico em relação aos Objetivos de Desenvolvimento Sustentável da ONU."
+  },
+  "q1_text": {
+    "en": "1. How does your project address operational cost burdens for occupants compared to regional standards?",
+    "fr": "1. Comment votre projet réduit-il les charges de coûts opérationnels pour les occupants par rapport aux standards régionaux ?",
+    "pt-br": "1. Como o seu projeto aborda os encargos de custos operacionais para os ocupantes em comparação com os padrões regionais?"
+  },
+  "q2_text": {
+    "en": "2. To what extent does your project enhance economic resilience for its users and the surrounding community?",
+    "fr": "2. Dans quelle mesure votre projet renforce-t-il la résilience économique de ses usagers et de la communauté environnante ?",
+    "pt-br": "2. Em que medida o seu projeto fortalece a resiliência econômica dos seus usuários e da comunidade ao redor?"
+  },
+  "q3_text": {
+    "en": "3. How does your project incorporate productive landscape elements that enhance local food systems?",
+    "fr": "3. Comment votre projet intègre-t-il des éléments paysagers productifs qui renforcent les systèmes alimentaires locaux ?",
+    "pt-br": "3. Como o seu projeto incorpora elementos paisagísticos produtivos que fortalecem os sistemas alimentares locais?"
+  },
+  "q4_text": {
+    "en": "4. To what extent does your project address the complete food cycle and contribute to local food system resilience?",
+    "fr": "4. Dans quelle mesure votre projet prend-il en compte le cycle alimentaire complet et contribue-t-il à la résilience du système alimentaire local ?",
+    "pt-br": "4. Em que medida o seu projeto aborda o ciclo alimentar completo e contribui para a resiliência do sistema alimentar local?"
+  },
+  "q5_text": {
+    "en": "5. How comprehensively does your project incorporate design elements that support mental health and psychological well-being?",
+    "fr": "5. Dans quelle mesure votre projet intègre-t-il des éléments de conception favorisant la santé mentale et le bien-être psychologique ?",
+    "pt-br": "5. De que forma abrangente o seu projeto incorpora elementos de design que apoiam a saúde mental e o bem-estar psicológico?"
+  },
+  "q6_text": {
+    "en": "6. To what extent does your project's design actively promote physical activity and healthy behaviors through its spatial configuration and amenities?",
+    "fr": "6. Dans quelle mesure la conception de votre projet promeut-elle activement l'activité physique et les comportements sains à travers sa configuration spatiale et ses équipements ?",
+    "pt-br": "6. Em que medida o design do seu projeto promove ativamente a atividade física e comportamentos saudáveis por meio de sua configuração espacial e infraestrutura?"
+  },
+  "q7_text": {
+    "en": "7. How comprehensively does your project address inclusive design principles for diverse users in learning-oriented spaces?",
+    "fr": "7. Dans quelle mesure votre projet applique-t-il les principes de conception inclusive pour des usagers diversifiés dans des espaces orientés vers l'apprentissage ?",
+    "pt-br": "7. De que forma abrangente o seu projeto aborda os princípios de design inclusivo para usuários diversos em espaços voltados para a aprendizagem?"
+  },
+  "q8_text": {
+    "en": "8. To what extent does your project incorporate spaces and features that facilitate knowledge sharing, skill development, and lifelong learning?",
+    "fr": "8. Dans quelle mesure votre projet intègre-t-il des espaces et des équipements favorisant le partage des connaissances, le développement des compétences et l'apprentissage tout au long de la vie ?",
+    "pt-br": "8. Em que medida o seu projeto incorpora espaços e recursos que facilitam o compartilhamento de conhecimento, o desenvolvimento de habilidades e a aprendizagem ao longo da vida?"
+  },
+  "q9_text": {
+    "en": "9. How comprehensively does your project implement equitable team composition and workplace practices throughout the project lifecycle?",
+    "fr": "9. Dans quelle mesure votre projet met-il en œuvre une composition d'équipe équitable et des pratiques de travail justes tout au long du cycle de vie du projet ?",
+    "pt-br": "9. De que forma abrangente o seu projeto implementa composição equitativa de equipe e práticas de trabalho justas ao longo de todo o ciclo de vida do projeto?"
+  },
+  "q10_text": {
+    "en": "10. To what extent does your project incorporate design elements that address diverse user needs across gender identities?",
+    "fr": "10. Dans quelle mesure votre projet intègre-t-il des éléments de conception répondant aux besoins diversifiés des usagers selon les identités de genre ?",
+    "pt-br": "10. Em que medida o seu projeto incorpora elementos de design que atendem às diversas necessidades dos usuários em relação às identidades de gênero?"
+  },
+  "q11_text": {
+    "en": "11. How comprehensively does your project address water efficiency and conservation through design strategies and systems integration?",
+    "fr": "11. Dans quelle mesure votre projet aborde-t-il l'efficacité hydrique et la conservation de l'eau à travers des stratégies de conception et l'intégration de systèmes ?",
+    "pt-br": "11. De que forma abrangente o seu projeto aborda a eficiência hídrica e a conservação da água por meio de estratégias de design e integração de sistemas?"
+  },
+  "q12_text": {
+    "en": "12. Which strategies does your project implement to protect water quality and responsibly manage the complete water cycle?",
+    "fr": "12. Quelles stratégies votre projet met-il en œuvre pour protéger la qualité de l'eau et gérer de manière responsable le cycle de l'eau complet ?",
+    "pt-br": "12. Quais estratégias o seu projeto implementa para proteger a qualidade da água e gerenciar de forma responsável o ciclo hídrico completo?"
+  },
+  "q13_text": {
+    "en": "13. How comprehensively does your project incorporate renewable energy systems and energy efficiency strategies compared to conventional practice?",
+    "fr": "13. Dans quelle mesure votre projet intègre-t-il des systèmes d'énergie renouvelable et des stratégies d'efficacité énergétique par rapport aux pratiques conventionnelles ?",
+    "pt-br": "13. De que forma abrangente o seu projeto incorpora sistemas de energia renovável e estratégias de eficiência energética em comparação com as práticas convencionais?"
+  },
+  "q14_text": {
+    "en": "14. To what extent does your project address energy resilience, affordability, and accessibility for all potential users?",
+    "fr": "14. Dans quelle mesure votre projet aborde-t-il la résilience énergétique, l'accessibilité financière et l'accès à l'énergie pour tous les utilisateurs potentiels ?",
+    "pt-br": "14. Em que medida o seu projeto aborda a resiliência energética, a acessibilidade e o acesso à energia para todos os potenciais usuários?"
+  },
+  "q15_text": {
+    "en": "15. How comprehensively does your project support local economic development and fair labor practices throughout the project lifecycle?",
+    "fr": "15. Dans quelle mesure votre projet soutient-il le développement économique local et les pratiques de travail équitables tout au long du cycle de vie du projet ?",
+    "pt-br": "15. De que forma abrangente o seu projeto apoia o desenvolvimento econômico local e práticas trabalhistas justas ao longo de todo o ciclo de vida do projeto?"
+  },
+  "q16_text": {
+    "en": "16. To what extent does your project incorporate life cycle thinking and resource efficiency principles in material selection and construction processes?",
+    "fr": "16. Dans quelle mesure votre projet intègre-t-il la pensée en cycle de vie et les principes d'efficacité des ressources dans la sélection des matériaux et les processus de construction ?",
+    "pt-br": "16. Em que medida o seu projeto incorpora o pensamento de ciclo de vida e os princípios de eficiência de recursos na seleção de materiais e nos processos de construção?"
+  },
+  "q17_text": {
+    "en": "17. How does your project approach infrastructure resilience and resource efficiency through its design and systems integration?",
+    "fr": "17. Comment votre projet aborde-t-il la résilience des infrastructures et l'efficacité des ressources à travers sa conception et l'intégration de ses systèmes ?",
+    "pt-br": "17. Como o seu projeto aborda a resiliência da infraestrutura e a eficiência de recursos por meio de seu design e integração de sistemas?"
+  },
+  "q18_text": {
+    "en": "18. To what extent does your project incorporate innovative construction approaches that promote sustainability and local economic development?",
+    "fr": "18. Dans quelle mesure votre projet intègre-t-il des approches de construction innovantes qui favorisent la durabilité et le développement économique local ?",
+    "pt-br": "18. Em que medida o seu projeto incorpora abordagens construtivas inovadoras que promovem a sustentabilidade e o desenvolvimento econômico local?"
+  },
+  "q19_text": {
+    "en": "19. How comprehensively does your project incorporate universal design principles to ensure equitable access and use for diverse populations?",
+    "fr": "19. Dans quelle mesure votre projet intègre-t-il les principes de conception universelle pour garantir un accès et une utilisation équitables pour des populations diverses ?",
+    "pt-br": "19. De que forma abrangente o seu projeto incorpora os princípios de design universal para garantir acesso e uso equitativos para populações diversas?"
+  },
+  "q20_text": {
+    "en": "20. To what extent does your project address socioeconomic barriers through its programming, tenure options, and community integration?",
+    "fr": "20. Dans quelle mesure votre projet traite-t-il les obstacles socioéconomiques à travers sa programmation, ses options d'occupation et son intégration communautaire ?",
+    "pt-br": "20. Em que medida o seu projeto aborda as barreiras socioeconômicas por meio de sua programação, opções de posse e integração comunitária?"
+  },
+  "q21_text": {
+    "en": "21. How comprehensively does your project address key dimensions of urban sustainability through integrated design approaches?",
+    "fr": "21. Dans quelle mesure votre projet aborde-t-il les dimensions clés de la durabilité urbaine à travers des approches de conception intégrées ?",
+    "pt-br": "21. De que forma abrangente o seu projeto aborda as dimensões-chave da sustentabilidade urbana por meio de abordagens de design integradas?"
+  },
+  "q22_text": {
+    "en": "22. To what extent does your project balance immediate community needs with long-term environmental and social resilience?",
+    "fr": "22. Dans quelle mesure votre projet équilibre-t-il les besoins immédiats de la communauté avec la résilience environnementale et sociale à long terme ?",
+    "pt-br": "22. Em que medida o seu projeto equilibra as necessidades imediatas da comunidade com a resiliência ambiental e social a longo prazo?"
+  },
+  "q23_text": {
+    "en": "23. How comprehensively does your project implement sustainable material strategies and lifecycle management approaches?",
+    "fr": "23. Dans quelle mesure votre projet met-il en œuvre des stratégies de matériaux durables et des approches de gestion du cycle de vie ?",
+    "pt-br": "23. De que forma abrangente o seu projeto implementa estratégias de materiais sustentáveis e abordagens de gestão do ciclo de vida?"
+  },
+  "q24_text": {
+    "en": "24. To what extent does your project incorporate sustainable procurement practices and provide operational transparency regarding material and resource management?",
+    "fr": "24. Dans quelle mesure votre projet intègre-t-il des pratiques d'achats durables et assure-t-il une transparence opérationnelle concernant la gestion des matériaux et des ressources ?",
+    "pt-br": "24. Em que medida o seu projeto incorpora práticas de compras sustentáveis e fornece transparência operacional em relação à gestão de materiais e recursos?"
+  },
+  "q25_text": {
+    "en": "25. How comprehensively does your project incorporate design strategies to enhance resilience against climate-related hazards and changing environmental conditions?",
+    "fr": "25. Dans quelle mesure votre projet intègre-t-il des stratégies de conception pour renforcer la résilience face aux risques climatiques et aux conditions environnementales changeantes ?",
+    "pt-br": "25. De que forma abrangente o seu projeto incorpora estratégias de design para melhorar a resiliência contra riscos climáticos e condições ambientais em mudança?"
+  },
+  "q26_text": {
+    "en": "26. To what extent does your project implement strategies to reduce lifecycle carbon emissions compared to conventional practice?",
+    "fr": "26. Dans quelle mesure votre projet met-il en œuvre des stratégies pour réduire les émissions de carbone sur l'ensemble du cycle de vie par rapport aux pratiques conventionnelles ?",
+    "pt-br": "26. Em que medida o seu projeto implementa estratégias para reduzir as emissões de carbono ao longo do ciclo de vida em comparação com as práticas convencionais?"
+  },
+  "q27_text": {
+    "en": "27. How comprehensively does your project implement strategies to prevent pollutants from entering waterways or marine environments?",
+    "fr": "27. Dans quelle mesure votre projet met-il en œuvre des stratégies pour empêcher les polluants d'atteindre les cours d'eau ou les milieux marins ?",
+    "pt-br": "27. De que forma abrangente o seu projeto implementa estratégias para impedir que poluentes entrem em cursos d'água ou ambientes marinhos?"
+  },
+  "q28_text": {
+    "en": "28. To what extent does your project incorporate design features that protect or enhance marine and coastal ecosystems?",
+    "fr": "28. Dans quelle mesure votre projet intègre-t-il des éléments de conception qui protègent ou améliorent les écosystèmes marins et côtiers ?",
+    "pt-br": "28. Em que medida o seu projeto incorpora características de design que protegem ou valorizam os ecossistemas marinhos e costeiros?"
+  },
+  "q29_text": {
+    "en": "29. How comprehensively does your project address terrestrial ecosystem protection through both ecological design strategies and efficient land use?",
+    "fr": "29. Dans quelle mesure votre projet aborde-t-il la protection des écosystèmes terrestres à travers des stratégies de conception écologique et une utilisation efficace des terres ?",
+    "pt-br": "29. De que forma abrangente o seu projeto aborda a proteção dos ecossistemas terrestres por meio de estratégias de design ecológico e uso eficiente do solo?"
+  },
+  "q30_text": {
+    "en": "30. To what extent does your project incorporate design features that enhance safety and implement processes that ensure fairness, transparency, and accountability?",
+    "fr": "30. Dans quelle mesure votre projet intègre-t-il des éléments de conception qui renforcent la sécurité et des processus garantissant l'équité, la transparence et la responsabilité ?",
+    "pt-br": "30. Em que medida o seu projeto incorpora características de design que aumentam a segurança e implementa processos que garantem justiça, transparência e responsabilidade?"
+  },
+  "q31_text": {
+    "en": "31. How extensively does your project engage in partnership-building and knowledge-sharing to advance sustainable design and construction practices?",
+    "fr": "31. Dans quelle mesure votre projet s'engage-t-il dans la construction de partenariats et le partage de connaissances pour faire progresser les pratiques de conception et de construction durables ?",
+    "pt-br": "31. Em que extensão o seu projeto se engaja na construção de parcerias e no compartilhamento de conhecimento para avançar as práticas de design e construção sustentáveis?"
+  },
+  "q1_opt1": {
+    "en": "Implements basic efficiency measures with modest cost reduction (~10-15%)",
+    "fr": "Met en œuvre des mesures d'efficacité de base avec une réduction modeste des coûts (~10-15 %)",
+    "pt-br": "Implementa medidas básicas de eficiência com redução modesta de custos (~10-15%)"
+  },
+  "q1_opt2": {
+    "en": "Incorporates advanced systems reducing operational costs by approximately 30-40%",
+    "fr": "Intègre des systèmes avancés réduisant les coûts opérationnels d'environ 30 à 40 %",
+    "pt-br": "Incorpora sistemas avançados que reduzem os custos operacionais em aproximadamente 30-40%"
+  },
+  "q1_opt3": {
+    "en": "Features comprehensive efficiency strategies reducing costs by approximately 50-60%",
+    "fr": "Présente des stratégies d'efficacité globales réduisant les coûts d'environ 50 à 60 %",
+    "pt-br": "Apresenta estratégias abrangentes de eficiência que reduzem os custos em aproximadamente 50-60%"
+  },
+  "q1_opt4": {
+    "en": "Achieves near-zero operational costs through integrated passive and active systems",
+    "fr": "Atteint des coûts opérationnels quasi nuls grâce à des systèmes passifs et actifs intégrés",
+    "pt-br": "Alcança custos operacionais quase nulos por meio de sistemas passivos e ativos integrados"
+  },
+  "q1_opt5": {
+    "en": "Generates surplus resources (energy, water, etc.) that provide economic benefit to occupants",
+    "fr": "Génère des ressources excédentaires (énergie, eau, etc.) qui profitent économiquement aux occupants",
+    "pt-br": "Gera recursos excedentes (energia, água, etc.) que proporcionam benefício econômico aos ocupantes"
+  },
+  "q2_opt1": {
+    "en": "Incorporates spaces that support income-generating activities",
+    "fr": "Intègre des espaces qui soutiennent les activités génératrices de revenus",
+    "pt-br": "Incorpora espaços que apoiam atividades geradoras de renda"
+  },
+  "q2_opt2": {
+    "en": "Reduces transportation costs through location or connectivity features",
+    "fr": "Réduit les coûts de transport grâce à la localisation ou aux caractéristiques de connectivité",
+    "pt-br": "Reduz os custos de transporte por meio da localização ou de recursos de conectividade"
+  },
+  "q2_opt3": {
+    "en": "Provides flexible spaces adaptable to changing economic conditions",
+    "fr": "Fournit des espaces flexibles adaptables à l'évolution des conditions économiques",
+    "pt-br": "Fornece espaços flexíveis adaptáveis às mudanças das condições econômicas"
+  },
+  "q2_opt4": {
+    "en": "Includes infrastructure resilient to environmental/economic disruptions",
+    "fr": "Comprend une infrastructure résiliente aux perturbations environnementales/économiques",
+    "pt-br": "Inclui infraestrutura resiliente a perturbações ambientais/econômicas"
+  },
+  "q2_opt5": {
+    "en": "Offers tiered affordability options for diverse economic circumstances",
+    "fr": "Propose des options d'accessibilité financière graduées pour des situations économiques diverses",
+    "pt-br": "Oferece opções graduadas de acessibilidade para diversas circunstâncias econômicas"
+  },
+  "q3_opt1": {
+    "en": "Basic consideration of food access in project planning with no dedicated productive spaces",
+    "fr": "Prise en compte basique de l'accès alimentaire dans la planification du projet sans espaces productifs dédiés",
+    "pt-br": "Consideração básica do acesso alimentar no planejamento do projeto, sem espaços produtivos dedicados"
+  },
+  "q3_opt2": {
+    "en": "Allocation of shared green spaces that could be converted to food production in future phases",
+    "fr": "Allocation d'espaces verts partagés pouvant être convertis en production alimentaire dans des phases ultérieures",
+    "pt-br": "Alocação de espaços verdes compartilhados que poderiam ser convertidos em produção de alimentos em fases futuras"
+  },
+  "q3_opt3": {
+    "en": "Integration of designated community garden spaces with supporting infrastructure (water access, tool storage)",
+    "fr": "Intégration d'espaces de jardinage communautaire dédiés avec infrastructure de soutien (accès à l'eau, stockage d'outils)",
+    "pt-br": "Integração de espaços de jardim comunitário designados com infraestrutura de suporte (acesso à água, armazenamento de ferramentas)"
+  },
+  "q3_opt4": {
+    "en": "Comprehensive productive landscape strategy with both private growing spaces and community agriculture areas",
+    "fr": "Stratégie paysagère productive globale intégrant des espaces de culture privés et des zones d'agriculture communautaire",
+    "pt-br": "Estratégia abrangente de paisagismo produtivo com espaços de cultivo privados e áreas de agricultura comunitária"
+  },
+  "q3_opt5": {
+    "en": "Full food system integration including production spaces, processing areas, and distribution infrastructure",
+    "fr": "Intégration complète du système alimentaire incluant espaces de production, zones de transformation et infrastructures de distribution",
+    "pt-br": "Integração completa do sistema alimentar, incluindo espaços de produção, áreas de processamento e infraestrutura de distribuição"
+  },
+  "q4_opt1": {
+    "en": "Incorporates composting infrastructure to close the nutrient loop",
+    "fr": "Intègre une infrastructure de compostage pour boucler le cycle des nutriments",
+    "pt-br": "Incorpora infraestrutura de compostagem para fechar o ciclo de nutrientes"
+  },
+  "q4_opt2": {
+    "en": "Provides appropriate food storage and preservation spaces",
+    "fr": "Prévoit des espaces appropriés pour le stockage et la conservation des aliments",
+    "pt-br": "Fornece espaços adequados de armazenamento e conservação de alimentos"
+  },
+  "q4_opt3": {
+    "en": "Includes design elements that extend growing seasons (greenhouses, cold frames)",
+    "fr": "Inclut des éléments de conception qui prolongent les saisons de culture (serres, châssis froids)",
+    "pt-br": "Inclui elementos de design que estendem as estações de cultivo (estufas, abrigos de frio)"
+  },
+  "q4_opt4": {
+    "en": "Features water collection/irrigation systems supporting food production",
+    "fr": "Intègre des systèmes de collecte d'eau/d'irrigation soutenant la production alimentaire",
+    "pt-br": "Apresenta sistemas de coleta de água/irrigação que apoiam a produção de alimentos"
+  },
+  "q4_opt5": {
+    "en": "Allocates multipurpose spaces that support food education and skill-building",
+    "fr": "Alloue des espaces polyvalents favorisant l'éducation alimentaire et le développement des compétences",
+    "pt-br": "Aloca espaços multiusos que apoiam a educação alimentar e o desenvolvimento de habilidades"
+  },
+  "q5_opt1": {
+    "en": "Biophilic design elements (visible natural elements, natural materials, patterns)",
+    "fr": "Éléments de conception biophilique (éléments naturels visibles, matériaux naturels, motifs)",
+    "pt-br": "Elementos de design biofílico (elementos naturais visíveis, materiais naturais, padrões)"
+  },
+  "q5_opt2": {
+    "en": "Spaces dedicated to mindfulness, meditation, or quiet reflection",
+    "fr": "Espaces dédiés à la pleine conscience, à la méditation ou à la réflexion tranquille",
+    "pt-br": "Espaços dedicados ao mindfulness, à meditação ou à reflexão silenciosa"
+  },
+  "q5_opt3": {
+    "en": "Access to quality daylighting in primary occupied spaces",
+    "fr": "Accès à un éclairage naturel de qualité dans les espaces principalement occupés",
+    "pt-br": "Acesso à iluminação natural de qualidade nos espaços de uso principal"
+  },
+  "q5_opt4": {
+    "en": "Views to nature or green spaces from principal living/working areas",
+    "fr": "Vues sur la nature ou les espaces verts depuis les espaces de vie/travail principaux",
+    "pt-br": "Vistas para a natureza ou espaços verdes a partir das principais áreas de vida/trabalho"
+  },
+  "q5_opt5": {
+    "en": "Design solutions that foster social connection while respecting privacy needs",
+    "fr": "Solutions de conception favorisant le lien social tout en respectant les besoins de confidentialité",
+    "pt-br": "Soluções de design que fomentam a conexão social respeitando as necessidades de privacidade"
+  },
+  "q6_opt1": {
+    "en": "Meets basic accessibility requirements with limited attention to active design principles",
+    "fr": "Répond aux exigences d'accessibilité de base avec une attention limitée aux principes de conception active",
+    "pt-br": "Atende aos requisitos básicos de acessibilidade com atenção limitada aos princípios de design ativo"
+  },
+  "q6_opt2": {
+    "en": "Incorporates some passive design strategies that encourage movement (e.g., visible staircases)",
+    "fr": "Intègre quelques stratégies de conception passive favorisant le mouvement (ex. : escaliers visibles)",
+    "pt-br": "Incorpora algumas estratégias de design passivo que encorajam o movimento (ex.: escadas visíveis)"
+  },
+  "q6_opt3": {
+    "en": "Features dedicated spaces for physical activity and exercise within the development",
+    "fr": "Comprend des espaces dédiés à l'activité physique et à l'exercice au sein du développement",
+    "pt-br": "Apresenta espaços dedicados à atividade física e ao exercício dentro do empreendimento"
+  },
+  "q6_opt4": {
+    "en": "Comprehensive active design strategy with connected indoor-outdoor activity spaces and circulation paths",
+    "fr": "Stratégie de conception active globale avec des espaces d'activité intérieur-extérieur connectés et des voies de circulation",
+    "pt-br": "Estratégia abrangente de design ativo com espaços de atividade interno-externo conectados e percursos de circulação"
+  },
+  "q6_opt5": {
+    "en": "Fully integrated health-promoting design with programming elements, monitoring capabilities, and adaptive features",
+    "fr": "Conception promotrice de santé pleinement intégrée avec des éléments de programmation, des capacités de suivi et des fonctionnalités adaptatives",
+    "pt-br": "Design promotor de saúde totalmente integrado com elementos de programação, capacidades de monitoramento e recursos adaptativos"
+  },
+  "q7_opt1": {
+    "en": "Mobility accessibility (beyond minimum code requirements)",
+    "fr": "Accessibilité à la mobilité (au-delà des exigences minimales réglementaires)",
+    "pt-br": "Acessibilidade à mobilidade (além dos requisitos mínimos normativos)"
+  },
+  "q7_opt2": {
+    "en": "Visual accessibility (wayfinding, signage, tactile elements)",
+    "fr": "Accessibilité visuelle (orientation, signalétique, éléments tactiles)",
+    "pt-br": "Acessibilidade visual (orientação espacial, sinalização, elementos táteis)"
+  },
+  "q7_opt3": {
+    "en": "Auditory accessibility (acoustic design, assistive listening systems)",
+    "fr": "Accessibilité auditive (conception acoustique, systèmes d'écoute assistée)",
+    "pt-br": "Acessibilidade auditiva (design acústico, sistemas de escuta assistida)"
+  },
+  "q7_opt4": {
+    "en": "Cognitive/neurodiversity considerations (sensory-balanced spaces, intuitive navigation)",
+    "fr": "Considérations cognitives/neurodiversité (espaces à équilibre sensoriel, navigation intuitive)",
+    "pt-br": "Considerações cognitivas/neurodiversidade (espaços de equilíbrio sensorial, navegação intuitiva)"
+  },
+  "q7_opt5": {
+    "en": "Flexible learning environments adaptable to diverse teaching methodologies",
+    "fr": "Environnements d'apprentissage flexibles adaptables à diverses méthodologies pédagogiques",
+    "pt-br": "Ambientes de aprendizagem flexíveis adaptáveis a diversas metodologias de ensino"
+  },
+  "q8_opt1": {
+    "en": "Basic information display areas with minimal interactive features",
+    "fr": "Zones d'affichage d'informations de base avec des fonctionnalités interactives minimales",
+    "pt-br": "Áreas básicas de exibição de informações com recursos interativos mínimos"
+  },
+  "q8_opt2": {
+    "en": "Dedicated spaces for structured learning activities with appropriate technological infrastructure",
+    "fr": "Espaces dédiés aux activités d'apprentissage structurées avec une infrastructure technologique appropriée",
+    "pt-br": "Espaços dedicados a atividades de aprendizagem estruturadas com infraestrutura tecnológica adequada"
+  },
+  "q8_opt3": {
+    "en": "Integrated formal and informal learning zones with adaptable configurations",
+    "fr": "Zones d'apprentissage formelles et informelles intégrées avec des configurations adaptables",
+    "pt-br": "Zonas de aprendizagem formal e informal integradas com configurações adaptáveis"
+  },
+  "q8_opt4": {
+    "en": "Comprehensive learning ecosystem with connections to community knowledge resources",
+    "fr": "Écosystème d'apprentissage complet avec des connexions aux ressources de connaissances communautaires",
+    "pt-br": "Ecossistema de aprendizagem abrangente com conexões aos recursos de conhecimento da comunidade"
+  },
+  "q8_opt5": {
+    "en": "Innovation-focused environment with spaces supporting experimentation, collaboration, and knowledge creation",
+    "fr": "Environnement axé sur l'innovation avec des espaces favorisant l'expérimentation, la collaboration et la création de connaissances",
+    "pt-br": "Ambiente orientado para a inovação com espaços que apoiam a experimentação, a colaboração e a criação de conhecimento"
+  },
+  "q9_opt1": {
+    "en": "Diverse design team composition with meaningful representation across genders",
+    "fr": "Composition diversifiée de l'équipe de conception avec une représentation significative entre les genres",
+    "pt-br": "Composição diversificada da equipe de design com representação significativa entre os gêneros"
+  },
+  "q9_opt2": {
+    "en": "Equitable compensation structures with transparent pay bands based on qualifications and experience",
+    "fr": "Structures de rémunération équitables avec des grilles salariales transparentes basées sur les qualifications et l'expérience",
+    "pt-br": "Estruturas de remuneração equitativas com faixas salariais transparentes baseadas em qualificações e experiência"
+  },
+  "q9_opt3": {
+    "en": "Procurement policies that prioritize contractors with demonstrated commitment to workforce diversity",
+    "fr": "Politiques d'achat qui privilégient les entrepreneurs ayant démontré leur engagement envers la diversité de la main-d'œuvre",
+    "pt-br": "Políticas de aquisição que priorizam contratados com compromisso demonstrado com a diversidade da força de trabalho"
+  },
+  "q9_opt4": {
+    "en": "Site management practices that actively support diverse participation in construction roles",
+    "fr": "Pratiques de gestion de chantier qui soutiennent activement la participation diversifiée dans les rôles de construction",
+    "pt-br": "Práticas de gestão de obra que apoiam ativamente a participação diversificada em funções de construção"
+  },
+  "q9_opt5": {
+    "en": "Leadership opportunities distributed equitably across gender lines at all project phases",
+    "fr": "Opportunités de leadership distribuées équitablement entre les genres à toutes les phases du projet",
+    "pt-br": "Oportunidades de liderança distribuídas equitativamente entre os gêneros em todas as fases do projeto"
+  },
+  "q10_opt1": {
+    "en": "Basic code compliance with minimal consideration of diverse user demographics",
+    "fr": "Conformité réglementaire de base avec une prise en compte minimale des données démographiques diversifiées des usagers",
+    "pt-br": "Conformidade normativa básica com consideração mínima das demografias diversas dos usuários"
+  },
+  "q10_opt2": {
+    "en": "Initial stakeholder analysis includes gender-disaggregated data to inform programming",
+    "fr": "L'analyse initiale des parties prenantes inclut des données ventilées par genre pour orienter la programmation",
+    "pt-br": "A análise inicial das partes interessadas inclui dados desagregados por gênero para orientar a programação"
+  },
+  "q10_opt3": {
+    "en": "Intentional design features that address documented needs of diverse users",
+    "fr": "Caractéristiques de conception intentionnelles répondant aux besoins documentés des usagers diversifiés",
+    "pt-br": "Características de design intencionais que atendem às necessidades documentadas de usuários diversos"
+  },
+  "q10_opt4": {
+    "en": "Comprehensive user-centered design process with balanced representation in all consultation phases",
+    "fr": "Processus de conception centré sur l'usager avec une représentation équilibrée dans toutes les phases de consultation",
+    "pt-br": "Processo abrangente de design centrado no usuário com representação equilibrada em todas as fases de consulta"
+  },
+  "q10_opt5": {
+    "en": "Transformative approach that challenges traditional gender assumptions and creates new paradigms for inclusive space",
+    "fr": "Approche transformatrice qui remet en question les hypothèses traditionnelles de genre et crée de nouveaux paradigmes pour des espaces inclusifs",
+    "pt-br": "Abordagem transformadora que desafia pressupostos tradicionais de gênero e cria novos paradigmas para espaços inclusivos"
+  },
+  "q11_opt1": {
+    "en": "Basic compliance with water efficiency standards using conventional fixtures and systems",
+    "fr": "Conformité de base aux normes d'efficacité hydrique avec des équipements et systèmes conventionnels",
+    "pt-br": "Conformidade básica com os padrões de eficiência hídrica usando equipamentos e sistemas convencionais"
+  },
+  "q11_opt2": {
+    "en": "Moderate water reduction through specified low-flow fixtures and basic rainwater collection",
+    "fr": "Réduction modérée de l'eau grâce à des équipements à faible débit spécifiés et à une collecte basique des eaux pluviales",
+    "pt-br": "Redução moderada de água por meio de equipamentos de baixo fluxo especificados e coleta básica de água da chuva"
+  },
+  "q11_opt3": {
+    "en": "Advanced water management with integrated greywater reuse systems for non-potable applications",
+    "fr": "Gestion avancée de l'eau avec des systèmes intégrés de réutilisation des eaux grises pour des applications non potables",
+    "pt-br": "Gestão avançada da água com sistemas integrados de reutilização de águas cinzas para aplicações não potáveis"
+  },
+  "q11_opt4": {
+    "en": "Comprehensive water strategy achieving 50%+ reduction from baseline through multiple integrated systems",
+    "fr": "Stratégie hydrique globale atteignant une réduction de 50 %+ par rapport à la référence grâce à plusieurs systèmes intégrés",
+    "pt-br": "Estratégia hídrica abrangente alcançando redução de 50%+ em relação à linha de base por meio de múltiplos sistemas integrados"
+  },
+  "q11_opt5": {
+    "en": "Net-positive water approach that contributes to watershed health beyond project boundaries",
+    "fr": "Approche hydrique à bilan positif contribuant à la santé du bassin versant au-delà des limites du projet",
+    "pt-br": "Abordagem hídrica de balanço positivo que contribui para a saúde da bacia hidrográfica além dos limites do projeto"
+  },
+  "q12_opt1": {
+    "en": "Construction-phase protections preventing sediment and pollutant discharge",
+    "fr": "Protections en phase de construction pour prévenir les rejets de sédiments et de polluants",
+    "pt-br": "Proteções na fase de construção para prevenir o lançamento de sedimentos e poluentes"
+  },
+  "q12_opt2": {
+    "en": "Stormwater management systems that filter contaminants before release",
+    "fr": "Systèmes de gestion des eaux pluviales qui filtrent les contaminants avant le rejet",
+    "pt-br": "Sistemas de gestão de águas pluviais que filtram contaminantes antes do lançamento"
+  },
+  "q12_opt3": {
+    "en": "Potable water quality assurance through appropriate filtration/treatment",
+    "fr": "Assurance de la qualité de l'eau potable par filtration/traitement approprié",
+    "pt-br": "Garantia de qualidade da água potável por meio de filtragem/tratamento adequado"
+  },
+  "q12_opt4": {
+    "en": "Ecosystem protection/restoration of natural water features on or adjacent to site",
+    "fr": "Protection/restauration des écosystèmes liés aux éléments naturels aquatiques sur le site ou à proximité",
+    "pt-br": "Proteção/restauração de ecossistemas de elementos naturais de água no local ou adjacentes"
+  },
+  "q12_opt5": {
+    "en": "Long-term maintenance protocols ensuring continued water system performance",
+    "fr": "Protocoles de maintenance à long terme garantissant les performances continues du système hydrique",
+    "pt-br": "Protocolos de manutenção a longo prazo garantindo o desempenho contínuo do sistema hídrico"
+  },
+  "q13_opt1": {
+    "en": "Basic energy code compliance with minimal renewable energy integration",
+    "fr": "Conformité de base aux normes énergétiques avec une intégration minimale des énergies renouvelables",
+    "pt-br": "Conformidade básica com as normas energéticas com integração mínima de energia renovável"
+  },
+  "q13_opt2": {
+    "en": "Moderate efficiency measures (25-30% better than baseline) with some renewable energy components",
+    "fr": "Mesures d'efficacité modérées (25-30 % mieux que la référence) avec quelques composants d'énergie renouvelable",
+    "pt-br": "Medidas de eficiência moderadas (25-30% melhor que a linha de base) com alguns componentes de energia renovável"
+  },
+  "q13_opt3": {
+    "en": "Advanced energy performance (40-50% better than baseline) with significant renewable integration",
+    "fr": "Performance énergétique avancée (40-50 % mieux que la référence) avec une intégration significative des renouvelables",
+    "pt-br": "Desempenho energético avançado (40-50% melhor que a linha de base) com integração significativa de renováveis"
+  },
+  "q13_opt4": {
+    "en": "Near net-zero energy performance through comprehensive efficiency and renewable strategies",
+    "fr": "Performance énergétique quasi nulle grâce à des stratégies globales d'efficacité et d'énergies renouvelables",
+    "pt-br": "Desempenho de energia quase nulo por meio de estratégias abrangentes de eficiência e renováveis"
+  },
+  "q13_opt5": {
+    "en": "Net-positive energy building generating surplus energy through integrated renewable systems",
+    "fr": "Bâtiment à énergie nette positive générant un surplus d'énergie grâce à des systèmes renouvelables intégrés",
+    "pt-br": "Edifício de energia líquida positiva gerando energia excedente por meio de sistemas renováveis integrados"
+  },
+  "q14_opt1": {
+    "en": "Passive design strategies that maintain operational functionality during power outages",
+    "fr": "Stratégies de conception passive maintenant la fonctionnalité opérationnelle lors des coupures de courant",
+    "pt-br": "Estratégias de design passivo que mantêm a funcionalidade operacional durante interrupções de energia"
+  },
+  "q14_opt2": {
+    "en": "Energy systems that reduce operational costs for occupants relative to conventional buildings",
+    "fr": "Systèmes énergétiques réduisant les coûts opérationnels pour les occupants par rapport aux bâtiments conventionnels",
+    "pt-br": "Sistemas de energia que reduzem os custos operacionais para os ocupantes em relação aos edifícios convencionais"
+  },
+  "q14_opt3": {
+    "en": "Distributed energy resources that enhance local grid reliability",
+    "fr": "Ressources énergétiques distribuées améliorant la fiabilité du réseau local",
+    "pt-br": "Recursos de energia distribuída que melhoram a confiabilidade da rede local"
+  },
+  "q14_opt4": {
+    "en": "Energy monitoring and smart systems allowing users to optimize consumption",
+    "fr": "Systèmes de surveillance énergétique et systèmes intelligents permettant aux usagers d'optimiser leur consommation",
+    "pt-br": "Sistemas de monitoramento energético e sistemas inteligentes que permitem aos usuários otimizar o consumo"
+  },
+  "q14_opt5": {
+    "en": "Design features ensuring equitable energy access for diverse user populations",
+    "fr": "Caractéristiques de conception garantissant un accès équitable à l'énergie pour des populations d'usagers diverses",
+    "pt-br": "Características de design que garantem acesso equitativo à energia para populações de usuários diversas"
+  },
+  "q15_opt1": {
+    "en": "Basic compliance with minimum labor standards with limited local economic consideration",
+    "fr": "Conformité de base aux normes minimales du travail avec une prise en compte économique locale limitée",
+    "pt-br": "Conformidade básica com os padrões mínimos trabalhistas com consideração econômica local limitada"
+  },
+  "q15_opt2": {
+    "en": "Implementation of fair labor practices with some preference for local businesses",
+    "fr": "Mise en œuvre de pratiques de travail équitables avec une certaine préférence pour les entreprises locales",
+    "pt-br": "Implementação de práticas trabalhistas justas com alguma preferência por empresas locais"
+  },
+  "q15_opt3": {
+    "en": "Structured approach to involving local SMEs as suppliers or subcontractors",
+    "fr": "Approche structurée pour impliquer les PME locales en tant que fournisseurs ou sous-traitants",
+    "pt-br": "Abordagem estruturada para envolver PMEs locais como fornecedoras ou subcontratadas"
+  },
+  "q15_opt4": {
+    "en": "Comprehensive local economic strategy with multiple tiers of local business integration",
+    "fr": "Stratégie économique locale globale avec plusieurs niveaux d'intégration des entreprises locales",
+    "pt-br": "Estratégia econômica local abrangente com múltiplos níveis de integração de empresas locais"
+  },
+  "q15_opt5": {
+    "en": "Transformative approach with full integration of local enterprises, materials, and labor with verifiable fair practices",
+    "fr": "Approche transformatrice avec intégration complète des entreprises, matériaux et main-d'œuvre locaux avec des pratiques équitables vérifiables",
+    "pt-br": "Abordagem transformadora com integração completa de empresas, materiais e mão de obra locais com práticas justas verificáveis"
+  },
+  "q16_opt1": {
+    "en": "Comprehensive Life Cycle Assessment (LCA) conducted to evaluate environmental impacts",
+    "fr": "Analyse du Cycle de Vie (ACV) complète réalisée pour évaluer les impacts environnementaux",
+    "pt-br": "Análise do Ciclo de Vida (ACV) abrangente realizada para avaliar os impactos ambientais"
+  },
+  "q16_opt2": {
+    "en": "Preference for locally-sourced materials to reduce transportation impacts",
+    "fr": "Préférence pour les matériaux d'origine locale afin de réduire les impacts liés au transport",
+    "pt-br": "Preferência por materiais de origem local para reduzir os impactos de transporte"
+  },
+  "q16_opt3": {
+    "en": "Selection criteria includes renewable resource management and sustainable harvesting",
+    "fr": "Les critères de sélection incluent la gestion des ressources renouvelables et la récolte durable",
+    "pt-br": "Os critérios de seleção incluem a gestão de recursos renováveis e a colheita sustentável"
+  },
+  "q16_opt4": {
+    "en": "Durability and maintenance considerations factored into material selection",
+    "fr": "Considérations de durabilité et de maintenance intégrées dans la sélection des matériaux",
+    "pt-br": "Considerações de durabilidade e manutenção incorporadas na seleção de materiais"
+  },
+  "q16_opt5": {
+    "en": "Incorporation of recycled, salvaged, or reusable materials and construction methods",
+    "fr": "Incorporation de matériaux recyclés, récupérés ou réutilisables et de méthodes de construction adaptées",
+    "pt-br": "Incorporação de materiais reciclados, reaproveitados ou reutilizáveis e métodos de construção compatíveis"
+  },
+  "q17_opt1": {
+    "en": "Integration of shared infrastructure components to improve sustainability and affordability",
+    "fr": "Intégration de composants d'infrastructure partagés pour améliorer la durabilité et l'accessibilité financière",
+    "pt-br": "Integração de componentes de infraestrutura compartilhada para melhorar a sustentabilidade e a acessibilidade"
+  },
+  "q17_opt2": {
+    "en": "Renovation or adaptation of existing buildings/infrastructure with improved environmental performance",
+    "fr": "Rénovation ou adaptation de bâtiments/infrastructures existants avec amélioration des performances environnementales",
+    "pt-br": "Renovação ou adaptação de edifícios/infraestrutura existentes com desempenho ambiental melhorado"
+  },
+  "q17_opt3": {
+    "en": "Implementation of digitalization or smart technologies to monitor and optimize resource consumption",
+    "fr": "Mise en œuvre de la numérisation ou de technologies intelligentes pour surveiller et optimiser la consommation de ressources",
+    "pt-br": "Implementação de digitalização ou tecnologias inteligentes para monitorar e otimizar o consumo de recursos"
+  },
+  "q17_opt4": {
+    "en": "Design features that enhance resilience against climate impacts and other potential disruptions",
+    "fr": "Caractéristiques de conception renforçant la résilience face aux impacts climatiques et autres perturbations potentielles",
+    "pt-br": "Características de design que aumentam a resiliência contra impactos climáticos e outras perturbações potenciais"
+  },
+  "q17_opt5": {
+    "en": "Infrastructure systems that reduce operational costs while maintaining or improving service quality",
+    "fr": "Systèmes d'infrastructure réduisant les coûts opérationnels tout en maintenant ou améliorant la qualité de service",
+    "pt-br": "Sistemas de infraestrutura que reduzem os custos operacionais enquanto mantêm ou melhoram a qualidade do serviço"
+  },
+  "q18_opt1": {
+    "en": "Standard construction methods with minimal innovation or sustainability considerations",
+    "fr": "Méthodes de construction standard avec une innovation minimale ou des considérations de durabilité",
+    "pt-br": "Métodos de construção padrão com inovação mínima ou considerações de sustentabilidade"
+  },
+  "q18_opt2": {
+    "en": "Implementation of established sustainable construction techniques with some adaptation to local context",
+    "fr": "Mise en œuvre de techniques de construction durable établies avec quelques adaptations au contexte local",
+    "pt-br": "Implementação de técnicas de construção sustentável estabelecidas com alguma adaptação ao contexto local"
+  },
+  "q18_opt3": {
+    "en": "Application of innovative construction processes that significantly improve resource efficiency",
+    "fr": "Application de processus de construction innovants améliorant significativement l'efficacité des ressources",
+    "pt-br": "Aplicação de processos de construção inovadores que melhoram significativamente a eficiência de recursos"
+  },
+  "q18_opt4": {
+    "en": "Development and testing of new building systems or technologies with documented environmental benefits",
+    "fr": "Développement et test de nouveaux systèmes ou technologies de construction avec des bénéfices environnementaux documentés",
+    "pt-br": "Desenvolvimento e teste de novos sistemas ou tecnologias construtivas com benefícios ambientais documentados"
+  },
+  "q18_opt5": {
+    "en": "Transformative approach combining technical innovation with local economic development",
+    "fr": "Approche transformatrice combinant innovation technique et développement économique local",
+    "pt-br": "Abordagem transformadora que combina inovação técnica com desenvolvimento econômico local"
+  },
+  "q19_opt1": {
+    "en": "Barrier-free circulation systems beyond minimum code requirements",
+    "fr": "Systèmes de circulation sans barrières au-delà des exigences minimales réglementaires",
+    "pt-br": "Sistemas de circulação sem barreiras além dos requisitos mínimos normativos"
+  },
+  "q19_opt2": {
+    "en": "Sensory accessibility features (e.g., visual cues, tactile elements, acoustic considerations)",
+    "fr": "Caractéristiques d'accessibilité sensorielle (ex. : indices visuels, éléments tactiles, considérations acoustiques)",
+    "pt-br": "Recursos de acessibilidade sensorial (ex.: pistas visuais, elementos táteis, considerações acústicas)"
+  },
+  "q19_opt3": {
+    "en": "Adaptable spaces that accommodate users of different physical abilities and ages",
+    "fr": "Espaces adaptables accueillant des usagers de différentes capacités physiques et âges",
+    "pt-br": "Espaços adaptáveis que acomodam usuários de diferentes capacidades físicas e idades"
+  },
+  "q19_opt4": {
+    "en": "Design elements that respect and reflect diverse cultural identities of potential users",
+    "fr": "Éléments de conception qui respectent et reflètent les diverses identités culturelles des usagers potentiels",
+    "pt-br": "Elementos de design que respeitam e refletem as diversas identidades culturais dos potenciais usuários"
+  },
+  "q19_opt5": {
+    "en": "Technology integration that enhances usability for people with varying capabilities",
+    "fr": "Intégration technologique améliorant la facilité d'utilisation pour les personnes aux capacités variées",
+    "pt-br": "Integração tecnológica que melhora a usabilidade para pessoas com diferentes capacidades"
+  },
+  "q20_opt1": {
+    "en": "Basic compliance with minimum inclusivity standards with limited consideration of socioeconomic factors",
+    "fr": "Conformité de base aux normes minimales d'inclusivité avec une prise en compte limitée des facteurs socioéconomiques",
+    "pt-br": "Conformidade básica com os padrões mínimos de inclusividade com consideração limitada dos fatores socioeconômicos"
+  },
+  "q20_opt2": {
+    "en": "Implementation of at least one specific mechanism to promote economic accessibility",
+    "fr": "Mise en œuvre d'au moins un mécanisme spécifique pour promouvoir l'accessibilité économique",
+    "pt-br": "Implementação de pelo menos um mecanismo específico para promover a acessibilidade econômica"
+  },
+  "q20_opt3": {
+    "en": "Mixed-use and/or mixed-income approach with multiple tenure options for diverse economic circumstances",
+    "fr": "Approche mixte (usages/revenus) avec plusieurs options d'occupation pour des situations économiques diverses",
+    "pt-br": "Abordagem de uso misto e/ou renda mista com múltiplas opções de posse para diversas circunstâncias econômicas"
+  },
+  "q20_opt4": {
+    "en": "Comprehensive inclusion strategy with clear affordability targets and community engagement processes",
+    "fr": "Stratégie d'inclusion globale avec des objectifs clairs d'accessibilité financière et des processus d'engagement communautaire",
+    "pt-br": "Estratégia abrangente de inclusão com metas claras de acessibilidade e processos de engajamento comunitário"
+  },
+  "q20_opt5": {
+    "en": "Transformative approach that actively addresses systemic barriers and provides pathways to economic opportunity",
+    "fr": "Approche transformatrice qui traite activement les obstacles systémiques et offre des voies vers des opportunités économiques",
+    "pt-br": "Abordagem transformadora que aborda ativamente as barreiras sistêmicas e fornece caminhos para oportunidades econômicas"
+  },
+  "q21_opt1": {
+    "en": "Affordable housing with universal design features and access to quality green spaces",
+    "fr": "Logements abordables avec des caractéristiques de conception universelle et l'accès à des espaces verts de qualité",
+    "pt-br": "Habitação acessível com características de design universal e acesso a espaços verdes de qualidade"
+  },
+  "q21_opt2": {
+    "en": "Multi-hazard resilience measures addressing local climate and disaster risks",
+    "fr": "Mesures de résilience multi-risques traitant les risques climatiques et catastrophiques locaux",
+    "pt-br": "Medidas de resiliência a múltiplos riscos abordando riscos climáticos e de desastres locais"
+  },
+  "q21_opt3": {
+    "en": "Resource-efficient systems that reduce environmental footprint (waste, water, energy)",
+    "fr": "Systèmes efficaces en ressources réduisant l'empreinte environnementale (déchets, eau, énergie)",
+    "pt-br": "Sistemas eficientes em recursos que reduzem a pegada ambiental (resíduos, água, energia)"
+  },
+  "q21_opt4": {
+    "en": "Preservation and enhancement of cultural/natural heritage elements",
+    "fr": "Préservation et valorisation des éléments du patrimoine culturel/naturel",
+    "pt-br": "Preservação e valorização de elementos do patrimônio cultural/natural"
+  },
+  "q21_opt5": {
+    "en": "Inclusive public spaces designed for diverse user groups",
+    "fr": "Espaces publics inclusifs conçus pour des groupes d'usagers diversifiés",
+    "pt-br": "Espaços públicos inclusivos projetados para grupos de usuários diversos"
+  },
+  "q22_opt1": {
+    "en": "Basic compliance with minimum standards for sustainability and safety",
+    "fr": "Conformité de base aux normes minimales de durabilité et de sécurité",
+    "pt-br": "Conformidade básica com os padrões mínimos de sustentabilidade e segurança"
+  },
+  "q22_opt2": {
+    "en": "Moderate implementation of sustainable features beyond code requirements with some consideration of future risks",
+    "fr": "Mise en œuvre modérée de caractéristiques durables au-delà des exigences réglementaires avec quelques considérations sur les risques futurs",
+    "pt-br": "Implementação moderada de características sustentáveis além dos requisitos normativos com alguma consideração de riscos futuros"
+  },
+  "q22_opt3": {
+    "en": "Integrated approach incorporating multiple sustainability strategies with clear resilience benefits",
+    "fr": "Approche intégrée intégrant plusieurs stratégies de durabilité avec des bénéfices clairs en matière de résilience",
+    "pt-br": "Abordagem integrada incorporando múltiplas estratégias de sustentabilidade com benefícios claros de resiliência"
+  },
+  "q22_opt4": {
+    "en": "Comprehensive sustainability framework addressing social inclusion, environmental protection, and economic viability",
+    "fr": "Cadre de durabilité global abordant l'inclusion sociale, la protection de l'environnement et la viabilité économique",
+    "pt-br": "Estrutura abrangente de sustentabilidade que aborda a inclusão social, a proteção ambiental e a viabilidade econômica"
+  },
+  "q22_opt5": {
+    "en": "Transformative model demonstrating innovative approaches to urban challenges with measurable co-benefits",
+    "fr": "Modèle transformateur démontrant des approches innovantes aux défis urbains avec des co-bénéfices mesurables",
+    "pt-br": "Modelo transformador que demonstra abordagens inovadoras para os desafios urbanos com co-benefícios mensuráveis"
+  },
+  "q23_opt1": {
+    "en": "Integration within a recognized sustainability assessment framework with lifecycle evaluation",
+    "fr": "Intégration dans un cadre d'évaluation de durabilité reconnu avec évaluation du cycle de vie",
+    "pt-br": "Integração em um quadro reconhecido de avaliação de sustentabilidade com avaliação do ciclo de vida"
+  },
+  "q23_opt2": {
+    "en": "Specified use of bio-based or renewable materials with documentation of sourcing certification",
+    "fr": "Utilisation spécifiée de matériaux biosourcés ou renouvelables avec documentation de la certification d'approvisionnement",
+    "pt-br": "Uso especificado de materiais de base biológica ou renováveis com documentação da certificação de fornecimento"
+  },
+  "q23_opt3": {
+    "en": "Implementation of modular or adaptable construction systems that facilitate future reuse",
+    "fr": "Mise en œuvre de systèmes de construction modulaires ou adaptables facilitant la réutilisation future",
+    "pt-br": "Implementação de sistemas de construção modulares ou adaptáveis que facilitam a reutilização futura"
+  },
+  "q23_opt4": {
+    "en": "Construction waste management plan with specific diversion targets and on-site separation procedures",
+    "fr": "Plan de gestion des déchets de construction avec des objectifs spécifiques de détournement et des procédures de tri sur site",
+    "pt-br": "Plano de gestão de resíduos de construção com metas específicas de desvio e procedimentos de separação no local"
+  },
+  "q23_opt5": {
+    "en": "Material selection prioritizing recycled content, reclaimed resources, or circular economy principles",
+    "fr": "Sélection de matériaux privilégiant le contenu recyclé, les ressources récupérées ou les principes d'économie circulaire",
+    "pt-br": "Seleção de materiais priorizando conteúdo reciclado, recursos reaproveitados ou princípios de economia circular"
+  },
+  "q24_opt1": {
+    "en": "Basic compliance with standard procurement requirements with minimal sustainability criteria",
+    "fr": "Conformité de base aux exigences standard d'achat avec des critères de durabilité minimaux",
+    "pt-br": "Conformidade básica com os requisitos padrão de aquisição com critérios de sustentabilidade mínimos"
+  },
+  "q24_opt2": {
+    "en": "Implementation of selective sustainability criteria for major material categories with some supplier verification",
+    "fr": "Mise en œuvre de critères de durabilité sélectifs pour les principales catégories de matériaux avec quelques vérifications des fournisseurs",
+    "pt-br": "Implementação de critérios de sustentabilidade seletivos para as principais categorias de materiais com alguma verificação de fornecedores"
+  },
+  "q24_opt3": {
+    "en": "Comprehensive sustainable procurement strategy with documented supplier qualification procedures",
+    "fr": "Stratégie d'approvisionnement durable globale avec des procédures documentées de qualification des fournisseurs",
+    "pt-br": "Estratégia abrangente de aquisição sustentável com procedimentos documentados de qualificação de fornecedores"
+  },
+  "q24_opt4": {
+    "en": "Integrated sustainability reporting throughout supply chain with third-party verification of claims",
+    "fr": "Reporting de durabilité intégré tout au long de la chaîne d'approvisionnement avec vérification tierce des déclarations",
+    "pt-br": "Relatório de sustentabilidade integrado ao longo da cadeia de suprimentos com verificação de terceiros das declarações"
+  },
+  "q24_opt5": {
+    "en": "Transformative approach including full lifecycle transparency, building user education, and monitoring systems",
+    "fr": "Approche transformatrice incluant une transparence complète du cycle de vie, l'éducation des usagers du bâtiment et des systèmes de surveillance",
+    "pt-br": "Abordagem transformadora incluindo transparência completa do ciclo de vida, educação dos usuários do edifício e sistemas de monitoramento"
+  },
+  "q25_opt1": {
+    "en": "Passive design elements that maintain functionality during extreme temperature events",
+    "fr": "Éléments de conception passive maintenant la fonctionnalité lors d'événements de températures extrêmes",
+    "pt-br": "Elementos de design passivo que mantêm a funcionalidade durante eventos de temperatura extrema"
+  },
+  "q25_opt2": {
+    "en": "Structural adaptations to withstand region-specific natural hazards",
+    "fr": "Adaptations structurelles pour résister aux risques naturels spécifiques à la région",
+    "pt-br": "Adaptações estruturais para suportar riscos naturais específicos da região"
+  },
+  "q25_opt3": {
+    "en": "Water management systems that address both drought and flood scenarios",
+    "fr": "Systèmes de gestion de l'eau traitant à la fois les scénarios de sécheresse et d'inondation",
+    "pt-br": "Sistemas de gestão da água que abordam tanto cenários de seca quanto de inundação"
+  },
+  "q25_opt4": {
+    "en": "Material selections that enhance durability under intensifying climate conditions",
+    "fr": "Sélections de matériaux améliorant la durabilité dans des conditions climatiques de plus en plus intenses",
+    "pt-br": "Seleções de materiais que melhoram a durabilidade sob condições climáticas crescentemente intensas"
+  },
+  "q25_opt5": {
+    "en": "Monitoring systems that track environmental conditions and building performance",
+    "fr": "Systèmes de surveillance qui suivent les conditions environnementales et les performances du bâtiment",
+    "pt-br": "Sistemas de monitoramento que acompanham as condições ambientais e o desempenho do edifício"
+  },
+  "q26_opt1": {
+    "en": "Basic efficiency improvements with minimal consideration of embodied carbon",
+    "fr": "Améliorations d'efficacité de base avec une prise en compte minimale du carbone incorporé",
+    "pt-br": "Melhorias básicas de eficiência com consideração mínima do carbono incorporado"
+  },
+  "q26_opt2": {
+    "en": "Moderate carbon reduction (20-30%) through selected low-carbon materials and energy efficiency",
+    "fr": "Réduction modérée du carbone (20-30 %) grâce à des matériaux bas carbone sélectionnés et à l'efficacité énergétique",
+    "pt-br": "Redução moderada de carbono (20-30%) por meio de materiais de baixo carbono selecionados e eficiência energética"
+  },
+  "q26_opt3": {
+    "en": "Significant carbon reduction (40-50%) through comprehensive embodied and operational carbon strategies",
+    "fr": "Réduction significative du carbone (40-50 %) grâce à des stratégies globales de carbone incorporé et opérationnel",
+    "pt-br": "Redução significativa de carbono (40-50%) por meio de estratégias abrangentes de carbono incorporado e operacional"
+  },
+  "q26_opt4": {
+    "en": "Advanced carbon reduction (60-70%) through integrated design approach and carbon-negative elements",
+    "fr": "Réduction avancée du carbone (60-70 %) grâce à une approche de conception intégrée et à des éléments à carbone négatif",
+    "pt-br": "Redução avançada de carbono (60-70%) por meio de abordagem de design integrada e elementos carbono-negativos"
+  },
+  "q26_opt5": {
+    "en": "Regenerative approach achieving net carbon negativity through material selection, sequestration, and energy generation",
+    "fr": "Approche régénératrice atteignant la négativité nette du carbone grâce à la sélection des matériaux, la séquestration et la production d'énergie",
+    "pt-br": "Abordagem regenerativa alcançando negatividade líquida de carbono por meio de seleção de materiais, sequestro e geração de energia"
+  },
+  "q27_opt1": {
+    "en": "Comprehensive plastic waste management system for construction phase",
+    "fr": "Système complet de gestion des déchets plastiques pour la phase de construction",
+    "pt-br": "Sistema abrangente de gestão de resíduos plásticos para a fase de construção"
+  },
+  "q27_opt2": {
+    "en": "Specification requirements limiting single-use plastic packaging for construction materials",
+    "fr": "Exigences de spécification limitant les emballages plastiques à usage unique pour les matériaux de construction",
+    "pt-br": "Requisitos de especificação que limitam embalagens plásticas de uso único para materiais de construção"
+  },
+  "q27_opt3": {
+    "en": "Material selection criteria that restrict or eliminate plastic-based building components lacking recycling pathways",
+    "fr": "Critères de sélection des matériaux restreignant ou éliminant les composants de construction à base de plastique sans voies de recyclage",
+    "pt-br": "Critérios de seleção de materiais que restringem ou eliminam componentes construtivos à base de plástico sem vias de reciclagem"
+  },
+  "q27_opt4": {
+    "en": "Designated spaces within the building design for waste sorting and prevention of marine debris",
+    "fr": "Espaces désignés dans la conception du bâtiment pour le tri des déchets et la prévention des déchets marins",
+    "pt-br": "Espaços designados no design do edifício para triagem de resíduos e prevenção de detritos marinhos"
+  },
+  "q27_opt5": {
+    "en": "Stormwater management systems incorporating filtration to capture microplastics and other pollutants",
+    "fr": "Systèmes de gestion des eaux pluviales intégrant la filtration pour capturer les microplastiques et autres polluants",
+    "pt-br": "Sistemas de gestão de águas pluviais com filtração para capturar microplásticos e outros poluentes"
+  },
+  "q28_opt1": {
+    "en": "Basic compliance with local regulations regarding water management with minimal consideration of marine impacts",
+    "fr": "Conformité de base aux réglementations locales en matière de gestion de l'eau avec une prise en compte minimale des impacts marins",
+    "pt-br": "Conformidade básica com as regulamentações locais de gestão da água com consideração mínima dos impactos marinhos"
+  },
+  "q28_opt2": {
+    "en": "Implementation of specific measures to reduce construction runoff and pollutants during development phase",
+    "fr": "Mise en œuvre de mesures spécifiques pour réduire le ruissellement et les polluants de construction pendant la phase de développement",
+    "pt-br": "Implementação de medidas específicas para reduzir o escoamento e os poluentes da construção durante a fase de desenvolvimento"
+  },
+  "q28_opt3": {
+    "en": "Comprehensive stormwater management featuring on-site filtration and containment systems",
+    "fr": "Gestion complète des eaux pluviales avec des systèmes de filtration et de confinement sur site",
+    "pt-br": "Gestão abrangente de águas pluviais com sistemas de filtragem e contenção no local"
+  },
+  "q28_opt4": {
+    "en": "Integrated water management approach incorporating marine-friendly landscaping and runoff prevention",
+    "fr": "Approche intégrée de gestion de l'eau intégrant un aménagement paysager favorable au milieu marin et la prévention du ruissellement",
+    "pt-br": "Abordagem integrada de gestão da água incorporando paisagismo favorável ao meio marinho e prevenção de escoamento"
+  },
+  "q28_opt5": {
+    "en": "Restorative design approach that actively contributes to coastal ecosystem health and marine habitat protection",
+    "fr": "Approche de conception restauratrice contribuant activement à la santé des écosystèmes côtiers et à la protection des habitats marins",
+    "pt-br": "Abordagem de design restauradora que contribui ativamente para a saúde dos ecossistemas costeiros e proteção de habitats marinhos"
+  },
+  "q29_opt1": {
+    "en": "Conservation or replacement of native vegetation (including trees and endangered species)",
+    "fr": "Conservation ou remplacement de la végétation indigène (y compris les arbres et espèces menacées)",
+    "pt-br": "Conservação ou substituição de vegetação nativa (incluindo árvores e espécies ameaçadas)"
+  },
+  "q29_opt2": {
+    "en": "Use of certified sustainable wood with verified supply chain traceability",
+    "fr": "Utilisation de bois certifié durable avec traçabilité vérifiée de la chaîne d'approvisionnement",
+    "pt-br": "Uso de madeira certificada sustentável com rastreabilidade verificada da cadeia de fornecimento"
+  },
+  "q29_opt3": {
+    "en": "Water-sensitive landscaping that maintains natural hydrology and reduces irrigation needs",
+    "fr": "Aménagement paysager sensible à l'eau maintenant l'hydrologie naturelle et réduisant les besoins en irrigation",
+    "pt-br": "Paisagismo sensível à água que mantém a hidrologia natural e reduz as necessidades de irrigação"
+  },
+  "q29_opt4": {
+    "en": "Habitat preservation for local wildlife with measures to prevent invasive species",
+    "fr": "Préservation de l'habitat pour la faune locale avec des mesures pour prévenir les espèces invasives",
+    "pt-br": "Preservação de habitat para a fauna local com medidas para prevenir espécies invasoras"
+  },
+  "q29_opt5": {
+    "en": "Building surface vegetation (green roofs, walls, etc.) supporting biodiversity",
+    "fr": "Végétalisation des surfaces du bâtiment (toitures vertes, murs végétaux, etc.) favorisant la biodiversité",
+    "pt-br": "Vegetação nas superfícies do edifício (telhados verdes, muros vegetados, etc.) apoiando a biodiversidade"
+  },
+  "q29_opt6": {
+    "en": "Efficient land use through compact development or reuse of previously developed land",
+    "fr": "Utilisation efficace des terres par un développement compact ou la réutilisation de terrains déjà aménagés",
+    "pt-br": "Uso eficiente do solo por meio de desenvolvimento compacto ou reutilização de terrenos já desenvolvidos"
+  },
+  "q29_opt7": {
+    "en": "Site design maintaining at least 40% permeable/vegetated surfaces relative to total site area",
+    "fr": "Conception du site maintenant au moins 40 % de surfaces perméables/végétalisées par rapport à la superficie totale",
+    "pt-br": "Design do local mantendo pelo menos 40% de superfícies permeáveis/vegetadas em relação à área total do terreno"
+  },
+  "q29_opt8": {
+    "en": "Restoration of previously degraded land or enhancement of existing ecological features",
+    "fr": "Restauration de terres précédemment dégradées ou valorisation des caractéristiques écologiques existantes",
+    "pt-br": "Restauração de terras anteriormente degradadas ou valorização de características ecológicas existentes"
+  },
+  "q30_opt1": {
+    "en": "Design elements that enhance perceived safety in public and communal spaces",
+    "fr": "Éléments de conception améliorant la sécurité perçue dans les espaces publics et collectifs",
+    "pt-br": "Elementos de design que aumentam a segurança percebida em espaços públicos e coletivos"
+  },
+  "q30_opt2": {
+    "en": "Security features appropriately integrated to protect occupants without creating barriers or exclusion",
+    "fr": "Éléments de sécurité intégrés de manière appropriée pour protéger les occupants sans créer de barrières ou d'exclusion",
+    "pt-br": "Recursos de segurança adequadamente integrados para proteger os ocupantes sem criar barreiras ou exclusão"
+  },
+  "q30_opt3": {
+    "en": "Documented anti-corruption procedures in procurement and contracting processes",
+    "fr": "Procédures anti-corruption documentées dans les processus d'achat et de passation de marchés",
+    "pt-br": "Procedimentos anticorrupção documentados nos processos de aquisição e contratação"
+  },
+  "q30_opt4": {
+    "en": "Transparent dispute resolution mechanisms accessible to all project stakeholders",
+    "fr": "Mécanismes de résolution des conflits transparents accessibles à toutes les parties prenantes du projet",
+    "pt-br": "Mecanismos transparentes de resolução de disputas acessíveis a todas as partes interessadas do projeto"
+  },
+  "q30_opt5": {
+    "en": "Inclusive decision-making processes involving diverse stakeholder groups throughout project phases",
+    "fr": "Processus décisionnels inclusifs impliquant des groupes de parties prenantes diversifiés tout au long des phases du projet",
+    "pt-br": "Processos de tomada de decisão inclusivos envolvendo grupos diversos de partes interessadas ao longo das fases do projeto"
+  },
+  "q30_opt6": {
+    "en": "Systematic client/user feedback collection and response procedures",
+    "fr": "Procédures systématiques de collecte et de réponse aux retours des clients/usagers",
+    "pt-br": "Procedimentos sistemáticos de coleta e resposta ao feedback de clientes/usuários"
+  },
+  "q30_opt7": {
+    "en": "Implementation of recognized ethical standards or certifications for project governance",
+    "fr": "Mise en œuvre de normes éthiques reconnues ou de certifications pour la gouvernance du projet",
+    "pt-br": "Implementação de padrões éticos reconhecidos ou certificações para a governança do projeto"
+  },
+  "q31_opt1": {
+    "en": "Integration within a formal cooperation program or sustainable development initiative",
+    "fr": "Intégration dans un programme de coopération formel ou une initiative de développement durable",
+    "pt-br": "Integração em um programa de cooperação formal ou iniciativa de desenvolvimento sustentável"
+  },
+  "q31_opt2": {
+    "en": "Compliance with or exceeding national/regional sustainable development frameworks",
+    "fr": "Conformité ou dépassement des cadres nationaux/régionaux de développement durable",
+    "pt-br": "Conformidade com ou superação dos marcos nacionais/regionais de desenvolvimento sustentável"
+  },
+  "q31_opt3": {
+    "en": "Public dissemination of project data, innovations, or lessons learned through publications or presentations",
+    "fr": "Diffusion publique des données du projet, des innovations ou des leçons apprises via des publications ou présentations",
+    "pt-br": "Disseminação pública de dados do projeto, inovações ou lições aprendidas por meio de publicações ou apresentações"
+  },
+  "q31_opt4": {
+    "en": "Formation of new cross-sector partnerships to address sustainability challenges",
+    "fr": "Formation de nouveaux partenariats intersectoriels pour relever les défis de durabilité",
+    "pt-br": "Formação de novas parcerias intersetoriais para enfrentar os desafios de sustentabilidade"
+  },
+  "q31_opt5": {
+    "en": "Assembly of a multidisciplinary team specifically to address comprehensive sustainability goals",
+    "fr": "Constitution d'une équipe multidisciplinaire spécifiquement pour atteindre des objectifs de durabilité globaux",
+    "pt-br": "Constituição de uma equipe multidisciplinar especificamente para abordar objetivos abrangentes de sustentabilidade"
+  },
+  "q31_opt6": {
+    "en": "Contribution of project performance data to national or international sustainability databases",
+    "fr": "Contribution des données de performance du projet aux bases de données nationales ou internationales de durabilité",
+    "pt-br": "Contribuição de dados de desempenho do projeto para bases de dados nacionais ou internacionais de sustentabilidade"
+  },
+  "q31_opt7": {
+    "en": "Technology or knowledge transfer between regions or between developed and developing contexts",
+    "fr": "Transfert de technologie ou de connaissances entre régions ou entre contextes développés et en développement",
+    "pt-br": "Transferência de tecnologia ou conhecimento entre regiões ou entre contextos desenvolvidos e em desenvolvimento"
+  },
+  "q31_opt8": {
+    "en": "Participation in industry transformation initiatives beyond the scope of a single project",
+    "fr": "Participation à des initiatives de transformation du secteur au-delà du périmètre d'un seul projet",
+    "pt-br": "Participação em iniciativas de transformação do setor além do escopo de um único projeto"
+  }
+}

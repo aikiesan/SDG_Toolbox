@@ -1,0 +1,30 @@
+<div class="lang-switcher d-flex align-items-center gap-2 mb-3">
+    <span class="text-muted small fw-semibold text-uppercase" style="letter-spacing:.05em;">Language:</span>
+    <button type="button" class="lang-btn lang-btn-pill" data-lang="en" onclick="setLanguage('en')">EN</button>
+    <button type="button" class="lang-btn lang-btn-pill" data-lang="pt-br" onclick="setLanguage('pt-br')">PT</button>
+    <button type="button" class="lang-btn lang-btn-pill" data-lang="fr" onclick="setLanguage('fr')">FR</button>
+</div>
+
+<style>
+.lang-btn-pill {
+    background: #fff;
+    border: 1px solid #6c757d;
+    border-radius: 2px;
+    color: #6c757d;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.6rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.lang-btn-pill:hover {
+    border-color: #AF201C;
+    color: #AF201C;
+}
+.lang-btn-pill.lang-btn-active {
+    background: #AF201C;
+    border-color: #AF201C;
+    color: #fff;
+}
+</style>

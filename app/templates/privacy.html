@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Privacy Policy - SDG Impact Assessment Tool{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4 text-center display-5 fw-bold">Privacy Policy</h1>
+    <p class="lead text-center mb-5">Our commitment to protecting your data and privacy.</p>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h2 class="h4 mb-3">Introduction</h2>
+            <p>This Privacy Policy outlines how the SDG Impact Assessment Tool collects, uses, maintains, and discloses information collected from users of our web application.</p>
+            
+            <h2 class="h4 mb-3 mt-4 pt-3 border-top">Information We Collect</h2>
+            <p>We may collect the following types of information:</p>
+            <ul>
+                <li><strong>Personal Information:</strong> When you register for an account, we collect your name and email address.</li>
+                <li><strong>Project Data:</strong> Information you provide about your architectural projects when using our assessment tool.</li>
+                <li><strong>Assessment Results:</strong> Responses and scores from your SDG impact assessments.</li>
+                <li><strong>Usage Data:</strong> Information about how you interact with our application, such as access times, pages viewed, and the referring website.</li>
+            </ul>
+            
+            <h2 class="h4 mb-3 mt-4 pt-3 border-top">How We Use Your Information</h2>
+            <p>We use the information we collect to:</p>
+            <ul>
+                <li>Provide, operate, and maintain our web application</li>
+                <li>Create and manage your account</li>
+                <li>Store and process your assessment data</li>
+                <li>Generate reports and visualizations based on your inputs</li>
+                <li>Improve our application and user experience</li>
+                <li>Respond to your inquiries and requests</li>
+                <li>Send you relevant notifications about your projects and assessments</li>
+            </ul>
+            
+            <h2 class="h4 mb-3 mt-4 pt-3 border-top">Data Security</h2>
+            <p>We implement appropriate security measures to protect against unauthorized access, alteration, disclosure, or destruction of your personal information and assessment data. Your data is stored securely and is only accessible to you unless you explicitly choose to share it.</p>
+            
+            <h2 class="h4 mb-3 mt-4 pt-3 border-top">Data Retention</h2>
+            <p>We will retain your personal information and project data for as long as your account is active or as needed to provide you with our services. You may request the deletion of your account and associated data at any time.</p>
+            
+            <h2 class="h4 mb-3 mt-4 pt-3 border-top">Third-Party Disclosure</h2>
+            <p>We do not sell, trade, or rent users' personal information to others. We may share aggregated, non-personal information with our partners for the purposes of research and analysis.</p>
+            
+            <h2 class="h4 mb-3 mt-4 pt-3 border-top">Updates to This Policy</h2>
+            <p>We may update this privacy policy at any time. We will notify you of any changes by posting the new policy on this page and, if significant changes are made, by sending a notification to the email address associated with your account.</p>
+            
+            <h2 class="h4 mb-3 mt-4 pt-3 border-top">Contact Us</h2>
+            <p>If you have any questions about this Privacy Policy, please contact us at:</p>
+            <address>
+                <strong>SDG Impact Assessment Tool</strong><br>
+                Email: lucassnakamura@gmail.com
+            </address>
+        </div>
+    </div>
+    
+    <div class="text-center mt-5">
+        <p class="small text-muted">Last updated: April 16, 2025</p>
+        <a href="{{ url_for('main.index') }}" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-2"></i>Return to Home
+        </a>
+    </div>
+</div>
+{% endblock %}

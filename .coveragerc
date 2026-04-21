@@ -1,0 +1,74 @@
+# Coverage configuration file
+[run]
+# Source directories to measure
+source = app
+
+# Omit these files from coverage
+omit =
+    */tests/*
+    */test_*.py
+    */__pycache__/*
+    */site-packages/*
+    */venv/*
+    */env/*
+    app/__init__.py
+    config.py
+    migrations/*
+
+# Branch coverage (measure both paths of if/else)
+branch = True
+
+# Concurrency for parallel testing
+concurrency = multiprocessing
+
+[report]
+# Minimum coverage percentage (will fail if below this)
+fail_under = 55
+
+# Precision for coverage percentage
+precision = 2
+
+# Show missing lines
+show_missing = True
+
+# Skip empty files
+skip_empty = True
+
+# Exclude lines from coverage
+exclude_lines =
+    # Standard pragma
+    pragma: no cover
+
+    # Don't complain about missing debug-only code
+    def __repr__
+    if self\.debug
+
+    # Don't complain if tests don't hit defensive assertion code
+    raise AssertionError
+    raise NotImplementedError
+
+    # Don't complain if non-runnable code isn't run
+    if 0:
+    if __name__ == .__main__.:
+
+    # Don't complain about abstract methods
+    @(abc\.)?abstractmethod
+
+    # Don't complain about type checking
+    if TYPE_CHECKING:
+    if typing.TYPE_CHECKING:
+
+[html]
+# Directory for HTML coverage report
+directory = test-reports/htmlcov
+
+# Title for HTML report
+title = SDG Assessment Tool - Test Coverage Report
+
+[xml]
+# XML output file for CI/CD
+output = test-reports/coverage.xml
+
+[json]
+# JSON output file
+output = test-reports/coverage.json

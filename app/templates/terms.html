@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Terms of Use - SDG Impact Assessment Tool{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4 text-center display-5 fw-bold">Terms of Use</h1>
+    <p class="lead text-center mb-5">Please read these terms carefully before using our platform.</p>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h2 class="h4 mb-3">Acceptance of Terms</h2>
+            <p>By accessing and using the SDG Impact Assessment Tool, you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to these terms, please do not use our service.</p>
+            
+            <h2 class="h4 mb-3 mt-4 pt-3 border-top">Use License</h2>
+            <p>The SDG Impact Assessment Tool grants you a limited, non-exclusive, non-transferable license to access and use our platform for your personal and professional use related to architectural sustainability assessment and planning.</p>
+            <p>You may not:</p>
+            <ul>
+                <li>Modify or copy the materials beyond what is necessary for normal platform use</li>
+                <li>Use the materials for any commercial purpose outside of your organization</li>
+                <li>Attempt to decompile or reverse engineer any software contained on the platform</li>
+                <li>Remove any copyright or other proprietary notations from the materials</li>
+                <li>Transfer the materials to another person or "mirror" the materials on any other server</li>
+            </ul>
+            
+            <h2 class="h4 mb-3 mt-4 pt-3 border-top">User Accounts</h2>
+            <p>To access certain features of the platform, you will need to create an account. You are responsible for maintaining the confidentiality of your account information and for all activities that occur under your account. You agree to:</p>
+            <ul>
+                <li>Provide accurate and complete information when creating your account</li>
+                <li>Secure your login credentials</li>
+                <li>Promptly update your account information if it changes</li>
+                <li>Notify us immediately of any unauthorized access to your account</li>
+            </ul>
+            
+            <h2 class="h4 mb-3 mt-4 pt-3 border-top">User Content</h2>
+            <p>You retain all rights to any content you submit, post, or display on or through our platform. By submitting content, you grant us a worldwide, non-exclusive, royalty-free license to use, reproduce, and distribute your content in connection with the service.</p>
+            
+            <h2 class="h4 mb-3 mt-4 pt-3 border-top">Disclaimer</h2>
+            <p>The materials on the SDG Impact Assessment Tool are provided on an 'as is' basis. We make no warranties, expressed or implied, and hereby disclaim and negate all other warranties including, without limitation, implied warranties of merchantability, fitness for a particular purpose, or non-infringement of intellectual property.</p>
+            
+            <h2 class="h4 mb-3 mt-4 pt-3 border-top">Limitations</h2>
+            <p>In no event shall the SDG Impact Assessment Tool or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the platform, even if we have been notified of the possibility of such damage.</p>
+            
+            <h2 class="h4 mb-3 mt-4 pt-3 border-top">Links</h2>
+            <p>The SDG Impact Assessment Tool has not reviewed all of the sites linked to its platform and is not responsible for the contents of any such linked site. The inclusion of any link does not imply endorsement by us. Use of any such linked website is at the user's own risk.</p>
+            
+            <h2 class="h4 mb-3 mt-4 pt-3 border-top">Modifications</h2>
+            <p>We may revise these terms of service at any time without notice. By using this platform, you are agreeing to be bound by the current version of these terms of service.</p>
+            
+            <h2 class="h4 mb-3 mt-4 pt-3 border-top">Governing Law</h2>
+            <p>These terms and conditions are governed by and construed in accordance with international law, and you irrevocably submit to the exclusive jurisdiction of the courts in that location.</p>
+        </div>
+    </div>
+    
+    <div class="text-center mt-5">
+        <p class="small text-muted">Last updated: April 16, 2025</p>
+        <a href="{{ url_for('main.index') }}" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-2"></i>Return to Home
+        </a>
+    </div>
+</div>
+{% endblock %}

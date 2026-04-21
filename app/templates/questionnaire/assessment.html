@@ -1,0 +1,2210 @@
+{% extends "base.html" %}
+{% block title %}Assessment — SDG Tool{% endblock %}
+{% block head %}
+{{ super() }}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+    :root {
+        --primary: #AF201C;
+        --primary-light: #AF201C;
+        --primary-dark: #32373c;
+        --neutral: #F7F6F6;
+        --text: #000000;
+            --text-light: #757575;
+            --background: #ffffff;
+            --border: #e0e0e0;
+            --success: #4caf50;
+            --error: #f44336;
+            --info: #2196f3;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        .assessment-container { padding: 0; }
+
+        header {
+            margin-bottom: 1.5rem;
+        }
+
+        .intro-text {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .note {
+            background-color: rgba(227, 6, 19, 0.05);
+            padding: 0.75rem;
+            border-radius: 0;
+            border-left: 4px solid var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Progress indicator */
+        .progress-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-bar {
+            height: 0.5rem;
+            background-color: var(--border);
+            border-radius: 0.25rem;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Form steps */
+        .form-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            position: relative;
+            padding-left: 0.5rem;
+        }
+
+        .form-steps::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 1rem;
+            transform: translateX(-50%);
+            height: 100%;
+            width: 2px;
+            background-color: var(--border);
+            z-index: 1;
+        }
+
+        .step {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background-color: var(--background);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--text-light);
+            position: relative;
+            z-index: 2;
+        }
+
+        .step.active {
+            border-color: var(--primary);
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .step.completed {
+            border-color: var(--success);
+            background-color: var(--success);
+            color: white;
+        }
+
+        /* Form sections */
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Question styles */
+        .question {
+            margin-bottom: 1.5rem;
+            padding: 1.25rem;
+            border-radius: 6px;
+            background-color: var(--neutral);
+            border-left: 4px solid transparent; /* For validation highlight */
+        }
+
+        .question-header {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .question-text {
+            font-weight: 600;
+            color: var(--primary-dark);
+            flex-grow: 1;
+        }
+
+        .question-help {
+            margin-left: 0.5rem;
+            color: var(--info);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .help-tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .help-tooltip .tooltip-text {
+            visibility: hidden;
+            width: 300px;
+            background-color: var(--text);
+            color: #fff;
+            text-align: left;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            top: -5px;
+            right: 125%;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-weight: normal;
+            font-size: 0.875rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .help-tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .input-type-indicator {
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            font-style: italic;
+            color: var(--text-light);
+        }
+
+        .radio-indicator {
+            color: var(--primary);
+        }
+
+        .checkbox-indicator {
+            color: var(--info);
+        }
+
+        /* Options styling */
+        .option {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .option:hover {
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+
+        .option input {
+            margin-top: 0.25rem;
+            margin-right: 0.75rem;
+            flex-shrink: 0; /* Prevent shrinking on smaller screens */
+        }
+
+        .option label {
+            cursor: pointer;
+            flex: 1;
+        }
+
+        /* Navigation buttons */
+        /* Navigation Container - Grey Background Section */
+        .form-navigation-wrapper {
+            background-color: var(--uia-gray-light, #F7F6F6);
+            border-top: 1px solid var(--uia-dark, #6C6B69);
+            margin-top: 2rem;
+            padding: 1.5rem 0;
+        }
+
+        .form-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Base Navigation Button - Atlas 3+3 Style */
+        .nav-btn-base {
+            background-color: white;
+            color: var(--uia-dark, #6C6B69);
+            border: 1px solid var(--uia-dark, #6C6B69);
+            border-radius: 0;
+            padding: 0.75rem 1.5rem;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        /* Previous Button */
+        .nav-btn-prev:hover {
+            background-color: white;
+            color: var(--uia-red, #AF201C);
+            border-color: var(--uia-red, #AF201C);
+        }
+
+        .nav-btn-prev:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Save Progress Button */
+        .nav-btn-save:hover {
+            background-color: var(--uia-blue, #577CB3);
+            color: white;
+            border-color: var(--uia-blue, #577CB3);
+        }
+
+        /* Next Button */
+        .nav-btn-next:hover {
+            background-color: var(--uia-blue, #577CB3);
+            color: white;
+            border-color: var(--uia-blue, #577CB3);
+        }
+
+        /* Submit Button - Blue by default to stand out */
+        .nav-btn-submit {
+            background-color: var(--uia-blue, #577CB3);
+            color: white;
+            border-color: var(--uia-blue, #577CB3);
+        }
+
+        .nav-btn-submit:hover {
+            background-color: var(--uia-violet, #484675);
+            border-color: var(--uia-violet, #484675);
+        }
+
+        /* Save feedback message */
+        .save-feedback {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--success);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 100;
+            animation: fadeIn 0.5s, fadeOut 0.5s 2.5s;
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; }
+        }
+
+
+        /* For screen readers */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        /* Validation Styles */
+        .validation-error {
+            color: var(--error, #f44336);
+            font-size: 0.9em; /* Slightly smaller */
+            margin-top: 0.5em; /* Increased top margin */
+            margin-bottom: 0.5em;
+            padding-left: 0.5em;
+            display: block; /* Ensure it's a block */
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .question.invalid {
+            border-left: 4px solid var(--error, #f44336);
+            background: rgba(244,67,54,0.08);
+        }
+        /* Highlight invalid questions text */
+        .question.invalid .question-text {
+            color: var(--error);
+        }
+         /* Feedback for checkbox groups */
+         .checkbox-hint {
+             color: var(--info);
+             font-size: 0.85rem;
+             margin-top: 0.5rem;
+             font-style: italic;
+             animation: fadeIn 0.3s ease-in-out;
+         }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .assessment-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+
+            .question {
+                padding: 1rem;
+            }
+
+            .help-tooltip .tooltip-text {
+                width: 200px;
+                right: -100px; /* Adjust position for smaller screens */
+                top: 30px;
+            }
+
+            .form-navigation {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .nav-btn-base {
+                width: 100%;
+                min-height: 44px;
+            }
+
+            .nav-btn-save {
+                order: 1;
+            }
+
+            .nav-btn-prev {
+                order: 2;
+            }
+
+            .nav-btn-next,
+            .nav-btn-submit {
+                order: 3;
+            }
+        }
+    </style>
+<script src="{{ url_for('static', filename='js/validation.js') }}"></script>
+<script src="{{ url_for('static', filename='js/autofill.js') }}"></script>
+{% endblock %}
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb" class="py-3">
+<ol class="breadcrumb mb-0">
+<li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Home</a></li>
+<li class="breadcrumb-item"><a href="{{ url_for('projects.index') }}">My Projects</a></li>
+<li class="breadcrumb-item"><a href="{{ url_for('projects.show', id=project.id) }}">{{ project.name }}</a></li>
+<li class="breadcrumb-item">Standard Assessment</li>
+<li aria-current="page" class="breadcrumb-item active">Assessment #{{ assessment.id }}</li>
+</ol>
+</nav>
+{% endblock %}
+{% block content %}
+<div class="container-lg mb-4">
+<div class="row">
+<div class="col-12 col-lg-10 offset-lg-2">
+<h1 class="page-title" style="text-transform: none; font-size: 2.5rem; margin-bottom: 0.75rem;">
+                Project Sustainability Assessment
+            </h1>
+<p class="lh-sm mb-4" style="max-width: 800px; font-size: 1.1rem;">
+                Evaluate your architectural project against the UN Sustainable Development Goals.
+            </p>
+            {% include "partials/_lang_switcher.html" %}
+        </div>
+</div>
+</div>
+<div class="container-lg py-5">
+<div class="row gx-md-5">
+<!-- Sidebar: Step Progress -->
+<div class="col-12 col-lg-2 mb-4">
+<!-- Desktop sticky sidebar -->
+<div class="d-none d-lg-block sticky-top" style="top: 2rem;">
+<span class="fs-6 text-uppercase fw-bold d-block mb-3" style="color: #000;">Progression</span>
+<a class="progress-step completed" href="{{ url_for('projects.show', id=project.id) }}">Project Info</a>
+<span class="progress-step active">Assessment</span>
+<!-- Step Indicators for Assessment Sections -->
+<div class="form-steps mt-3 mb-3">
+<div class="step" data-step="1">1</div>
+<div class="step" data-step="2">2</div>
+<div class="step" data-step="3">3</div>
+<div class="step" data-step="4">4</div>
+<div class="step" data-step="5">5</div>
+<div class="step" data-step="6">6</div>
+<div class="step" data-step="7">7</div>
+</div>
+<span class="progress-step">Results</span>
+</div>
+<!-- Mobile dropdown -->
+<div class="d-lg-none mb-4">
+<select aria-label="Assessment progression" class="form-select">
+<option>Step 1: Project Info</option>
+<option selected="">Step 2: Assessment</option>
+<option disabled="">Step 3: Results</option>
+</select>
+</div>
+</div>
+<!-- Main Form Content -->
+<div class="col-12 col-lg-10">
+<div role="main">
+<button id="autofill-btn" style="display:none; float:right; margin-bottom:1rem; background:var(--info); color:white; border:none; padding:0.5rem 1.2rem; border-radius:0; cursor:pointer; font-weight:bold;" type="button">Autofill Questionnaire Randomly</button>
+<div aria-label="Form progress" class="progress-container">
+<div class="progress-bar">
+<div aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" class="progress" id="progress" role="progressbar"></div>
+</div>
+</div>
+<div class="note">
+<strong>Note:</strong> All questions must be answered to generate your complete assessment report. Your progress is automatically saved as you complete each section.
+        </div>
+<!-- THE FORM -->
+<form id="sustainability-form" method="POST">
+<script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    var autofillBtn = document.getElementById('autofill-btn');
+                    if (autofillBtn && typeof window.autofillQuestions === 'function') {
+                        autofillBtn.addEventListener('click', function() {
+                            window.autofillQuestions();
+                        });
+                    } else if (autofillBtn) {
+                        autofillBtn.addEventListener('click', function() {
+                            alert('Autofill script not loaded!');
+                        });
+                    }
+                });
+            </script>
+<input name="csrf_token" type="hidden" value="{{ csrf_token() }}"/>
+<input name="project_id" type="hidden" value="{{ project.id }}"/>
+<input name="assessment_id" type="hidden" value="{{ assessment_id }}"/>
+<!-- Section 1: Basic Needs & Economic Aspects (Q1-4) -->
+<section aria-labelledby="section1-heading" class="form-section active" data-section="1">
+<h2 class="tool-section-title" data-translate-key="section1_title" id="section1-heading">Basic Needs &amp; Economic Aspects</h2>
+<div class="question" id="q1-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q1_text" id="q1-text">1. How does your project address operational cost burdens for occupants compared to regional standards?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q1_help">Consider energy efficiency, water conservation, and other operational costs that affect the affordability of living or working in the space.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="radio-indicator" data-translate-key="select_one_option"><i class="fas fa-dot-circle"></i> Select one option only</span></p>
+<div class="options">
+<div class="option">
+<input id="q1-opt1" name="q1" required="" type="radio" value="1"/>
+<label data-translate-key="q1_opt1" for="q1-opt1">Implements basic efficiency measures with modest cost reduction (~10-15%)</label>
+</div>
+<div class="option">
+<input id="q1-opt2" name="q1" type="radio" value="2"/>
+<label data-translate-key="q1_opt2" for="q1-opt2">Incorporates advanced systems reducing operational costs by approximately 30-40%</label>
+</div>
+<div class="option">
+<input id="q1-opt3" name="q1" type="radio" value="3"/>
+<label data-translate-key="q1_opt3" for="q1-opt3">Features comprehensive efficiency strategies reducing costs by approximately 50-60%</label>
+</div>
+<div class="option">
+<input id="q1-opt4" name="q1" type="radio" value="4"/>
+<label data-translate-key="q1_opt4" for="q1-opt4">Achieves near-zero operational costs through integrated passive and active systems</label>
+</div>
+<div class="option">
+<input id="q1-opt5" name="q1" type="radio" value="5"/>
+<label data-translate-key="q1_opt5" for="q1-opt5">Generates surplus resources (energy, water, etc.) that provide economic benefit to occupants</label>
+</div>
+</div>
+<span class="validation-error" id="q1-error" style="display: none;">Please select an option.</span>
+</div>
+<div class="question" id="q2-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q2_text" id="q2-text">2. To what extent does your project enhance economic resilience for its users and the surrounding community?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q2_help">Economic resilience refers to the capacity to withstand or recover quickly from economic difficulties. This may include design features that support diverse economic activities or reduce financial vulnerability.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="checkbox-indicator" data-translate-key="select_all_options"><i class="fas fa-check-square"></i> Select all that apply</span></p>
+<div class="options" data-min-check="1">
+<div class="option">
+<input id="q2-opt1" name="q2" type="checkbox" value="income_spaces"/>
+<label data-translate-key="q2_opt1" for="q2-opt1">Incorporates spaces that support income-generating activities</label>
+</div>
+<div class="option">
+<input id="q2-opt2" name="q2" type="checkbox" value="transportation_costs"/>
+<label data-translate-key="q2_opt2" for="q2-opt2">Reduces transportation costs through location or connectivity features</label>
+</div>
+<div class="option">
+<input id="q2-opt3" name="q2" type="checkbox" value="flexible_spaces"/>
+<label data-translate-key="q2_opt3" for="q2-opt3">Provides flexible spaces adaptable to changing economic conditions</label>
+</div>
+<div class="option">
+<input id="q2-opt4" name="q2" type="checkbox" value="resilient_infrastructure"/>
+<label data-translate-key="q2_opt4" for="q2-opt4">Includes infrastructure resilient to environmental/economic disruptions</label>
+</div>
+<div class="option">
+<input id="q2-opt5" name="q2" type="checkbox" value="affordability_options"/>
+<label data-translate-key="q2_opt5" for="q2-opt5">Offers tiered affordability options for diverse economic circumstances</label>
+</div>
+</div>
+<span class="validation-error" id="q2-error" style="display: none;">Please select at least one option.</span>
+</div>
+<div class="question" id="q3-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q3_text" id="q3-text">3. How does your project incorporate productive landscape elements that enhance local food systems?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q3_help">Productive landscapes include any design features that support food production, such as garden spaces, fruit trees, or community agriculture.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="radio-indicator" data-translate-key="select_one_option"><i class="fas fa-dot-circle"></i> Select one option only</span></p>
+<div class="options">
+<div class="option">
+<input id="q3-opt1" name="q3" required="" type="radio" value="1"/>
+<label data-translate-key="q3_opt1" for="q3-opt1">Basic consideration of food access in project planning with no dedicated productive spaces</label>
+</div>
+<div class="option">
+<input id="q3-opt2" name="q3" type="radio" value="2"/>
+<label data-translate-key="q3_opt2" for="q3-opt2">Allocation of shared green spaces that could be converted to food production in future phases</label>
+</div>
+<div class="option">
+<input id="q3-opt3" name="q3" type="radio" value="3"/>
+<label data-translate-key="q3_opt3" for="q3-opt3">Integration of designated community garden spaces with supporting infrastructure (water access, tool storage)</label>
+</div>
+<div class="option">
+<input id="q3-opt4" name="q3" type="radio" value="4"/>
+<label data-translate-key="q3_opt4" for="q3-opt4">Comprehensive productive landscape strategy with both private growing spaces and community agriculture areas</label>
+</div>
+<div class="option">
+<input id="q3-opt5" name="q3" type="radio" value="5"/>
+<label data-translate-key="q3_opt5" for="q3-opt5">Full food system integration including production spaces, processing areas, and distribution infrastructure</label>
+</div>
+</div>
+<span class="validation-error" id="q3-error" style="display: none;">Please select an option.</span>
+</div>
+<div class="question" id="q4-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q4_text" id="q4-text">4. To what extent does your project address the complete food cycle and contribute to local food system resilience?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q4_help">The complete food cycle includes production, processing, distribution, consumption, and waste management. Food system resilience refers to the capacity to provide sufficient, appropriate and accessible food in the face of various disruptions.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="checkbox-indicator" data-translate-key="select_all_options"><i class="fas fa-check-square"></i> Select all that apply</span></p>
+<div class="options" data-min-check="1">
+<div class="option">
+<input id="q4-opt1" name="q4" type="checkbox" value="composting"/>
+<label data-translate-key="q4_opt1" for="q4-opt1">Incorporates composting infrastructure to close the nutrient loop</label>
+</div>
+<div class="option">
+<input id="q4-opt2" name="q4" type="checkbox" value="food_storage"/>
+<label data-translate-key="q4_opt2" for="q4-opt2">Provides appropriate food storage and preservation spaces</label>
+</div>
+<div class="option">
+<input id="q4-opt3" name="q4" type="checkbox" value="growing_seasons"/>
+<label data-translate-key="q4_opt3" for="q4-opt3">Includes design elements that extend growing seasons (greenhouses, cold frames)</label>
+</div>
+<div class="option">
+<input id="q4-opt4" name="q4" type="checkbox" value="water_systems"/>
+<label data-translate-key="q4_opt4" for="q4-opt4">Features water collection/irrigation systems supporting food production</label>
+</div>
+<div class="option">
+<input id="q4-opt5" name="q4" type="checkbox" value="food_education"/>
+<label data-translate-key="q4_opt5" for="q4-opt5">Allocates multipurpose spaces that support food education and skill-building</label>
+</div>
+</div>
+<span class="validation-error" id="q4-error" style="display: none;">Please select at least one option.</span>
+</div>
+<div class="form-navigation-wrapper">
+<div class="form-navigation">
+<button class="nav-btn-base nav-btn-prev" disabled="" id="prev-1" type="button">Previous</button>
+<button class="nav-btn-base nav-btn-save" id="save-1" type="button">Save Progress</button>
+<button class="nav-btn-base nav-btn-next" id="next-1" type="button">Next</button>
+</div>
+</div>
+</section>
+<!-- Section 2: Health, Well-being & Education (Q5-8) -->
+<section aria-labelledby="section2-heading" class="form-section" data-section="2">
+<h2 class="tool-section-title" data-translate-key="section2_title" id="section2-heading">Health, Well-being &amp; Education</h2>
+<div class="question" id="q5-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q5_text" id="q5-text">5. How comprehensively does your project incorporate design elements that support mental health and psychological well-being?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q5_help">Design elements for mental health include features that reduce stress, promote comfort, provide connection to nature, or support positive social interactions.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="checkbox-indicator" data-translate-key="select_all_options"><i class="fas fa-check-square"></i> Select all that apply</span></p>
+<div class="options" data-min-check="1">
+<div class="option">
+<input id="q5-opt1" name="q5" type="checkbox" value="biophilic"/>
+<label data-translate-key="q5_opt1" for="q5-opt1">Biophilic design elements (visible natural elements, natural materials, patterns)</label>
+</div>
+<div class="option">
+<input id="q5-opt2" name="q5" type="checkbox" value="mindfulness"/>
+<label data-translate-key="q5_opt2" for="q5-opt2">Spaces dedicated to mindfulness, meditation, or quiet reflection</label>
+</div>
+<div class="option">
+<input id="q5-opt3" name="q5" type="checkbox" value="daylighting"/>
+<label data-translate-key="q5_opt3" for="q5-opt3">Access to quality daylighting in primary occupied spaces</label>
+</div>
+<div class="option">
+<input id="q5-opt4" name="q5" type="checkbox" value="views"/>
+<label data-translate-key="q5_opt4" for="q5-opt4">Views to nature or green spaces from principal living/working areas</label>
+</div>
+<div class="option">
+<input id="q5-opt5" name="q5" type="checkbox" value="social"/>
+<label data-translate-key="q5_opt5" for="q5-opt5">Design solutions that foster social connection while respecting privacy needs</label>
+</div>
+</div>
+<span class="validation-error" id="q5-error" style="display: none;">Please select at least one option.</span>
+</div>
+<div class="question" id="q6-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q6_text" id="q6-text">6. To what extent does your project's design actively promote physical activity and healthy behaviors through its spatial configuration and amenities?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q6_help">Active design uses architecture to encourage physical movement and exercise. Examples include attractive, visible stairs, walking paths, exercise areas, or design that naturally encourages movement.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="radio-indicator" data-translate-key="select_one_option"><i class="fas fa-dot-circle"></i> Select one option only</span></p>
+<div class="options">
+<div class="option">
+<input id="q6-opt1" name="q6" required="" type="radio" value="1"/>
+<label data-translate-key="q6_opt1" for="q6-opt1">Meets basic accessibility requirements with limited attention to active design principles</label>
+</div>
+<div class="option">
+<input id="q6-opt2" name="q6" type="radio" value="2"/>
+<label data-translate-key="q6_opt2" for="q6-opt2">Incorporates some passive design strategies that encourage movement (e.g., visible staircases)</label>
+</div>
+<div class="option">
+<input id="q6-opt3" name="q6" type="radio" value="3"/>
+<label data-translate-key="q6_opt3" for="q6-opt3">Features dedicated spaces for physical activity and exercise within the development</label>
+</div>
+<div class="option">
+<input id="q6-opt4" name="q6" type="radio" value="4"/>
+<label data-translate-key="q6_opt4" for="q6-opt4">Comprehensive active design strategy with connected indoor-outdoor activity spaces and circulation paths</label>
+</div>
+<div class="option">
+<input id="q6-opt5" name="q6" type="radio" value="5"/>
+<label data-translate-key="q6_opt5" for="q6-opt5">Fully integrated health-promoting design with programming elements, monitoring capabilities, and adaptive features</label>
+</div>
+</div>
+<span class="validation-error" id="q6-error" style="display: none;">Please select an option.</span>
+</div>
+<div class="question" id="q7-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q7_text" id="q7-text">7. How comprehensively does your project address inclusive design principles for diverse users in learning-oriented spaces?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q7_help">Inclusive design ensures that spaces can be accessed, understood, and used by as many people as possible, regardless of age, size, ability, or disability. Learning-oriented spaces could include formal education areas, meeting rooms, or spaces for skill development.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="checkbox-indicator" data-translate-key="select_all_options"><i class="fas fa-check-square"></i> Select all that apply</span></p>
+<div class="options" data-min-check="1">
+<div class="option">
+<input id="q7-opt1" name="q7" type="checkbox" value="mobility"/>
+<label data-translate-key="q7_opt1" for="q7-opt1">Mobility accessibility (beyond minimum code requirements)</label>
+</div>
+<div class="option">
+<input id="q7-opt2" name="q7" type="checkbox" value="visual"/>
+<label data-translate-key="q7_opt2" for="q7-opt2">Visual accessibility (wayfinding, signage, tactile elements)</label>
+</div>
+<div class="option">
+<input id="q7-opt3" name="q7" type="checkbox" value="auditory"/>
+<label data-translate-key="q7_opt3" for="q7-opt3">Auditory accessibility (acoustic design, assistive listening systems)</label>
+</div>
+<div class="option">
+<input id="q7-opt4" name="q7" type="checkbox" value="cognitive"/>
+<label data-translate-key="q7_opt4" for="q7-opt4">Cognitive/neurodiversity considerations (sensory-balanced spaces, intuitive navigation)</label>
+</div>
+<div class="option">
+<input id="q7-opt5" name="q7" type="checkbox" value="flexible"/>
+<label data-translate-key="q7_opt5" for="q7-opt5">Flexible learning environments adaptable to diverse teaching methodologies</label>
+</div>
+</div>
+<span class="validation-error" id="q7-error" style="display: none;">Please select at least one option.</span>
+</div>
+<div class="question" id="q8-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q8_text" id="q8-text">8. To what extent does your project incorporate spaces and features that facilitate knowledge sharing, skill development, and lifelong learning?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q8_help">These spaces support the exchange and development of knowledge and skills, such as libraries, workshop spaces, community rooms, or areas with information displays and learning resources.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="radio-indicator" data-translate-key="select_one_option"><i class="fas fa-dot-circle"></i> Select one option only</span></p>
+<div class="options">
+<div class="option">
+<input id="q8-opt1" name="q8" required="" type="radio" value="1"/>
+<label data-translate-key="q8_opt1" for="q8-opt1">Basic information display areas with minimal interactive features</label>
+</div>
+<div class="option">
+<input id="q8-opt2" name="q8" type="radio" value="2"/>
+<label data-translate-key="q8_opt2" for="q8-opt2">Dedicated spaces for structured learning activities with appropriate technological infrastructure</label>
+</div>
+<div class="option">
+<input id="q8-opt3" name="q8" type="radio" value="3"/>
+<label data-translate-key="q8_opt3" for="q8-opt3">Integrated formal and informal learning zones with adaptable configurations</label>
+</div>
+<div class="option">
+<input id="q8-opt4" name="q8" type="radio" value="4"/>
+<label data-translate-key="q8_opt4" for="q8-opt4">Comprehensive learning ecosystem with connections to community knowledge resources</label>
+</div>
+<div class="option">
+<input id="q8-opt5" name="q8" type="radio" value="5"/>
+<label data-translate-key="q8_opt5" for="q8-opt5">Innovation-focused environment with spaces supporting experimentation, collaboration, and knowledge creation</label>
+</div>
+</div>
+<span class="validation-error" id="q8-error" style="display: none;">Please select an option.</span>
+</div>
+<div class="form-navigation-wrapper">
+<div class="form-navigation">
+<button class="nav-btn-base nav-btn-prev" id="prev-2" type="button">Previous</button>
+<button class="nav-btn-base nav-btn-save" id="save-2" type="button">Save Progress</button>
+<button class="nav-btn-base nav-btn-next" id="next-2" type="button">Next</button>
+</div>
+</div>
+</section>
+<!-- Section 3: Inclusion & Diversity (Q9-12) -->
+<section aria-labelledby="section3-heading" class="form-section" data-section="3">
+<h2 class="tool-section-title" data-translate-key="section3_title" id="section3-heading">Inclusion &amp; Diversity</h2>
+<div class="question" id="q9-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q9_text" id="q9-text">9. How comprehensively does your project implement equitable team composition and workplace practices throughout the project lifecycle?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q9_help">This question addresses the diversity and inclusivity of the project team itself, including design, construction, and operational teams. Consider gender balance, fair compensation, and equitable opportunities.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="checkbox-indicator" data-translate-key="select_all_options"><i class="fas fa-check-square"></i> Select all that apply</span></p>
+<div class="options" data-min-check="1">
+<div class="option">
+<input id="q9-opt1" name="q9" type="checkbox" value="diverse_team"/>
+<label data-translate-key="q9_opt1" for="q9-opt1">Diverse design team composition with meaningful representation across genders</label>
+</div>
+<div class="option">
+<input id="q9-opt2" name="q9" type="checkbox" value="equitable_compensation"/>
+<label data-translate-key="q9_opt2" for="q9-opt2">Equitable compensation structures with transparent pay bands based on qualifications and experience</label>
+</div>
+<div class="option">
+<input id="q9-opt3" name="q9" type="checkbox" value="procurement_policies"/>
+<label data-translate-key="q9_opt3" for="q9-opt3">Procurement policies that prioritize contractors with demonstrated commitment to workforce diversity</label>
+</div>
+<div class="option">
+<input id="q9-opt4" name="q9" type="checkbox" value="site_management"/>
+<label data-translate-key="q9_opt4" for="q9-opt4">Site management practices that actively support diverse participation in construction roles</label>
+</div>
+<div class="option">
+<input id="q9-opt5" name="q9" type="checkbox" value="leadership_opportunities"/>
+<label data-translate-key="q9_opt5" for="q9-opt5">Leadership opportunities distributed equitably across gender lines at all project phases</label>
+</div>
+</div>
+<span class="validation-error" id="q9-error" style="display: none;">Please select at least one option.</span>
+</div>
+<div class="question" id="q10-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q10_text" id="q10-text">10. To what extent does your project incorporate design elements that address diverse user needs across gender identities?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q10_help">This refers to how the design itself responds to the needs of people of all genders, including aspects like safety, accessibility, and functionality that recognize different user needs and experiences.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="radio-indicator" data-translate-key="select_one_option"><i class="fas fa-dot-circle"></i> Select one option only</span></p>
+<div class="options">
+<div class="option">
+<input id="q10-opt1" name="q10" required="" type="radio" value="1"/>
+<label data-translate-key="q10_opt1" for="q10-opt1">Basic code compliance with minimal consideration of diverse user demographics</label>
+</div>
+<div class="option">
+<input id="q10-opt2" name="q10" type="radio" value="2"/>
+<label data-translate-key="q10_opt2" for="q10-opt2">Initial stakeholder analysis includes gender-disaggregated data to inform programming</label>
+</div>
+<div class="option">
+<input id="q10-opt3" name="q10" type="radio" value="3"/>
+<label data-translate-key="q10_opt3" for="q10-opt3">Intentional design features that address documented needs of diverse users</label>
+</div>
+<div class="option">
+<input id="q10-opt4" name="q10" type="radio" value="4"/>
+<label data-translate-key="q10_opt4" for="q10-opt4">Comprehensive user-centered design process with balanced representation in all consultation phases</label>
+</div>
+<div class="option">
+<input id="q10-opt5" name="q10" type="radio" value="5"/>
+<label data-translate-key="q10_opt5" for="q10-opt5">Transformative approach that challenges traditional gender assumptions and creates new paradigms for inclusive space</label>
+</div>
+</div>
+<span class="validation-error" id="q10-error" style="display: none;">Please select an option.</span>
+</div>
+<div class="question" id="q11-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q11_text" id="q11-text">11. How comprehensively does your project address water efficiency and conservation through design strategies and systems integration?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q11_help">Water efficiency strategies include low-flow fixtures, rainwater harvesting, greywater reuse, efficient irrigation, and other approaches that reduce potable water consumption.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="radio-indicator" data-translate-key="select_one_option"><i class="fas fa-dot-circle"></i> Select one option only</span></p>
+<div class="options">
+<div class="option">
+<input id="q11-opt1" name="q11" required="" type="radio" value="1"/>
+<label data-translate-key="q11_opt1" for="q11-opt1">Basic compliance with water efficiency standards using conventional fixtures and systems</label>
+</div>
+<div class="option">
+<input id="q11-opt2" name="q11" type="radio" value="2"/>
+<label data-translate-key="q11_opt2" for="q11-opt2">Moderate water reduction through specified low-flow fixtures and basic rainwater collection</label>
+</div>
+<div class="option">
+<input id="q11-opt3" name="q11" type="radio" value="3"/>
+<label data-translate-key="q11_opt3" for="q11-opt3">Advanced water management with integrated greywater reuse systems for non-potable applications</label>
+</div>
+<div class="option">
+<input id="q11-opt4" name="q11" type="radio" value="4"/>
+<label data-translate-key="q11_opt4" for="q11-opt4">Comprehensive water strategy achieving 50%+ reduction from baseline through multiple integrated systems</label>
+</div>
+<div class="option">
+<input id="q11-opt5" name="q11" type="radio" value="5"/>
+<label data-translate-key="q11_opt5" for="q11-opt5">Net-positive water approach that contributes to watershed health beyond project boundaries</label>
+</div>
+</div>
+<span class="validation-error" id="q11-error" style="display: none;">Please select an option.</span>
+</div>
+<div class="question" id="q12-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q12_text" id="q12-text">12. Which strategies does your project implement to protect water quality and responsibly manage the complete water cycle?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q12_help">Water quality protection includes preventing pollution, filtering contaminants, and ensuring safe drinking water. The complete water cycle includes supply, use, treatment, and disposal or reuse of water.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="checkbox-indicator" data-translate-key="select_all_options"><i class="fas fa-check-square"></i> Select all that apply</span></p>
+<div class="options" data-min-check="1">
+<div class="option">
+<input id="q12-opt1" name="q12" type="checkbox" value="construction_protection"/>
+<label data-translate-key="q12_opt1" for="q12-opt1">Construction-phase protections preventing sediment and pollutant discharge</label>
+</div>
+<div class="option">
+<input id="q12-opt2" name="q12" type="checkbox" value="stormwater_management"/>
+<label data-translate-key="q12_opt2" for="q12-opt2">Stormwater management systems that filter contaminants before release</label>
+</div>
+<div class="option">
+<input id="q12-opt3" name="q12" type="checkbox" value="potable_water"/>
+<label data-translate-key="q12_opt3" for="q12-opt3">Potable water quality assurance through appropriate filtration/treatment</label>
+</div>
+<div class="option">
+<input id="q12-opt4" name="q12" type="checkbox" value="ecosystem_protection"/>
+<label data-translate-key="q12_opt4" for="q12-opt4">Ecosystem protection/restoration of natural water features on or adjacent to site</label>
+</div>
+<div class="option">
+<input id="q12-opt5" name="q12" type="checkbox" value="maintenance_protocols"/>
+<label data-translate-key="q12_opt5" for="q12-opt5">Long-term maintenance protocols ensuring continued water system performance</label>
+</div>
+</div>
+<span class="validation-error" id="q12-error" style="display: none;">Please select at least one option.</span>
+</div>
+<div class="form-navigation-wrapper">
+<div class="form-navigation">
+<button class="nav-btn-base nav-btn-prev" id="prev-3" type="button">Previous</button>
+<button class="nav-btn-base nav-btn-save" id="save-3" type="button">Save Progress</button>
+<button class="nav-btn-base nav-btn-next" id="next-3" type="button">Next</button>
+</div>
+</div>
+</section>
+<!-- Section 4: Energy & Resource Efficiency (Q13-16) -->
+<section aria-labelledby="section4-heading" class="form-section" data-section="4">
+<h2 class="tool-section-title" data-translate-key="section4_title" id="section4-heading">Energy &amp; Resource Efficiency</h2>
+<div class="question" id="q13-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q13_text" id="q13-text">13. How comprehensively does your project incorporate renewable energy systems and energy efficiency strategies compared to conventional practice?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q13_help">Renewable energy systems include solar, wind, geothermal and other technologies that generate energy from renewable sources. Energy efficiency strategies reduce overall energy consumption through building design, systems, and operations.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="radio-indicator" data-translate-key="select_one_option"><i class="fas fa-dot-circle"></i> Select one option only</span></p>
+<div class="options">
+<div class="option">
+<input id="q13-opt1" name="q13" required="" type="radio" value="1"/>
+<label data-translate-key="q13_opt1" for="q13-opt1">Basic energy code compliance with minimal renewable energy integration</label>
+</div>
+<div class="option">
+<input id="q13-opt2" name="q13" type="radio" value="2"/>
+<label data-translate-key="q13_opt2" for="q13-opt2">Moderate efficiency measures (25-30% better than baseline) with some renewable energy components</label>
+</div>
+<div class="option">
+<input id="q13-opt3" name="q13" type="radio" value="3"/>
+<label data-translate-key="q13_opt3" for="q13-opt3">Advanced energy performance (40-50% better than baseline) with significant renewable integration</label>
+</div>
+<div class="option">
+<input id="q13-opt4" name="q13" type="radio" value="4"/>
+<label data-translate-key="q13_opt4" for="q13-opt4">Near net-zero energy performance through comprehensive efficiency and renewable strategies</label>
+</div>
+<div class="option">
+<input id="q13-opt5" name="q13" type="radio" value="5"/>
+<label data-translate-key="q13_opt5" for="q13-opt5">Net-positive energy building generating surplus energy through integrated renewable systems</label>
+</div>
+</div>
+<span class="validation-error" id="q13-error" style="display: none;">Please select an option.</span>
+</div>
+<div class="question" id="q14-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q14_text" id="q14-text">14. To what extent does your project address energy resilience, affordability, and accessibility for all potential users?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q14_help">Energy resilience refers to the ability to maintain essential functions during power outages. Affordability addresses cost-effectiveness, while accessibility ensures all users can benefit from and control energy resources.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="checkbox-indicator" data-translate-key="select_all_options"><i class="fas fa-check-square"></i> Select all that apply</span></p>
+<div class="options" data-min-check="1">
+<div class="option">
+<input id="q14-opt1" name="q14" type="checkbox" value="passive_strategies"/>
+<label data-translate-key="q14_opt1" for="q14-opt1">Passive design strategies that maintain operational functionality during power outages</label>
+</div>
+<div class="option">
+<input id="q14-opt2" name="q14" type="checkbox" value="cost_reduction"/>
+<label data-translate-key="q14_opt2" for="q14-opt2">Energy systems that reduce operational costs for occupants relative to conventional buildings</label>
+</div>
+<div class="option">
+<input id="q14-opt3" name="q14" type="checkbox" value="distributed_resources"/>
+<label data-translate-key="q14_opt3" for="q14-opt3">Distributed energy resources that enhance local grid reliability</label>
+</div>
+<div class="option">
+<input id="q14-opt4" name="q14" type="checkbox" value="monitoring_systems"/>
+<label data-translate-key="q14_opt4" for="q14-opt4">Energy monitoring and smart systems allowing users to optimize consumption</label>
+</div>
+<div class="option">
+<input id="q14-opt5" name="q14" type="checkbox" value="equitable_access"/>
+<label data-translate-key="q14_opt5" for="q14-opt5">Design features ensuring equitable energy access for diverse user populations</label>
+</div>
+</div>
+<span class="validation-error" id="q14-error" style="display: none;">Please select at least one option.</span>
+</div>
+<div class="question" id="q15-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q15_text" id="q15-text">15. How comprehensively does your project support local economic development and fair labor practices throughout the project lifecycle?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q15_help">Local economic development includes supporting local businesses, creating jobs, and generating economic activity in the community. Fair labor practices ensure appropriate compensation, safe working conditions, and ethical treatment of all workers.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="radio-indicator" data-translate-key="select_one_option"><i class="fas fa-dot-circle"></i> Select one option only</span></p>
+<div class="options">
+<div class="option">
+<input id="q15-opt1" name="q15" required="" type="radio" value="1"/>
+<label data-translate-key="q15_opt1" for="q15-opt1">Basic compliance with minimum labor standards with limited local economic consideration</label>
+</div>
+<div class="option">
+<input id="q15-opt2" name="q15" type="radio" value="2"/>
+<label data-translate-key="q15_opt2" for="q15-opt2">Implementation of fair labor practices with some preference for local businesses</label>
+</div>
+<div class="option">
+<input id="q15-opt3" name="q15" type="radio" value="3"/>
+<label data-translate-key="q15_opt3" for="q15-opt3">Structured approach to involving local SMEs as suppliers or subcontractors</label>
+</div>
+<div class="option">
+<input id="q15-opt4" name="q15" type="radio" value="4"/>
+<label data-translate-key="q15_opt4" for="q15-opt4">Comprehensive local economic strategy with multiple tiers of local business integration</label>
+</div>
+<div class="option">
+<input id="q15-opt5" name="q15" type="radio" value="5"/>
+<label data-translate-key="q15_opt5" for="q15-opt5">Transformative approach with full integration of local enterprises, materials, and labor with verifiable fair practices</label>
+</div>
+</div>
+<span class="validation-error" id="q15-error" style="display: none;">Please select an option.</span>
+</div>
+<div class="question" id="q16-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q16_text" id="q16-text">16. To what extent does your project incorporate life cycle thinking and resource efficiency principles in material selection and construction processes?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q16_help">Life cycle thinking considers environmental impacts throughout a material's entire life cycle - from extraction or harvesting, through manufacturing, transportation, installation, use, and end-of-life disposal or reuse. Resource efficiency aims to use materials in ways that minimize waste and maximize value.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="checkbox-indicator" data-translate-key="select_all_options"><i class="fas fa-check-square"></i> Select all that apply</span></p>
+<div class="options" data-min-check="1">
+<div class="option">
+<input id="q16-opt1" name="q16" type="checkbox" value="lca"/>
+<label data-translate-key="q16_opt1" for="q16-opt1">Comprehensive Life Cycle Assessment (LCA) conducted to evaluate environmental impacts</label>
+</div>
+<div class="option">
+<input id="q16-opt2" name="q16" type="checkbox" value="local_materials"/>
+<label data-translate-key="q16_opt2" for="q16-opt2">Preference for locally-sourced materials to reduce transportation impacts</label>
+</div>
+<div class="option">
+<input id="q16-opt3" name="q16" type="checkbox" value="renewable_resources"/>
+<label data-translate-key="q16_opt3" for="q16-opt3">Selection criteria includes renewable resource management and sustainable harvesting</label>
+</div>
+<div class="option">
+<input id="q16-opt4" name="q16" type="checkbox" value="durability"/>
+<label data-translate-key="q16_opt4" for="q16-opt4">Durability and maintenance considerations factored into material selection</label>
+</div>
+<div class="option">
+<input id="q16-opt5" name="q16" type="checkbox" value="recycled_materials"/>
+<label data-translate-key="q16_opt5" for="q16-opt5">Incorporation of recycled, salvaged, or reusable materials and construction methods</label>
+</div>
+</div>
+<span class="validation-error" id="q16-error" style="display: none;">Please select at least one option.</span>
+</div>
+<div class="form-navigation-wrapper">
+<div class="form-navigation">
+<button class="nav-btn-base nav-btn-prev" id="prev-4" type="button">Previous</button>
+<button class="nav-btn-base nav-btn-save" id="save-4" type="button">Save Progress</button>
+<button class="nav-btn-base nav-btn-next" id="next-4" type="button">Next</button>
+</div>
+</div>
+</section>
+<!-- Section 5: Infrastructure & Innovation (Q17-20) -->
+<section aria-labelledby="section5-heading" class="form-section" data-section="5">
+<h2 class="tool-section-title" data-translate-key="section5_title" id="section5-heading">Infrastructure &amp; Innovation</h2>
+<div class="question" id="q17-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q17_text" id="q17-text">17. How does your project approach infrastructure resilience and resource efficiency through its design and systems integration?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q17_help">Infrastructure resilience refers to the ability of systems to withstand and recover from disruptions. Resource efficiency addresses how effectively resources like water, energy, and materials are used throughout the project.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="checkbox-indicator" data-translate-key="select_all_options"><i class="fas fa-check-square"></i> Select all that apply</span></p>
+<div class="options" data-min-check="1">
+<div class="option">
+<input id="q17-opt1" name="q17" type="checkbox" value="shared_infrastructure"/>
+<label data-translate-key="q17_opt1" for="q17-opt1">Integration of shared infrastructure components to improve sustainability and affordability</label>
+</div>
+<div class="option">
+<input id="q17-opt2" name="q17" type="checkbox" value="adaptive_reuse"/>
+<label data-translate-key="q17_opt2" for="q17-opt2">Renovation or adaptation of existing buildings/infrastructure with improved environmental performance</label>
+</div>
+<div class="option">
+<input id="q17-opt3" name="q17" type="checkbox" value="smart_tech"/>
+<label data-translate-key="q17_opt3" for="q17-opt3">Implementation of digitalization or smart technologies to monitor and optimize resource consumption</label>
+</div>
+<div class="option">
+<input id="q17-opt4" name="q17" type="checkbox" value="climate_resilience"/>
+<label data-translate-key="q17_opt4" for="q17-opt4">Design features that enhance resilience against climate impacts and other potential disruptions</label>
+</div>
+<div class="option">
+<input id="q17-opt5" name="q17" type="checkbox" value="cost_efficiency"/>
+<label data-translate-key="q17_opt5" for="q17-opt5">Infrastructure systems that reduce operational costs while maintaining or improving service quality</label>
+</div>
+</div>
+<span class="validation-error" id="q17-error" style="display: none;">Please select at least one option.</span>
+</div>
+<div class="question" id="q18-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q18_text" id="q18-text">18. To what extent does your project incorporate innovative construction approaches that promote sustainability and local economic development?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q18_help">Innovative construction approaches include new materials, methods, or technologies that improve environmental performance, efficiency, or economic outcomes. This may include prefabrication, novel materials, or new construction processes.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="radio-indicator" data-translate-key="select_one_option"><i class="fas fa-dot-circle"></i> Select one option only</span></p>
+<div class="options">
+<div class="option">
+<input id="q18-opt1" name="q18" required="" type="radio" value="1"/>
+<label data-translate-key="q18_opt1" for="q18-opt1">Standard construction methods with minimal innovation or sustainability considerations</label>
+</div>
+<div class="option">
+<input id="q18-opt2" name="q18" type="radio" value="2"/>
+<label data-translate-key="q18_opt2" for="q18-opt2">Implementation of established sustainable construction techniques with some adaptation to local context</label>
+</div>
+<div class="option">
+<input id="q18-opt3" name="q18" type="radio" value="3"/>
+<label data-translate-key="q18_opt3" for="q18-opt3">Application of innovative construction processes that significantly improve resource efficiency</label>
+</div>
+<div class="option">
+<input id="q18-opt4" name="q18" type="radio" value="4"/>
+<label data-translate-key="q18_opt4" for="q18-opt4">Development and testing of new building systems or technologies with documented environmental benefits</label>
+</div>
+<div class="option">
+<input id="q18-opt5" name="q18" type="radio" value="5"/>
+<label data-translate-key="q18_opt5" for="q18-opt5">Transformative approach combining technical innovation with local economic development</label>
+</div>
+</div>
+<span class="validation-error" id="q18-error" style="display: none;">Please select an option.</span>
+</div>
+<div class="question" id="q19-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q19_text" id="q19-text">19. How comprehensively does your project incorporate universal design principles to ensure equitable access and use for diverse populations?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q19_help">Universal design creates environments usable by all people, to the greatest extent possible, without the need for adaptation or specialized design. This extends beyond minimum accessibility requirements to create truly inclusive spaces.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="checkbox-indicator" data-translate-key="select_all_options"><i class="fas fa-check-square"></i> Select all that apply</span></p>
+<div class="options" data-min-check="1">
+<div class="option">
+<input id="q19-opt1" name="q19" type="checkbox" value="barrier_free"/>
+<label data-translate-key="q19_opt1" for="q19-opt1">Barrier-free circulation systems beyond minimum code requirements</label>
+</div>
+<div class="option">
+<input id="q19-opt2" name="q19" type="checkbox" value="sensory_access"/>
+<label data-translate-key="q19_opt2" for="q19-opt2">Sensory accessibility features (e.g., visual cues, tactile elements, acoustic considerations)</label>
+</div>
+<div class="option">
+<input id="q19-opt3" name="q19" type="checkbox" value="adaptable_spaces"/>
+<label data-translate-key="q19_opt3" for="q19-opt3">Adaptable spaces that accommodate users of different physical abilities and ages</label>
+</div>
+<div class="option">
+<input id="q19-opt4" name="q19" type="checkbox" value="cultural_elements"/>
+<label data-translate-key="q19_opt4" for="q19-opt4">Design elements that respect and reflect diverse cultural identities of potential users</label>
+</div>
+<div class="option">
+<input id="q19-opt5" name="q19" type="checkbox" value="tech_integration"/>
+<label data-translate-key="q19_opt5" for="q19-opt5">Technology integration that enhances usability for people with varying capabilities</label>
+</div>
+</div>
+<span class="validation-error" id="q19-error" style="display: none;">Please select at least one option.</span>
+</div>
+<div class="question" id="q20-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q20_text" id="q20-text">20. To what extent does your project address socioeconomic barriers through its programming, tenure options, and community integration?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q20_help">This question addresses how the project removes financial, social, or cultural barriers to accessibility and participation through approaches like affordable housing, mixed-income development, or community-focused amenities.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="radio-indicator" data-translate-key="select_one_option"><i class="fas fa-dot-circle"></i> Select one option only</span></p>
+<div class="options">
+<div class="option">
+<input id="q20-opt1" name="q20" required="" type="radio" value="1"/>
+<label data-translate-key="q20_opt1" for="q20-opt1">Basic compliance with minimum inclusivity standards with limited consideration of socioeconomic factors</label>
+</div>
+<div class="option">
+<input id="q20-opt2" name="q20" type="radio" value="2"/>
+<label data-translate-key="q20_opt2" for="q20-opt2">Implementation of at least one specific mechanism to promote economic accessibility</label>
+</div>
+<div class="option">
+<input id="q20-opt3" name="q20" type="radio" value="3"/>
+<label data-translate-key="q20_opt3" for="q20-opt3">Mixed-use and/or mixed-income approach with multiple tenure options for diverse economic circumstances</label>
+</div>
+<div class="option">
+<input id="q20-opt4" name="q20" type="radio" value="4"/>
+<label data-translate-key="q20_opt4" for="q20-opt4">Comprehensive inclusion strategy with clear affordability targets and community engagement processes</label>
+</div>
+<div class="option">
+<input id="q20-opt5" name="q20" type="radio" value="5"/>
+<label data-translate-key="q20_opt5" for="q20-opt5">Transformative approach that actively addresses systemic barriers and provides pathways to economic opportunity</label>
+</div>
+</div>
+<span class="validation-error" id="q20-error" style="display: none;">Please select an option.</span>
+</div>
+<div class="form-navigation-wrapper">
+<div class="form-navigation">
+<button class="nav-btn-base nav-btn-prev" id="prev-5" type="button">Previous</button>
+<button class="nav-btn-base nav-btn-save" id="save-5" type="button">Save Progress</button>
+<button class="nav-btn-base nav-btn-next" id="next-5" type="button">Next</button>
+</div>
+</div>
+</section>
+<!-- Section 6: Sustainable Cities & Environment (Q21-24) -->
+<section aria-labelledby="section6-heading" class="form-section" data-section="6">
+<h2 class="tool-section-title" data-translate-key="section6_title" id="section6-heading">Sustainable Cities &amp; Environment</h2>
+<div class="question" id="q21-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q21_text" id="q21-text">21. How comprehensively does your project address key dimensions of urban sustainability through integrated design approaches?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q21_help">Urban sustainability encompasses environmental, social, and economic aspects of design that contribute to more livable, resilient, and equitable urban environments.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="checkbox-indicator" data-translate-key="select_all_options"><i class="fas fa-check-square"></i> Select all that apply</span></p>
+<div class="options" data-min-check="1">
+<div class="option">
+<input id="q21-opt1" name="q21" type="checkbox" value="affordable_housing"/>
+<label data-translate-key="q21_opt1" for="q21-opt1">Affordable housing with universal design features and access to quality green spaces</label>
+</div>
+<div class="option">
+<input id="q21-opt2" name="q21" type="checkbox" value="resilience_measures"/>
+<label data-translate-key="q21_opt2" for="q21-opt2">Multi-hazard resilience measures addressing local climate and disaster risks</label>
+</div>
+<div class="option">
+<input id="q21-opt3" name="q21" type="checkbox" value="resource_efficient"/>
+<label data-translate-key="q21_opt3" for="q21-opt3">Resource-efficient systems that reduce environmental footprint (waste, water, energy)</label>
+</div>
+<div class="option">
+<input id="q21-opt4" name="q21" type="checkbox" value="cultural_heritage"/>
+<label data-translate-key="q21_opt4" for="q21-opt4">Preservation and enhancement of cultural/natural heritage elements</label>
+</div>
+<div class="option">
+<input id="q21-opt5" name="q21" type="checkbox" value="inclusive_spaces"/>
+<label data-translate-key="q21_opt5" for="q21-opt5">Inclusive public spaces designed for diverse user groups</label>
+</div>
+</div>
+<span class="validation-error" id="q21-error" style="display: none;">Please select at least one option.</span>
+</div>
+<div class="question" id="q22-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q22_text" id="q22-text">22. To what extent does your project balance immediate community needs with long-term environmental and social resilience?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q22_help">This question addresses how the project manages trade-offs between short-term utility and long-term sustainability, considering both present needs and future challenges or opportunities.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="radio-indicator" data-translate-key="select_one_option"><i class="fas fa-dot-circle"></i> Select one option only</span></p>
+<div class="options">
+<div class="option">
+<input id="q22-opt1" name="q22" required="" type="radio" value="1"/>
+<label data-translate-key="q22_opt1" for="q22-opt1">Basic compliance with minimum standards for sustainability and safety</label>
+</div>
+<div class="option">
+<input id="q22-opt2" name="q22" type="radio" value="2"/>
+<label data-translate-key="q22_opt2" for="q22-opt2">Moderate implementation of sustainable features beyond code requirements with some consideration of future risks</label>
+</div>
+<div class="option">
+<input id="q22-opt3" name="q22" type="radio" value="3"/>
+<label data-translate-key="q22_opt3" for="q22-opt3">Integrated approach incorporating multiple sustainability strategies with clear resilience benefits</label>
+</div>
+<div class="option">
+<input id="q22-opt4" name="q22" type="radio" value="4"/>
+<label data-translate-key="q22_opt4" for="q22-opt4">Comprehensive sustainability framework addressing social inclusion, environmental protection, and economic viability</label>
+</div>
+<div class="option">
+<input id="q22-opt5" name="q22" type="radio" value="5"/>
+<label data-translate-key="q22_opt5" for="q22-opt5">Transformative model demonstrating innovative approaches to urban challenges with measurable co-benefits</label>
+</div>
+</div>
+<span class="validation-error" id="q22-error" style="display: none;">Please select an option.</span>
+</div>
+<div class="question" id="q23-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q23_text" id="q23-text">23. How comprehensively does your project implement sustainable material strategies and lifecycle management approaches?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q23_help">Sustainable material strategies include selecting materials with lower environmental impacts, longer lifespans, or those sourced from renewable or recycled sources. Lifecycle management involves planning for the entire life of materials from extraction to disposal or reuse.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="checkbox-indicator" data-translate-key="select_all_options"><i class="fas fa-check-square"></i> Select all that apply</span></p>
+<div class="options" data-min-check="1">
+<div class="option">
+<input id="q23-opt1" name="q23" type="checkbox" value="sustainability_framework"/>
+<label data-translate-key="q23_opt1" for="q23-opt1">Integration within a recognized sustainability assessment framework with lifecycle evaluation</label>
+</div>
+<div class="option">
+<input id="q23-opt2" name="q23" type="checkbox" value="bio_materials"/>
+<label data-translate-key="q23_opt2" for="q23-opt2">Specified use of bio-based or renewable materials with documentation of sourcing certification</label>
+</div>
+<div class="option">
+<input id="q23-opt3" name="q23" type="checkbox" value="modular_systems"/>
+<label data-translate-key="q23_opt3" for="q23-opt3">Implementation of modular or adaptable construction systems that facilitate future reuse</label>
+</div>
+<div class="option">
+<input id="q23-opt4" name="q23" type="checkbox" value="waste_management"/>
+<label data-translate-key="q23_opt4" for="q23-opt4">Construction waste management plan with specific diversion targets and on-site separation procedures</label>
+</div>
+<div class="option">
+<input id="q23-opt5" name="q23" type="checkbox" value="circular_economy"/>
+<label data-translate-key="q23_opt5" for="q23-opt5">Material selection prioritizing recycled content, reclaimed resources, or circular economy principles</label>
+</div>
+</div>
+<span class="validation-error" id="q23-error" style="display: none;">Please select at least one option.</span>
+</div>
+<div class="question" id="q24-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q24_text" id="q24-text">24. To what extent does your project incorporate sustainable procurement practices and provide operational transparency regarding material and resource management?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q24_help">Sustainable procurement involves considering environmental and social factors in purchasing decisions. Operational transparency refers to providing clear information about material sourcing, environmental impacts, and resource management practices.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="radio-indicator" data-translate-key="select_one_option"><i class="fas fa-dot-circle"></i> Select one option only</span></p>
+<div class="options">
+<div class="option">
+<input id="q24-opt1" name="q24" required="" type="radio" value="1"/>
+<label data-translate-key="q24_opt1" for="q24-opt1">Basic compliance with standard procurement requirements with minimal sustainability criteria</label>
+</div>
+<div class="option">
+<input id="q24-opt2" name="q24" type="radio" value="2"/>
+<label data-translate-key="q24_opt2" for="q24-opt2">Implementation of selective sustainability criteria for major material categories with some supplier verification</label>
+</div>
+<div class="option">
+<input id="q24-opt3" name="q24" type="radio" value="3"/>
+<label data-translate-key="q24_opt3" for="q24-opt3">Comprehensive sustainable procurement strategy with documented supplier qualification procedures</label>
+</div>
+<div class="option">
+<input id="q24-opt4" name="q24" type="radio" value="4"/>
+<label data-translate-key="q24_opt4" for="q24-opt4">Integrated sustainability reporting throughout supply chain with third-party verification of claims</label>
+</div>
+<div class="option">
+<input id="q24-opt5" name="q24" type="radio" value="5"/>
+<label data-translate-key="q24_opt5" for="q24-opt5">Transformative approach including full lifecycle transparency, building user education, and monitoring systems</label>
+</div>
+</div>
+<span class="validation-error" id="q24-error" style="display: none;">Please select an option.</span>
+</div>
+<div class="form-navigation-wrapper">
+<div class="form-navigation">
+<button class="nav-btn-base nav-btn-prev" id="prev-6" type="button">Previous</button>
+<button class="nav-btn-base nav-btn-save" id="save-6" type="button">Save Progress</button>
+<button class="nav-btn-base nav-btn-next" id="next-6" type="button">Next</button>
+</div>
+</div>
+</section>
+<!-- Section 7: Climate Action & Environmental Protection (Q25-31) -->
+<section aria-labelledby="section7-heading" class="form-section" data-section="7">
+<h2 class="tool-section-title" data-translate-key="section7_title" id="section7-heading">Climate Action &amp; Environmental Protection</h2>
+<div class="question" id="q25-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q25_text" id="q25-text">25. How comprehensively does your project incorporate design strategies to enhance resilience against climate-related hazards and changing environmental conditions?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q25_help">Climate resilience strategies help buildings and communities withstand extreme weather events, higher temperatures, sea level rise, and other climate-related challenges while maintaining functionality.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="checkbox-indicator" data-translate-key="select_all_options"><i class="fas fa-check-square"></i> Select all that apply</span></p>
+<div class="options" data-min-check="1">
+<div class="option">
+<input id="q25-opt1" name="q25" type="checkbox" value="passive_design"/>
+<label data-translate-key="q25_opt1" for="q25-opt1">Passive design elements that maintain functionality during extreme temperature events</label>
+</div>
+<div class="option">
+<input id="q25-opt2" name="q25" type="checkbox" value="structural_adaptations"/>
+<label data-translate-key="q25_opt2" for="q25-opt2">Structural adaptations to withstand region-specific natural hazards</label>
+</div>
+<div class="option">
+<input id="q25-opt3" name="q25" type="checkbox" value="water_management"/>
+<label data-translate-key="q25_opt3" for="q25-opt3">Water management systems that address both drought and flood scenarios</label>
+</div>
+<div class="option">
+<input id="q25-opt4" name="q25" type="checkbox" value="material_selections"/>
+<label data-translate-key="q25_opt4" for="q25-opt4">Material selections that enhance durability under intensifying climate conditions</label>
+</div>
+<div class="option">
+<input id="q25-opt5" name="q25" type="checkbox" value="monitoring_systems"/>
+<label data-translate-key="q25_opt5" for="q25-opt5">Monitoring systems that track environmental conditions and building performance</label>
+</div>
+</div>
+<span class="validation-error" id="q25-error" style="display: none;">Please select at least one option.</span>
+</div>
+<div class="question" id="q26-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q26_text" id="q26-text">26. To what extent does your project implement strategies to reduce lifecycle carbon emissions compared to conventional practice?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q26_help">Lifecycle carbon emissions include both embodied carbon (from materials and construction) and operational carbon (from building energy use) over the project's lifespan.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="radio-indicator" data-translate-key="select_one_option"><i class="fas fa-dot-circle"></i> Select one option only</span></p>
+<div class="options">
+<div class="option">
+<input id="q26-opt1" name="q26" required="" type="radio" value="1"/>
+<label data-translate-key="q26_opt1" for="q26-opt1">Basic efficiency improvements with minimal consideration of embodied carbon</label>
+</div>
+<div class="option">
+<input id="q26-opt2" name="q26" type="radio" value="2"/>
+<label data-translate-key="q26_opt2" for="q26-opt2">Moderate carbon reduction (20-30%) through selected low-carbon materials and energy efficiency</label>
+</div>
+<div class="option">
+<input id="q26-opt3" name="q26" type="radio" value="3"/>
+<label data-translate-key="q26_opt3" for="q26-opt3">Significant carbon reduction (40-50%) through comprehensive embodied and operational carbon strategies</label>
+</div>
+<div class="option">
+<input id="q26-opt4" name="q26" type="radio" value="4"/>
+<label data-translate-key="q26_opt4" for="q26-opt4">Advanced carbon reduction (60-70%) through integrated design approach and carbon-negative elements</label>
+</div>
+<div class="option">
+<input id="q26-opt5" name="q26" type="radio" value="5"/>
+<label data-translate-key="q26_opt5" for="q26-opt5">Regenerative approach achieving net carbon negativity through material selection, sequestration, and energy generation</label>
+</div>
+</div>
+<span class="validation-error" id="q26-error" style="display: none;">Please select an option.</span>
+</div>
+<div class="question" id="q27-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q27_text" id="q27-text">27. How comprehensively does your project implement strategies to prevent pollutants from entering waterways or marine environments?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q27_help">This refers to preventing water pollution during construction and operation, including controls for sediment, chemicals, debris, and plastic waste that could affect aquatic ecosystems.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="checkbox-indicator" data-translate-key="select_all_options"><i class="fas fa-check-square"></i> Select all that apply</span></p>
+<div class="options" data-min-check="1">
+<div class="option">
+<input id="q27-opt1" name="q27" type="checkbox" value="waste_management"/>
+<label data-translate-key="q27_opt1" for="q27-opt1">Comprehensive plastic waste management system for construction phase</label>
+</div>
+<div class="option">
+<input id="q27-opt2" name="q27" type="checkbox" value="plastic_packaging"/>
+<label data-translate-key="q27_opt2" for="q27-opt2">Specification requirements limiting single-use plastic packaging for construction materials</label>
+</div>
+<div class="option">
+<input id="q27-opt3" name="q27" type="checkbox" value="material_selection"/>
+<label data-translate-key="q27_opt3" for="q27-opt3">Material selection criteria that restrict or eliminate plastic-based building components lacking recycling pathways</label>
+</div>
+<div class="option">
+<input id="q27-opt4" name="q27" type="checkbox" value="waste_sorting"/>
+<label data-translate-key="q27_opt4" for="q27-opt4">Designated spaces within the building design for waste sorting and prevention of marine debris</label>
+</div>
+<div class="option">
+<input id="q27-opt5" name="q27" type="checkbox" value="stormwater_filtration"/>
+<label data-translate-key="q27_opt5" for="q27-opt5">Stormwater management systems incorporating filtration to capture microplastics and other pollutants</label>
+</div>
+</div>
+<span class="validation-error" id="q27-error" style="display: none;">Please select at least one option.</span>
+</div>
+<div class="question" id="q28-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q28_text" id="q28-text">28. To what extent does your project incorporate design features that protect or enhance marine and coastal ecosystems?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q28_help">This includes design approaches that minimize negative impacts on aquatic environments and may include features that actively improve water quality or habitat conditions.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="radio-indicator" data-translate-key="select_one_option"><i class="fas fa-dot-circle"></i> Select one option only</span></p>
+<div class="options">
+<div class="option">
+<input id="q28-opt1" name="q28" required="" type="radio" value="1"/>
+<label data-translate-key="q28_opt1" for="q28-opt1">Basic compliance with local regulations regarding water management with minimal consideration of marine impacts</label>
+</div>
+<div class="option">
+<input id="q28-opt2" name="q28" type="radio" value="2"/>
+<label data-translate-key="q28_opt2" for="q28-opt2">Implementation of specific measures to reduce construction runoff and pollutants during development phase</label>
+</div>
+<div class="option">
+<input id="q28-opt3" name="q28" type="radio" value="3"/>
+<label data-translate-key="q28_opt3" for="q28-opt3">Comprehensive stormwater management featuring on-site filtration and containment systems</label>
+</div>
+<div class="option">
+<input id="q28-opt4" name="q28" type="radio" value="4"/>
+<label data-translate-key="q28_opt4" for="q28-opt4">Integrated water management approach incorporating marine-friendly landscaping and runoff prevention</label>
+</div>
+<div class="option">
+<input id="q28-opt5" name="q28" type="radio" value="5"/>
+<label data-translate-key="q28_opt5" for="q28-opt5">Restorative design approach that actively contributes to coastal ecosystem health and marine habitat protection</label>
+</div>
+</div>
+<span class="validation-error" id="q28-error" style="display: none;">Please select an option.</span>
+</div>
+<div class="question" id="q29-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q29_text" id="q29-text">29. How comprehensively does your project address terrestrial ecosystem protection through both ecological design strategies and efficient land use?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q29_help">Terrestrial ecosystem protection includes conserving or enhancing plant and animal habitats, protecting native species, and managing land use to minimize habitat disruption. This may include site planning that preserves natural areas or integrates natural elements.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="checkbox-indicator" data-translate-key="select_all_options"><i class="fas fa-check-square"></i> Select all that apply</span></p>
+<div class="options" data-min-check="1">
+<div class="option">
+<input id="q29-opt1" name="q29" type="checkbox" value="native_vegetation"/>
+<label data-translate-key="q29_opt1" for="q29-opt1">Conservation or replacement of native vegetation (including trees and endangered species)</label>
+</div>
+<div class="option">
+<input id="q29-opt2" name="q29" type="checkbox" value="sustainable_wood"/>
+<label data-translate-key="q29_opt2" for="q29-opt2">Use of certified sustainable wood with verified supply chain traceability</label>
+</div>
+<div class="option">
+<input id="q29-opt3" name="q29" type="checkbox" value="water_sensitive"/>
+<label data-translate-key="q29_opt3" for="q29-opt3">Water-sensitive landscaping that maintains natural hydrology and reduces irrigation needs</label>
+</div>
+<div class="option">
+<input id="q29-opt4" name="q29" type="checkbox" value="habitat_preservation"/>
+<label data-translate-key="q29_opt4" for="q29-opt4">Habitat preservation for local wildlife with measures to prevent invasive species</label>
+</div>
+<div class="option">
+<input id="q29-opt5" name="q29" type="checkbox" value="building_vegetation"/>
+<label data-translate-key="q29_opt5" for="q29-opt5">Building surface vegetation (green roofs, walls, etc.) supporting biodiversity</label>
+</div>
+<div class="option">
+<input id="q29-opt6" name="q29" type="checkbox" value="efficient_land"/>
+<label data-translate-key="q29_opt6" for="q29-opt6">Efficient land use through compact development or reuse of previously developed land</label>
+</div>
+<div class="option">
+<input id="q29-opt7" name="q29" type="checkbox" value="permeable_surfaces"/>
+<label data-translate-key="q29_opt7" for="q29-opt7">Site design maintaining at least 40% permeable/vegetated surfaces relative to total site area</label>
+</div>
+<div class="option">
+<input id="q29-opt8" name="q29" type="checkbox" value="restoration"/>
+<label data-translate-key="q29_opt8" for="q29-opt8">Restoration of previously degraded land or enhancement of existing ecological features</label>
+</div>
+</div>
+<span class="validation-error" id="q29-error" style="display: none;">Please select at least one option.</span>
+</div>
+<div class="question" id="q30-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q30_text" id="q30-text">30. To what extent does your project incorporate design features that enhance safety and implement processes that ensure fairness, transparency, and accountability?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q30_help">This encompasses both physical design elements that create safe environments and procedural approaches that promote fair, transparent business practices throughout the project lifecycle.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="checkbox-indicator" data-translate-key="select_all_options"><i class="fas fa-check-square"></i> Select all that apply</span></p>
+<div class="options" data-min-check="1">
+<div class="option">
+<input id="q30-opt1" name="q30" type="checkbox" value="safety_design"/>
+<label data-translate-key="q30_opt1" for="q30-opt1">Design elements that enhance perceived safety in public and communal spaces</label>
+</div>
+<div class="option">
+<input id="q30-opt2" name="q30" type="checkbox" value="security_features"/>
+<label data-translate-key="q30_opt2" for="q30-opt2">Security features appropriately integrated to protect occupants without creating barriers or exclusion</label>
+</div>
+<div class="option">
+<input id="q30-opt3" name="q30" type="checkbox" value="anti_corruption"/>
+<label data-translate-key="q30_opt3" for="q30-opt3">Documented anti-corruption procedures in procurement and contracting processes</label>
+</div>
+<div class="option">
+<input id="q30-opt4" name="q30" type="checkbox" value="dispute_resolution"/>
+<label data-translate-key="q30_opt4" for="q30-opt4">Transparent dispute resolution mechanisms accessible to all project stakeholders</label>
+</div>
+<div class="option">
+<input id="q30-opt5" name="q30" type="checkbox" value="inclusive_decision"/>
+<label data-translate-key="q30_opt5" for="q30-opt5">Inclusive decision-making processes involving diverse stakeholder groups throughout project phases</label>
+</div>
+<div class="option">
+<input id="q30-opt6" name="q30" type="checkbox" value="feedback_collection"/>
+<label data-translate-key="q30_opt6" for="q30-opt6">Systematic client/user feedback collection and response procedures</label>
+</div>
+<div class="option">
+<input id="q30-opt7" name="q30" type="checkbox" value="ethical_standards"/>
+<label data-translate-key="q30_opt7" for="q30-opt7">Implementation of recognized ethical standards or certifications for project governance</label>
+</div>
+</div>
+<span class="validation-error" id="q30-error" style="display: none;">Please select at least one option.</span>
+</div>
+<div class="question" id="q31-container">
+<div class="question-header">
+<p class="question-text" data-translate-key="q31_text" id="q31-text">31. How extensively does your project engage in partnership-building and knowledge-sharing to advance sustainable design and construction practices?</p>
+<div class="help-tooltip question-help">
+<i class="fas fa-question-circle"></i>
+<span class="tooltip-text" data-translate-key="q31_help">This refers to collaborative efforts that extend beyond the project itself to contribute to broader sustainability goals, including sharing information, forming partnerships, and participating in industry initiatives.</span>
+</div>
+</div>
+<p class="input-type-indicator"><span class="checkbox-indicator" data-translate-key="select_all_options"><i class="fas fa-check-square"></i> Select all that apply</span></p>
+<div class="options" data-min-check="1">
+<div class="option">
+<input id="q31-opt1" name="q31" type="checkbox" value="cooperation_program"/>
+<label data-translate-key="q31_opt1" for="q31-opt1">Integration within a formal cooperation program or sustainable development initiative</label>
+</div>
+<div class="option">
+<input id="q31-opt2" name="q31" type="checkbox" value="frameworks"/>
+<label data-translate-key="q31_opt2" for="q31-opt2">Compliance with or exceeding national/regional sustainable development frameworks</label>
+</div>
+<div class="option">
+<input id="q31-opt3" name="q31" type="checkbox" value="public_dissemination"/>
+<label data-translate-key="q31_opt3" for="q31-opt3">Public dissemination of project data, innovations, or lessons learned through publications or presentations</label>
+</div>
+<div class="option">
+<input id="q31-opt4" name="q31" type="checkbox" value="new_partnerships"/>
+<label data-translate-key="q31_opt4" for="q31-opt4">Formation of new cross-sector partnerships to address sustainability challenges</label>
+</div>
+<div class="option">
+<input id="q31-opt5" name="q31" type="checkbox" value="multidisciplinary_team"/>
+<label data-translate-key="q31_opt5" for="q31-opt5">Assembly of a multidisciplinary team specifically to address comprehensive sustainability goals</label>
+</div>
+<div class="option">
+<input id="q31-opt6" name="q31" type="checkbox" value="performance_data"/>
+<label data-translate-key="q31_opt6" for="q31-opt6">Contribution of project performance data to national or international sustainability databases</label>
+</div>
+<div class="option">
+<input id="q31-opt7" name="q31" type="checkbox" value="knowledge_transfer"/>
+<label data-translate-key="q31_opt7" for="q31-opt7">Technology or knowledge transfer between regions or between developed and developing contexts</label>
+</div>
+<div class="option">
+<input id="q31-opt8" name="q31" type="checkbox" value="industry_initiatives"/>
+<label data-translate-key="q31_opt8" for="q31-opt8">Participation in industry transformation initiatives beyond the scope of a single project</label>
+</div>
+</div>
+<span class="validation-error" id="q31-error" style="display: none;">Please select at least one option.</span>
+</div>
+<div class="form-navigation-wrapper">
+<div class="form-navigation">
+<button class="nav-btn-base nav-btn-prev" id="prev-7" type="button">Previous</button>
+<button class="nav-btn-base nav-btn-save" id="save-7" type="button">Save Progress</button>
+<button class="nav-btn-base nav-btn-submit" id="submit-btn" type="submit">Submit Assessment</button>
+</div>
+</div>
+</section>
+</form>
+<!-- End of Form -->
+<div id="manual-redirect" style="display:none; text-align:center; margin-top:20px;">
+<p>Processing your assessment... If you are not redirected automatically in a few seconds, please click the button below:</p>
+<a class="btn btn-primary" href="#" id="results-link">View Assessment Results</a> <!-- Href will be set by JS -->
+</div>
+</div> <!-- End Container -->
+<div class="save-feedback" id="save-feedback">
+        Progress saved successfully!
+    </div>
+</div><!-- end role main -->
+</div><!-- end col-lg-10 -->
+</div><!-- end row -->
+<!-- end container-lg -->
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+    <script defer src="{{ url_for('static', filename='js/assessment/i18n_assessment.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='js/assessment/ui_assessment.js') }}"></script>
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("DOM fully loaded and parsed.");
+
+            // --- Global Variables & Elements ---
+            const form = document.getElementById('sustainability-form');
+            const sections = document.querySelectorAll('.form-section');
+            const totalSections = sections.length;
+            const progressBar = document.getElementById('progress');
+            const steps = document.querySelectorAll('.step');
+            const saveFeedback = document.getElementById('save-feedback');
+            const submitBtn = document.getElementById('submit-btn');
+            const manualRedirectDiv = document.getElementById('manual-redirect');
+            const resultsLink = document.getElementById('results-link');
+
+            const projectIdInput = document.querySelector('input[name="project_id"]');
+            const assessmentIdInput = document.querySelector('input[name="assessment_id"]');
+
+            if (!form || !projectIdInput || !assessmentIdInput || !progressBar || steps.length === 0 || sections.length === 0) {
+                console.error("Essential form elements not found. Page details:", {
+                    form: !!form,
+                    projectIdInput: !!projectIdInput,
+                    assessmentIdInput: !!assessmentIdInput,
+                    progressBar: !!progressBar,
+                    stepsCount: steps.length,
+                    sectionsCount: sections.length,
+                    currentURL: window.location.href,
+                    documentTitle: document.title
+                });
+
+                // Show user-friendly error message
+                const container = document.querySelector('.assessment-container') || document.body;
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'alert alert-danger';
+                errorDiv.innerHTML = `
+                    <h4>Error Loading Questionnaire</h4>
+                    <p>The questionnaire form could not be loaded properly. This may be due to a server error.</p>
+                    <p>Please try:</p>
+                    <ul>
+                        <li>Refreshing the page</li>
+                        <li>Going back to <a href="/projects">Projects</a> and starting the assessment again</li>
+                        <li>Contacting support if the problem persists</li>
+                    </ul>
+                `;
+                container.insertBefore(errorDiv, container.firstChild);
+                return; // Stop if essential elements are missing
+            }
+
+            const projectId = projectIdInput.value;
+            const assessmentId = assessmentIdInput.value;
+            let currentSection = 1; // Start at section 1
+
+            console.log(`Project ID: ${projectId}, Assessment ID: ${assessmentId}, Total Sections: ${totalSections}`);
+
+             // Set the manual redirect link URL immediately
+             if (resultsLink && projectId && assessmentId) {
+                const resultsUrl = `/assessments/projects/${projectId}/results/${assessmentId}`; // Adjust URL structure if needed
+                 resultsLink.href = resultsUrl;
+                console.log("Manual redirect link set to:", resultsUrl);
+             }
+
+
+            // --- Helper Functions ---
+
+            // Validation function for assessment sections
+            function validateAssessmentSection(sectionNumber) {
+                const section = document.querySelector(`.form-section[data-section="${sectionNumber}"]`);
+                if (!section) return true;
+
+                let isValid = true;
+
+                // Clear previous errors specifically within this section
+                const errorMessages = section.querySelectorAll('.validation-error');
+                errorMessages.forEach(el => el.remove());
+
+                const questions = section.querySelectorAll('.question');
+                questions.forEach(question => question.classList.remove('invalid'));
+
+                // Validate each question
+                questions.forEach(question => {
+                    const isRadioQuestion = question.querySelector('.radio-indicator') !== null;
+                    const isCheckboxQuestion = question.querySelector('.checkbox-indicator') !== null;
+
+                    if (isRadioQuestion) {
+                        // Radio validation logic
+                        const firstRadio = question.querySelector('input[type="radio"]');
+                        if (firstRadio) {
+                            const radioGroupName = firstRadio.name;
+                            const radiosInGroup = question.querySelectorAll(`input[type="radio"][name="${radioGroupName}"]`);
+                            const selected = Array.from(radiosInGroup).some(radio => radio.checked);
+
+                            if (!selected) {
+                                isValid = false;
+                                question.classList.add('invalid');
+
+                                if (!question.querySelector('.validation-error')) {
+                                    const errorMsg = document.createElement('div');
+                                    errorMsg.className = 'validation-error';
+                                    errorMsg.textContent = 'Please select one option';
+                                    const optionsDiv = question.querySelector('.options');
+                                    if (optionsDiv) {
+                                        optionsDiv.insertAdjacentElement('afterend', errorMsg);
+                                    } else {
+                                        question.appendChild(errorMsg);
+                                    }
+                                }
+                            }
+                        } else {
+                            console.warn("Could not find any radio buttons in question:", question);
+                        }
+                    }
+
+                    if (isCheckboxQuestion) {
+                        // Checkbox validation logic
+                        const firstCheckbox = question.querySelector('input[type="checkbox"]');
+                        if (firstCheckbox) {
+                            const checkboxGroupName = firstCheckbox.name;
+                            const checkboxesInGroup = question.querySelectorAll(`input[type="checkbox"][name="${checkboxGroupName}"]`);
+                            const selected = Array.from(checkboxesInGroup).some(checkbox => checkbox.checked);
+
+                            if (!selected) {
+                                isValid = false;
+                                question.classList.add('invalid');
+
+                                if (!question.querySelector('.validation-error')) {
+                                    const errorMsg = document.createElement('div');
+                                    errorMsg.className = 'validation-error';
+                                    errorMsg.textContent = 'Please select at least one option';
+                                    const optionsDiv = question.querySelector('.options');
+                                    if (optionsDiv) {
+                                        optionsDiv.insertAdjacentElement('afterend', errorMsg);
+                                    } else {
+                                        question.appendChild(errorMsg);
+                                    }
+                                }
+                            }
+                        } else {
+                            console.warn("Could not find any checkboxes in question:", question);
+                        }
+                    }
+                });
+
+                // If validation failed, scroll to the first error
+                if (!isValid) {
+                    const firstError = section.querySelector('.question.invalid');
+                    if (firstError) {
+                        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+
+                return isValid;
+            }
+
+            function updateProgress() {
+                if (!progressBar) return;
+                const percent = Math.max(0, (currentSection -1) / totalSections * 100);
+                progressBar.style.width = percent + '%';
+                progressBar.setAttribute('aria-valuenow', Math.round(percent));
+                console.log(`Progress updated: ${percent}%`);
+            }
+
+            function updateSteps() {
+                steps.forEach(step => {
+                    const stepNum = parseInt(step.dataset.step);
+                    step.classList.remove('active', 'completed');
+                    if (stepNum === currentSection) {
+                        step.classList.add('active');
+                    } else if (stepNum < currentSection) {
+                        step.classList.add('completed');
+                    }
+                });
+                console.log(`Steps updated for section ${currentSection}`);
+            }
+
+            function showSaveFeedback() {
+                if (!saveFeedback) return;
+                saveFeedback.style.display = 'block';
+                // Use CSS animation for fade out if available, otherwise fallback
+                 if (window.getComputedStyle(saveFeedback).animationName === 'none') {
+                     setTimeout(() => {
+                         saveFeedback.style.display = 'none';
+                     }, 3000);
+                 } else {
+                     // Let CSS animation handle hiding
+                     setTimeout(() => {
+                          if (saveFeedback.style.display !== 'none') { // Check if it wasn't hidden by something else
+                            saveFeedback.style.display = 'none'; // Ensure hidden after animation
+                          }
+                     }, 3000); // Match CSS animation duration + delay
+                 }
+                console.log("Save feedback shown.");
+            }
+
+            function saveFormData(callback) {
+                console.log("Attempting to save form data...");
+                const formData = new FormData(form);
+                const formDataObj = {};
+
+                // Correctly handle multi-select checkboxes
+                form.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                    const name = checkbox.name;
+                    if (!formDataObj[name]) {
+                        formDataObj[name] = [];
+                    }
+                    formDataObj[name].push(checkbox.value);
+                });
+
+                 // Add radio buttons and other fields
+                 for (const [key, value] of formData.entries()) {
+                     // Only add if not already handled (i.e., not a checkbox)
+                     // AND skip the csrf_token here as we send it via header
+                     if (!(form.querySelector(`input[name="${key}"]`)?.type === 'checkbox') && key !== 'csrf_token') {
+                         formDataObj[key] = value;
+                     }
+                 }
+
+                 // --- Get CSRF token for the header ---
+                 const csrfToken = document.querySelector('input[name="csrf_token"]')?.value;
+                 if (!csrfToken) {
+                     console.error("CSRF token not found in form!");
+                     // Handle error appropriately - maybe alert user or prevent save
+                     if (typeof callback === 'function') callback(false);
+                     return;
+                 }
+                 // --- END Get CSRF token ---
+
+
+                const saveUrl = `/assessments/projects/${projectId}/questionnaire/${assessmentId}/save-draft`;
+                console.log("Save URL:", saveUrl);
+                console.log("Data to save (body):", formDataObj);
+                console.log("CSRF Token (header):", csrfToken);
+
+
+                fetch(saveUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        // --- Add CSRF header ---
+                        'X-CSRFToken': csrfToken
+                        // --- END Add CSRF header ---
+                    },
+                    body: JSON.stringify(formDataObj)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        // Try to get error details from response body
+                        return response.json().then(errData => {
+                           throw new Error(`Save failed: ${response.status} ${response.statusText}. Server message: ${errData.message || 'No message'}`);
+                        }).catch(() => {
+                           // If parsing JSON fails, throw generic error
+                           throw new Error(`Save failed: ${response.status} ${response.statusText}`);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        showSaveFeedback();
+                        console.log("Progress saved successfully via AJAX.");
+                         if (typeof callback === 'function') callback(true);
+                    } else {
+                        console.error("Error saving progress (server response):", data.message || "Unknown error");
+                        // Don't alert for draft saves, just log
+                        console.warn("Draft save failed, continuing navigation/submit attempt.");
+                         if (typeof callback === 'function') callback(true); // Allow proceeding even if draft save fails
+                    }
+                })
+                .catch(error => {
+                    console.error("Error saving progress (network/fetch error):", error);
+                    // Don't alert for draft saves, just log
+                    console.warn(`Network error during draft save: ${error.message}. Continuing navigation/submit attempt.`);
+                     if (typeof callback === 'function') callback(true); // Allow proceeding even if draft save fails
+                });
+            }
+
+            function goToSection(sectionNum) {
+                console.log(`Attempting to navigate from section ${currentSection} to section ${sectionNum}`);
+                if (sectionNum < 1 || sectionNum > totalSections) {
+                    console.error(`Invalid section number: ${sectionNum}`);
+                    return;
+                }
+
+                sections.forEach(section => section.classList.remove('active'));
+                const targetSection = document.querySelector(`.form-section[data-section="${sectionNum}"]`);
+
+                if (targetSection) {
+                    targetSection.classList.add('active');
+                    currentSection = sectionNum;
+                    updateProgress();
+                    updateSteps();
+
+                    // Update Previous button state
+                    const prevButton = document.getElementById(`prev-${currentSection}`);
+                    if (prevButton) prevButton.disabled = (currentSection === 1);
+
+                     // Update Next button state (hide on last section) - handled by submit button visibility logic
+                     const nextButton = document.getElementById(`next-${currentSection}`);
+                     if (nextButton) nextButton.style.display = (currentSection === totalSections) ? 'none' : 'inline-block';
+
+                     // Show/hide Submit button
+                     const currentSubmitBtn = document.getElementById('submit-btn'); // Re-select in case it's specific to section 7
+                     if (currentSubmitBtn) currentSubmitBtn.style.display = (currentSection === totalSections) ? 'inline-block' : 'none';
+
+
+                    // Scroll to top of container
+                    const container = document.querySelector('.container');
+                    if (container) {
+                        container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                    console.log(`Successfully navigated to section ${currentSection}`);
+                } else {
+                    console.error(`Could not find section element for section ${sectionNum}`);
+                }
+            }
+
+             function loadFormData() {
+                 const loadUrl = `/assessments/projects/${projectId}/questionnaire/${assessmentId}/load-draft`;
+                 console.log("Attempting to load saved data from:", loadUrl);
+                 fetch(loadUrl, {
+                     method: 'GET',
+                     headers: {
+                         'X-Requested-With': 'XMLHttpRequest',
+                         'Accept': 'application/json'
+                     }
+                 })
+                 .then(response => {
+                     if (!response.ok) {
+                          // Don't treat 404 (no draft saved yet) as an error
+                          if (response.status === 404) {
+                              console.log("No saved draft found (404). Starting fresh.");
+                              return null; // Indicate no data loaded
+                          }
+                         throw new Error(`Load failed: ${response.status} ${response.statusText}`);
+                     }
+                     // Check content type before parsing
+                     const contentType = response.headers.get("content-type");
+                     if (contentType && contentType.indexOf("application/json") !== -1) {
+                        return response.json();
+                     } else {
+                         throw new Error("Received non-JSON response from load endpoint.");
+                     }
+                 })
+                 .then(data => {
+                     if (data && data.success && data.data) {
+                         console.log("Loaded data:", data.data);
+                         for (const [key, value] of Object.entries(data.data)) {
+                             const elements = form.querySelectorAll(`[name="${key}"]`);
+                             if (elements.length > 0) {
+                                 elements.forEach(element => {
+                                     if (element.type === 'checkbox') {
+                                         // Ensure value is an array for checkboxes
+                                         const values = Array.isArray(value) ? value : [value];
+                                         element.checked = values.includes(element.value);
+                                     } else if (element.type === 'radio') {
+                                         element.checked = (element.value === value);
+                                     } else {
+                                         // Handle text inputs, selects, textareas, etc.
+                                         element.value = value;
+                                     }
+                                 });
+                             } else {
+                                 console.warn(`No form element found for loaded data key: "${key}"`);
+                             }
+                         }
+                         console.log("Form populated with loaded data.");
+                     } else if (data && !data.success) {
+                          console.warn("Load endpoint returned success=false:", data.message || "No message");
+                     } else if (!data) {
+                         // This handles the 404 case where null was returned
+                         console.log("No previous draft data to load.");
+                     }
+                 })
+                 .catch(error => {
+                     console.error("Error loading form data:", error);
+                      // Don't alert the user for load errors, just log it. They can proceed with a blank form.
+                 });
+             }
+
+            // --- Event Listeners ---
+
+            // Next Buttons
+            document.querySelectorAll('.nav-btn-next').forEach(button => {
+                button.addEventListener('click', function() {
+                    const currentSectionNum = parseInt(this.id.split('-')[1]);
+                    console.log(`Next button clicked for section ${currentSectionNum}`);
+
+                     // Validate the CURRENT section before proceeding
+                     const isValid = validateAssessmentSection(currentSectionNum);
+                     console.log(`Validation result for section ${currentSectionNum}: ${isValid}`);
+
+                    if (isValid) {
+                        // Save current section's data before moving
+                        saveFormData(() => { // Use callback to ensure save attempt finishes
+                             goToSection(currentSectionNum + 1);
+                        });
+                    } else {
+                         console.log("Validation failed for section", currentSectionNum);
+                         // Optionally scroll to the first error in the section
+                         const firstError = document.querySelector(`.form-section[data-section="${currentSectionNum}"] .question.invalid`);
+                         if(firstError) {
+                             firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                         }
+                    }
+                });
+            });
+
+            // Previous Buttons
+            document.querySelectorAll('.btn-prev').forEach(button => {
+                button.addEventListener('click', function() {
+                    const currentSectionNum = parseInt(this.id.split('-')[1]);
+                    console.log(`Previous button clicked for section ${currentSectionNum}`);
+                    goToSection(currentSectionNum - 1);
+                });
+            });
+
+            // Save Buttons
+            document.querySelectorAll('.btn-save').forEach(button => {
+                button.addEventListener('click', function() {
+                     console.log(`Save button clicked for section ${currentSection}`);
+                     saveFormData(); // Save without navigating
+                 });
+            });
+
+            // Form Submission
+            if (form) {
+                const projectIdInput = document.querySelector('input[name="project_id"]');
+                const assessmentIdInput = document.querySelector('input[name="assessment_id"]');
+                const projectId = projectIdInput ? projectIdInput.value : null;
+                const assessmentId = assessmentIdInput ? assessmentIdInput.value : null;
+                // --- Define the FINAL submit URL ---
+                const submitUrl = projectId && assessmentId ? `/assessments/projects/${projectId}/assessments/${assessmentId}/submit` : null;
+                console.log("Submit URL constructed:", submitUrl);
+                // --- Store the results URL ---
+                const resultsUrl = projectId && assessmentId ? `/assessments/projects/${projectId}/assessments/${assessmentId}/results` : null;
+
+
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault(); // Prevent default form submission ALWAYS
+                    console.log("Form submission initiated (AJAX)...");
+
+                    if (!submitBtn) {
+                        console.error("Submit button not found!");
+                        return;
+                    }
+                    if (!submitUrl) {
+                        console.error("Submit URL could not be constructed!");
+                        alert("Error: Cannot determine submission URL.");
+                        return;
+                    }
+
+                    // Disable button immediately
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+
+                    // Validate ALL sections one last time
+                    let allSectionsValid = true;
+                    let firstInvalidSection = null;
+                    for (let i = 1; i <= totalSections; i++) {
+                         let sectionValid = false;
+                         if (typeof FormValidation !== 'undefined' && FormValidation.validateAssessmentSection) {
+                             sectionValid = FormValidation.validateAssessmentSection(i);
+                         } else {
+                              console.warn(`Validation skipped for section ${i} during final submit (validation function missing).`);
+                              sectionValid = true;
+                         }
+                         if (!sectionValid) {
+                            allSectionsValid = false;
+                            if (firstInvalidSection === null) firstInvalidSection = i;
+                         }
+                    }
+
+                    if (!allSectionsValid) {
+                        console.log(`Final validation failed. First invalid section: ${firstInvalidSection}`);
+                        goToSection(firstInvalidSection);
+                        alert("Please complete all required questions before submitting. Check section " + firstInvalidSection + ".");
+                        setTimeout(() => {
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = 'Submit Assessment';
+                        }, 500);
+                        return;
+                    }
+
+                    // --- Submit using AJAX ---
+                    console.log("All sections valid. Submitting via AJAX...");
+
+                    const finalFormData = new FormData(form);
+                    const finalFormDataObj = {};
+
+                    // Build the final data object similar to saveFormData
+                    finalFormData.forEach((value, key) => {
+                         // Handle checkboxes correctly (aggregate into arrays)
+                         if (form.querySelector(`[name="${key}"]`)?.type === 'checkbox') {
+                             if (!finalFormDataObj[key]) {
+                                 finalFormDataObj[key] = [];
+                             }
+                             finalFormDataObj[key].push(value);
+                         } else if (key !== 'csrf_token') { // Exclude CSRF token from body
+                             finalFormDataObj[key] = value;
+                         }
+                     });
+
+                    // Get CSRF token for the header
+                    const csrfToken = document.querySelector('input[name="csrf_token"]')?.value;
+                     if (!csrfToken) {
+                         console.error("CSRF token not found for final submit!");
+                         alert("Critical Error: Missing security token. Cannot submit.");
+                         submitBtn.disabled = false;
+                         submitBtn.innerHTML = 'Submit Assessment';
+                         return;
+                     }
+
+                    fetch(submitUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': csrfToken // Send CSRF token in header
+                        },
+                        body: JSON.stringify(finalFormDataObj) // Send all form data as JSON
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            // Attempt to get more specific error from response
+                            return response.text().then(text => { // Use .text() as it might not be JSON
+                                console.error("Submit failed response text:", text);
+                                // Try parsing as JSON, but fallback to text
+                                try {
+                                    const errData = JSON.parse(text);
+                                    throw new Error(`Submit failed: ${response.status} ${response.statusText}. Server message: ${errData.message || text}`);
+                                } catch (e) {
+                                    throw new Error(`Submit failed: ${response.status} ${response.statusText}. Response: ${text}`);
+                                }
+                            });
+                        }
+                        return response.json(); // Expecting JSON on success (e.g., redirect URL or success message)
+                    })
+                    .then(data => {
+                        console.log("Submission successful (AJAX):", data);
+                        // Redirect to the results page on success
+                        if (resultsUrl) {
+                            window.location.href = resultsUrl;
+                        } else {
+                            alert("Assessment submitted successfully! (Could not determine results page URL)");
+                             // Re-enable button if redirection fails
+                             submitBtn.disabled = false;
+                             submitBtn.innerHTML = 'Submit Assessment';
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error submitting assessment (AJAX):", error);
+                        alert(`Error submitting assessment: ${error.message}`);
+                        // Re-enable submit button on error
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = 'Submit Assessment';
+                    });
+                    // --- END Submit using AJAX ---
+                });
+            } else {
+                console.error("Form element not found!");
+            }
+
+            // --- Initialization ---
+            console.log("Initializing form state...");
+            loadFormData(); // Attempt to load saved data on page load
+            goToSection(1); // Ensure the first section is displayed correctly
+             // Hide submit button initially if it exists outside section 7
+             if (submitBtn && !submitBtn.closest('.form-section[data-section="7"]')) {
+                 submitBtn.style.display = 'none';
+             }
+
+
+            console.log("Form script setup complete.");
+        });
+    </script>
+{% endblock %}

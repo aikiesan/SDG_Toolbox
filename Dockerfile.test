@@ -1,0 +1,41 @@
+# Test-specific Dockerfile
+FROM python:3.10-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies including Chrome dependencies for Selenium
+RUN apt-get update && apt-get install -y \
+    postgresql-client \
+    gcc \
+    g++ \
+    curl \
+    wget \
+    gnupg \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements files
+COPY requirements.txt requirements-test.txt ./
+
+# Install Python dependencies
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir -r requirements-test.txt
+
+# Copy application code
+COPY . .
+
+# Create directory for test reports
+RUN mkdir -p /app/test-reports/htmlcov
+
+# Set environment variables
+ENV PYTHONPATH=/app
+ENV FLASK_APP=run.py
+ENV FLASK_ENV=testing
+ENV TESTING=True
+
+# Expose port for test server (if needed)
+EXPOSE 5000
+
+# Default command (will be overridden by docker-compose or scripts)
+CMD ["pytest", "--cov=app", "--cov-report=html", "--cov-report=xml", "--cov-report=term", "-v"]

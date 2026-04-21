@@ -1,0 +1,417 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block styles %}
+<style>
+  .dashboard-card {
+    transition: transform 0.3s;
+    height: 100%;
+  }
+  .dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .stat-card {
+    border-left: 4px solid var(--uia-red);
+    border-radius: 0;
+  }
+  .card-header h5 {
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  .chart-container {
+    height: 300px;
+    position: relative;
+  }
+  .progress-step {
+    height: 30px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-lg py-5">
+  <div class="row gx-md-5">
+    <!-- Sidebar -->
+    <div class="col-12 col-lg-2">
+      <div class="sticky-top pt-2">
+        <nav class="d-flex flex-column gap-2">
+          <span class="sdg-section-header mb-2">Dashboard</span>
+          <a href="{{ url_for('dashboard.index') }}" class="btn btn-uia-outline w-100 text-start">Overview</a>
+          <a href="{{ url_for('dashboard.sdg_analysis') }}" class="btn btn-uia-outline w-100 text-start">SDG Analysis</a>
+          <a href="{{ url_for('dashboard.project_comparison') }}" class="btn btn-uia-outline w-100 text-start">Comparison</a>
+          <a href="{{ url_for('dashboard.generate_report') }}" class="btn btn-uia-primary w-100 text-start" target="_blank">Report</a>
+        </nav>
+      </div>
+    </div>
+    <!-- Main Content -->
+    <div class="col-12 col-lg-10">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0" style="text-transform: uppercase; font-weight: 800;">Dashboard</h1>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="card stat-card shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6 class="text-muted mb-0">Total Projects</h6>
+              <span class="stat-value">{{ project_count }}</span>
+            </div>
+            <div class="align-self-center">
+              <i class="bi bi-building" style="font-size: 2rem; color: var(--uia-red);"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="card stat-card shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6 class="text-muted mb-0">Total Assessments</h6>
+              <span class="stat-value">{{ assessment_count }}</span>
+            </div>
+            <div class="align-self-center">
+              <i class="bi bi-clipboard-check" style="font-size: 2rem; color: var(--uia-red);"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="card stat-card shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6 class="text-muted mb-0">Completion Rate</h6>
+              <span class="stat-value">{{ completion_rate|round|int }}%</span>
+            </div>
+            <div class="align-self-center">
+              <i class="bi bi-graph-up-arrow" style="font-size: 2rem; color: var(--uia-red);"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="card stat-card shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h6 class="text-muted mb-0">Average SDG Score</h6>
+              <span class="stat-value">{{ avg_score|round(1) }}</span>
+            </div>
+            <div class="align-self-center">
+              <i class="bi bi-star-fill" style="font-size: 2rem; color: var(--uia-red);"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Dashboard Content -->
+  <div class="row">
+    <!-- Left Column - Charts -->
+    <div class="col-lg-8">
+      <!-- SDG Performance Chart -->
+      <div class="card dashboard-card shadow-sm mb-4">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">SDG Performance</h5>
+          <a href="{{ url_for('dashboard.sdg_analysis') }}" class="btn btn-sm btn-uia-outline">Detailed Analysis</a>
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            <canvas id="sdgPerformanceChart"></canvas>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Assessment Progress -->
+      <div class="card dashboard-card shadow-sm mb-4">
+        <div class="card-header bg-white">
+          <h5 class="mb-0">Assessment Completion Progress</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <div class="d-flex justify-content-between mb-1">
+              <span>Step 1: Basic Needs</span>
+              <span>{{ progress_stats.get('step1', 0)|round|int }}%</span>
+            </div>
+            <div class="progress progress-step">
+              <div class="progress-bar bg-success" style="width: {{ progress_stats.get('step1', 0) }}%"></div>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <div class="d-flex justify-content-between mb-1">
+              <span>Step 2: Enablers & Opportunities</span>
+              <span>{{ progress_stats.get('step2', 0)|round|int }}%</span>
+            </div>
+            <div class="progress progress-step">
+              <div class="progress-bar bg-info" style="width: {{ progress_stats.get('step2', 0) }}%"></div>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <div class="d-flex justify-content-between mb-1">
+              <span>Step 3: Sustainable Infrastructure</span>
+              <span>{{ progress_stats.get('step3', 0)|round|int }}%</span>
+            </div>
+            <div class="progress progress-step">
+              <div class="progress-bar bg-warning" style="width: {{ progress_stats.get('step3', 0) }}%"></div>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <div class="d-flex justify-content-between mb-1">
+              <span>Step 4: Environmental Stewardship</span>
+              <span>{{ progress_stats.get('step4', 0)|round|int }}%</span>
+            </div>
+            <div class="progress progress-step">
+              <div class="progress-bar bg-danger" style="width: {{ progress_stats.get('step4', 0) }}%"></div>
+            </div>
+          </div>
+          
+          <div>
+            <div class="d-flex justify-content-between mb-1">
+              <span>Step 5: Cooperation & Implementation</span>
+              <span>{{ progress_stats.get('step5', 0)|round|int }}%</span>
+            </div>
+            <div class="progress progress-step">
+              <div class="progress-bar bg-primary" style="width: {{ progress_stats.get('step5', 0) }}%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Monthly Trend Chart -->
+      <div class="card dashboard-card shadow-sm">
+        <div class="card-header bg-white">
+          <h5 class="mb-0">Assessment Creation Trend</h5>
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            <canvas id="monthlyTrendChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Right Column - Lists & Project Types -->
+    <div class="col-lg-4">
+      <!-- Project Type Distribution -->
+      <div class="card dashboard-card shadow-sm mb-4">
+        <div class="card-header bg-white">
+          <h5 class="mb-0">Project Type Distribution</h5>
+        </div>
+        <div class="card-body">
+          <div style="height: 250px;">
+            <canvas id="projectTypeChart"></canvas>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Recent Projects -->
+      <div class="card dashboard-card shadow-sm mb-4">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Recent Projects</h5>
+          <a href="{{ url_for('projects') }}" class="btn btn-sm btn-uia-outline">View All</a>
+        </div>
+        <div class="card-body p-0">
+          <div class="list-group list-group-flush">
+            {% for project in recent_projects %}
+            <a href="{{ url_for('show_project', id=project.id) }}" class="list-group-item list-group-item-action">
+              <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">{{ project.name }}</h6>
+                <small>{{ project.created_at|format_date }}</small>
+              </div>
+              <p class="mb-1 text-muted">{{ project.project_type }}</p>
+            </a>
+            {% else %}
+            <div class="list-group-item">
+              <p class="mb-0 text-center text-muted">No projects yet.</p>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      
+      <!-- Recent Assessments -->
+      <div class="card dashboard-card shadow-sm">
+        <div class="card-header bg-white">
+          <h5 class="mb-0">Recent Assessments</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="list-group list-group-flush">
+            {% for assessment in recent_assessments %}
+            <a href="{{ url_for('show_assessment', id=assessment.id) }}" class="list-group-item list-group-item-action">
+              <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">{{ assessment.project_name }}</h6>
+                <small>{{ assessment.created_at|format_date }}</small>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="badge bg-{{ 'success' if assessment.status == 'completed' else 'warning' }}">
+                  {{ assessment.status|capitalize }}
+                </span>
+                {% if assessment.overall_score %}
+                <span class="badge bg-info">Score: {{ assessment.overall_score|round(1) }}</span>
+                {% endif %}
+              </div>
+            </a>
+            {% else %}
+            <div class="list-group-item">
+              <p class="mb-0 text-center text-muted">No assessments yet.</p>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    </div><!-- end col-lg-10 -->
+  </div><!-- end row -->
+</div><!-- end container-lg -->
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // SDG Performance Chart
+    const sdgLabels = {{ sdg_labels|tojson }};
+    const sdgScores = {{ sdg_scores|tojson }};
+    const sdgColors = {{ sdg_colors|tojson }};
+    
+    const sdgCtx = document.getElementById('sdgPerformanceChart').getContext('2d');
+    new Chart(sdgCtx, {
+      type: 'bar',
+      data: {
+        labels: sdgLabels.map(label => `SDG ${label}`),
+        datasets: [{
+          label: 'Average Score',
+          data: sdgScores,
+          backgroundColor: sdgColors,
+          borderColor: sdgColors.map(color => color ? color : '#3f7e44'),
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 5,
+            ticks: {
+              stepSize: 1
+            }
+          }
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: 'Average Score by SDG (0-5 scale)'
+          },
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              title: function(tooltipItems) {
+                return `SDG ${tooltipItems[0].label.split(' ')[1]}`;
+              }
+            }
+          }
+        }
+      }
+    });
+    
+    // Project Type Chart
+    const projectTypeLabels = {{ project_type_labels|tojson }};
+    const projectTypeCounts = {{ project_type_counts|tojson }};
+    
+    const projectTypeCtx = document.getElementById('projectTypeChart').getContext('2d');
+    new Chart(projectTypeCtx, {
+      type: 'pie',
+      data: {
+        labels: projectTypeLabels,
+        datasets: [{
+          data: projectTypeCounts,
+          backgroundColor: [
+            '#3f7e44', // Green
+            '#26bde2', // Blue
+            '#dda63a', // Yellow
+            '#c5192d', // Red
+            '#ff3a21', // Orange
+            '#56c02b', // Light green
+            '#4c9f38'  // Dark green
+          ]
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          }
+        }
+      }
+    });
+    
+    // Monthly Trend Chart
+    const monthLabels = {{ month_labels|tojson }};
+    const monthData = {{ month_data|tojson }};
+    
+    const trendCtx = document.getElementById('monthlyTrendChart').getContext('2d');
+    new Chart(trendCtx, {
+      type: 'line',
+      data: {
+        labels: monthLabels,
+        datasets: [{
+          label: 'Assessments Created',
+          data: monthData,
+          borderColor: '#3f7e44',
+          backgroundColor: 'rgba(63, 126, 68, 0.1)',
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              precision: 0
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          }
+        }
+      }
+    });
+  });
+</script>
+{% endblock %}

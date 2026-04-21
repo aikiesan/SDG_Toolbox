@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{% block title %}SDG Assessment Tool{% endblock %}</title>
+    
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/UIA_LOGO.png') }}">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    
+    {# Link to your main.css first #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    
+    <style>
+        :root {
+            /* Official UIA Brand Colors */
+            --uia-red: #e30613;
+            --uia-dark: #6C6B69;
+            --uia-blue: #577CB3;
+            --uia-violet: #484675;
+            --uia-black: #000000;
+            --uia-gray-light: #F7F6F6;
+            --uia-grey-border: #BEBEBE;     /* Medium grey for button borders */
+            --uia-grey-text: #6C6B69;       /* Text grey (same as --uia-dark) */
+            --uia-grey-hover: #5A5A5A;      /* Dark grey for hover backgrounds (UIA institutional pattern) */
+
+            /* Semantic aliases */
+            --uia-primary: var(--uia-blue);
+            --uia-primary-rgb: 87, 124, 179;
+            --uia-accent: var(--uia-red);
+            --uia-text-dark: #000000;
+            --uia-text-medium: var(--uia-dark);
+            --uia-bg-light: #F7F6F6;
+            --uia-bg-white: #ffffff;
+            --uia-border-color: #e1e4e8;
+            --uia-border-color-subtle: #f0f2f5;
+
+            /* Bootstrap overrides */
+            --bs-primary: var(--uia-blue);
+            --bs-primary-rgb: 87, 124, 179;
+            --bs-secondary: #6c757d;
+            --bs-success: #198754;
+            --bs-info: #0dcaf0;
+            --bs-warning: #ffc107;
+            --bs-danger: var(--uia-red);
+            --bs-light: var(--uia-bg-light);
+            --bs-dark: var(--uia-dark);
+            --bs-body-color: var(--uia-text-medium);
+            --bs-body-bg: var(--uia-bg-white);
+            --bs-border-color: var(--uia-border-color);
+            --bs-border-radius: 0rem;
+            --bs-border-radius-sm: 0rem;
+            --bs-border-radius-lg: 0rem;
+            --bs-border-radius-pill: 999px;
+
+            /* Region map colors */
+            --region-europe: #4A90E2;
+            --region-asia: #9013FE;
+            --region-africa: #50E3C2;
+            --region-americas: #B8E986;
+            --region-oceania: #D0021B;
+
+            /* Legacy aliases */
+            --primary-color: var(--uia-blue);
+            --secondary-color: #6c757d;
+            --accent-color: var(--uia-red);
+            --light-gray: var(--uia-bg-light);
+            --medium-gray: var(--uia-border-color);
+            --dark-gray: var(--uia-dark);
+
+            --header-height: 72px;
+            --border-radius-sm: 0;
+            --border-radius-md: 0;
+            --border-radius-lg: 0;
+            --transition-speed: 0.2s;
+
+            /* UIA Modular Spacing System (8px base) */
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+            --spacing-2xl: 40px;
+            --spacing-3xl: 48px;
+            --spacing-4xl: 64px;
+
+            /* Semantic spacing aliases */
+            --section-padding-y: var(--spacing-4xl);
+            --card-padding: var(--spacing-lg);
+            --button-padding-y: var(--spacing-sm);
+            --button-padding-x: var(--spacing-lg);
+
+            /* Border Radius System - UIA Pattern */
+            --radius-none: 0;
+            --radius-sm: 4px;
+            --radius-pill: 999px;
+        }
+
+        /* Official UIA Typography System */
+        h1, h2, h3, h4, h5, h6,
+        .navbar-brand,
+        .section-title,
+        .page-title,
+        .sdg-section-header,
+        .card-header,
+        .btn {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        body, p, div, span,
+        .form-control,
+        .form-select,
+        label {
+            font-family: 'Merriweather', serif;
+            font-weight: 400;
+        }
+
+        body {
+            font-family: 'Merriweather', serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            color: var(--bs-body-color);
+            background-color: var(--bs-body-bg);
+            line-height: 1.65;
+        }
+        
+        /* --- Navbar Styling --- */
+        .navbar-custom {
+            background-color: #ffffff;
+            border-bottom: 2px solid #000000;
+            box-shadow: none;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .navbar-custom .navbar-brand {
+            font-weight: 700;
+            color: #000000;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .navbar-custom .navbar-brand img {
+            height: 40px;
+            width: auto;
+            max-width: 120px;
+            object-fit: contain;
+        }
+
+        /* Text-only nav links matching UIA */
+        .navbar-nav .nav-link {
+            font-weight: 700;
+            color: #000 !important;
+            text-transform: uppercase;
+            font-size: 13px;
+            letter-spacing: 0.05em;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+            transition: color 0.2s;
+        }
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active { color: var(--uia-grey-hover) !important; }
+
+        .navbar-custom .navbar-toggler {
+            border: 1px solid #000;
+            padding: 0.35rem 0.6rem;
+            border-radius: 0;
+        }
+        .navbar-custom .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23000000' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2.5' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        /* User Dropdown Styling */
+        .navbar-custom .nav-item.dropdown {
+            margin-left: 0.5rem;
+        }
+        .navbar-custom .dropdown-toggle {
+            font-weight: 700;
+            color: #000000;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .navbar-custom .dropdown-toggle .user-name-nav {
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .navbar-custom .dropdown-menu {
+            border-radius: 0;
+            border: 2px solid #000000;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.15);
+            padding: 0.5rem 0;
+            margin-top: 0.5rem !important;
+        }
+        .navbar-custom .dropdown-item {
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            padding: 0.6rem 1.25rem;
+            color: #000000;
+        }
+        .navbar-custom .dropdown-item:hover,
+        .navbar-custom .dropdown-item:focus {
+            background-color: var(--uia-gray-light);
+            color: var(--uia-grey-text);
+        }
+        .navbar-custom .dropdown-item i {
+            margin-right: 0.75rem;
+            color: var(--uia-dark);
+            width: 1.25em;
+            text-align: center;
+        }
+        .navbar-custom .dropdown-item:hover i {
+            color: var(--uia-grey-text);
+        }
+        .navbar-custom .dropdown-divider {
+            border-top: 1px solid var(--uia-border-color);
+        }
+
+        /* General Button Styling */
+        .btn {
+            padding: 0.6rem 1.25rem;
+            border-radius: 0;
+            transition: all var(--transition-speed) ease;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 13px;
+        }
+
+        .btn-primary {
+            background-color: var(--uia-blue);
+            border-color: var(--uia-blue);
+            color: #ffffff;
+            font-family: 'Oswald', sans-serif;
+        }
+        .btn-primary:hover {
+            background-color: var(--uia-grey-hover);
+            border-color: var(--uia-grey-hover);
+            color: #ffffff;
+        }
+        .btn-outline-primary {
+            color: var(--uia-blue);
+            border-color: var(--uia-blue);
+            background: transparent;
+            font-family: 'Oswald', sans-serif;
+        }
+        .btn-outline-primary:hover {
+            background-color: var(--uia-grey-hover);
+            color: #ffffff;
+            border-color: var(--uia-grey-border);
+        }
+        .btn-outline-secondary {
+            color: var(--uia-dark);
+            border-color: #ccc;
+            background: transparent;
+        }
+        .btn-outline-secondary:hover {
+            background-color: var(--uia-gray-light);
+            color: var(--uia-dark);
+            border-color: #ccc;
+        }
+        /* btn-secondary: blue pill */
+        .btn-secondary {
+            background-color: var(--uia-blue);
+            border: none;
+            border-radius: 999px;
+            padding: 10px 25px;
+            font-size: 14px;
+            text-transform: uppercase;
+            font-weight: 600;
+            font-family: 'Oswald', sans-serif;
+        }
+        .btn-secondary:hover { background-color: var(--uia-grey-hover); color: white; }
+
+        .card {
+            border: 1px solid var(--bs-border-color);
+            border-radius: 0;
+            box-shadow: none;
+            transition: all var(--transition-speed) ease;
+            overflow: hidden;
+            background-color: var(--bs-body-bg);
+        }
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .card-header {
+            background-color: var(--uia-gray-light);
+            border-bottom: 1px solid var(--bs-border-color);
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 1rem 1.5rem;
+            color: var(--uia-dark);
+        }
+
+        footer {
+            background-color: #fff;
+            color: var(--uia-text-medium);
+            padding: 2.5rem 0;
+            font-size: 0.9rem;
+        }
+        footer a {
+            text-decoration: none;
+            transition: color var(--transition-speed) ease;
+        }
+        footer a:hover {
+            color: var(--uia-grey-hover);
+        }
+        
+        .content-container {
+            padding-top: 2rem;
+            padding-bottom: 3rem;
+            flex-grow: 1; 
+        }
+        
+        .page-transition { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Ensure Bootstrap alert styling can also use theme colors if not overridden by specific classes */
+        .alert-primary { background-color: var(--bs-primary-bg-subtle); color: var(--bs-primary-text-emphasis); border-color: var(--bs-primary-border-subtle); }
+        .alert-secondary { background-color: var(--bs-secondary-bg-subtle); color: var(--bs-secondary-text-emphasis); border-color: var(--bs-secondary-border-subtle); }
+        /* Add for success, danger, warning, info if needed */
+
+        /* Footer Button Styles */
+        .btn-footer-action {
+            display: block;
+            width: 100%;
+            padding: 12px 16px;
+            background: white;
+            border: 1px solid var(--uia-grey-border);
+            text-align: center;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--uia-grey-text);
+            transition: all 0.2s ease;
+            text-decoration: none;
+            margin-bottom: 12px;
+        }
+        .btn-footer-action:hover {
+            background: var(--uia-grey-hover);
+            color: white;
+            border-color: var(--uia-grey-border);
+            text-decoration: none;
+        }
+
+        /* Footer Link Styles */
+        .footer-link {
+            color: var(--uia-grey-text);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s ease;
+        }
+        .footer-link:hover {
+            color: var(--uia-grey-hover);
+            text-decoration: none;
+        }
+
+        /* --- MOBILE NAVIGATION IMPROVEMENTS --- */
+        @media (max-width: 991.98px) {
+            .navbar-custom .navbar-collapse {
+                background-color: #ffffff;
+                border-radius: 0;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+                margin-top: 0.75rem;
+                padding: 1rem;
+                border: 2px solid #000000;
+                position: relative;
+                z-index: 1050;
+            }
+
+            .navbar-custom .navbar-nav {
+                margin-bottom: 1rem;
+            }
+
+            .navbar-custom .nav-link {
+                padding: 0.75rem 1rem;
+                margin: 0.25rem 0;
+                border-radius: 0;
+                font-weight: 700;
+                color: #000000 !important;
+                background-color: transparent;
+                transition: all 0.2s ease;
+            }
+
+            .navbar-custom .nav-link:hover,
+            .navbar-custom .nav-link:focus {
+                background-color: var(--uia-gray-light) !important;
+                color: var(--uia-grey-text) !important;
+            }
+
+            .navbar-custom .nav-link.active {
+                background-color: var(--uia-gray-light) !important;
+                color: var(--uia-grey-text) !important;
+            }
+
+            .navbar-custom .dropdown-menu {
+                position: static !important;
+                transform: none !important;
+                box-shadow: none;
+                border: none;
+                border-left: 2px solid var(--uia-red);
+                background-color: var(--uia-gray-light);
+                margin: 0.5rem 0 0 1rem;
+                border-radius: 0;
+            }
+
+            .navbar-custom .dropdown-item {
+                color: #000000;
+                padding: 0.6rem 1rem;
+                border-radius: 0;
+                margin: 0;
+            }
+
+            .navbar-custom .dropdown-item:hover,
+            .navbar-custom .dropdown-item:focus {
+                background-color: #ffffff;
+                color: var(--uia-grey-text);
+            }
+
+            .navbar-nav .btn {
+                width: 100%;
+                text-align: center;
+                margin: 0.25rem 0;
+            }
+        }
+
+    </style>
+    {% block head %}{% endblock %} {# For page-specific CSS files or styles #}
+</head>
+<body>
+    <!-- Header Top (Search / account links) -->
+    <div class="container-lg">
+        <div class="row">
+            <div class="col-lg-10 offset-lg-2">
+                <div class="header-top text-end mt-3 mb-1">
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('auth.profile') }}">{{ current_user.name|truncate(20) }}</a>
+                        <a href="{{ url_for('auth.logout') }}">Logout</a>
+                    {% else %}
+                        <a href="{{ url_for('auth.login') }}">Login</a>
+                        <a href="{{ url_for('auth.register') }}">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation -->
+    <header id="masthead" class="border-bottom border-dark mb-0">
+        <nav class="navbar navbar-expand-lg navbar-light py-3" aria-label="Main navigation">
+            <div class="container-lg">
+                <a class="navbar-brand" href="{{ url_for('main.index') }}">
+                    <img src="{{ url_for('static', filename='img/UIA_LOGO.png') }}" alt="UIA"
+                         style="max-height: 50px; width: auto;"
+                         onerror="this.onerror=null; this.style.display='none';">
+                </a>
+                <button class="navbar-toggler border-0" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#mainNavbarNav"
+                        aria-controls="mainNavbarNav" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="mainNavbarNav">
+                    <ul class="navbar-nav justify-content-end w-100">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'main.index' %}active{% endif %}"
+                               href="{{ url_for('main.index') }}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'main.about' %}active{% endif %}"
+                               href="{{ url_for('main.about') }}">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.blueprint in ['projects','questionnaire','dashboard'] %}active{% endif %}"
+                               href="{{ url_for('projects.index') if current_user.is_authenticated else url_for('auth.login') }}">
+                                My Projects
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'main.sdg_information_hub' %}active{% endif %}"
+                               href="{{ url_for('main.sdg_information_hub') }}">UN 17 SDGs</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'main.faq' %}active{% endif %}"
+                               href="{{ url_for('main.faq') }}">FAQ</a>
+                        </li>
+                        {% if current_user.is_authenticated and current_user.is_admin %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.blueprint == 'dashboard' %}active{% endif %}"
+                               href="{{ url_for('dashboard.index') }}">Dashboard</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Breadcrumbs slot (filled by child templates) -->
+    <div class="container-lg">
+        <div class="row gx-md-5">
+            <div class="col-12 col-lg-10 offset-lg-2">
+                {% block breadcrumbs %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <main class="content-container page-transition">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </main>
+
+    <div id="footer-container">
+        <footer style="background-color: #F7F6F6; border-top: 1px solid #6C6B69; margin-top: 60px; padding: 3rem 0;">
+            <div class="container-lg">
+                {# 3-Column Grid Layout #}
+                <div class="row mb-4">
+                    {# LEFT COLUMN: Membership CTA + Legal Links #}
+                    <div class="col-12 col-md-4 mb-4 mb-md-0">
+                        <p style="font-family: 'Merriweather', serif; font-size: 14px; color: var(--uia-dark); line-height: 1.6;">
+                            Join the professional network that unites 124 countries and territories.
+                            If your professional organisation represents the majority of qualified architects
+                            licensed to practice in your country, and if it is not yet a member of the UIA,
+                            your organisation can apply for UIA membership.
+                        </p>
+                        <div class="d-flex align-items-center gap-2 mt-3" style="font-size: 12px; font-family: 'Merriweather', serif;">
+                            <a href="https://www.uia-architectes.org/en/privacy-policy/"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="footer-link">
+                                Privacy Policy
+                            </a>
+                            <span style="color: var(--uia-dark);">|</span>
+                            <a href="https://www.uia-architectes.org/en/terms-of-use/"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="footer-link">
+                                Terms of Use
+                            </a>
+                        </div>
+                    </div>
+
+                    {# MIDDLE COLUMN: 4 Rectangular Action Buttons #}
+                    <div class="col-12 col-md-4 mb-4 mb-md-0">
+                        <a href="https://www.uia-architectes.org/en/about/join-us_uia/"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="btn-footer-action">
+                            Join us
+                        </a>
+                        <a href="https://www.uia-architectes.org/en/work-programmes/"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="btn-footer-action">
+                            Join a Work Programme
+                        </a>
+                        <a href="https://www.uia-architectes.org/en/commissions/"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="btn-footer-action">
+                            Join a Commission
+                        </a>
+                        <a href="https://www.uia-architectes.org/en/commission/validation/"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="btn-footer-action">
+                            Validate your architecture school
+                        </a>
+                    </div>
+
+                    {# RIGHT COLUMN: Social Media Links #}
+                    <div class="col-12 col-md-4">
+                        <h4 style="color: var(--uia-blue); font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 14px; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                            Follow UIA
+                        </h4>
+                        <div class="d-flex flex-column gap-2">
+                            <a href="https://www.instagram.com/uia_architects/"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="d-flex align-items-center gap-2 footer-link">
+                                <svg style="width: 20px; height: 20px;" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                                </svg>
+                                Instagram
+                            </a>
+                            <a href="https://twitter.com/UIA_Architects"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="d-flex align-items-center gap-2 footer-link">
+                                <svg style="width: 20px; height: 20px;" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                                </svg>
+                                Twitter
+                            </a>
+                            <a href="https://www.facebook.com/Union-Internationale-des-Architectes-UIA-161916773874971/"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="d-flex align-items-center gap-2 footer-link">
+                                <svg style="width: 20px; height: 20px;" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                </svg>
+                                Facebook
+                            </a>
+                            <a href="https://www.youtube.com/channel/UCGutTnNLpW0ksBkVgl8eORA"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="d-flex align-items-center gap-2 footer-link">
+                                <svg style="width: 20px; height: 20px;" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                </svg>
+                                YouTube
+                            </a>
+                            <a href="https://www.linkedin.com/company/union-internationale-des-architectes"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="d-flex align-items-center gap-2 footer-link">
+                                <svg style="width: 20px; height: 20px;" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                </svg>
+                                LinkedIn
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                {# Bottom Copyright Bar #}
+                <div class="row pt-4" style="border-top: 1px solid #6C6B69;">
+                    <div class="col-12 text-center">
+                        <p style="font-family: 'Merriweather', serif; font-size: 14px; color: var(--uia-dark); margin: 0;">
+                            &copy; 2026 - International Union of Architects
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert-dismissible');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    if (typeof bootstrap !== 'undefined' && bootstrap.Alert) {
+                        const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
+                        if (bsAlert) {
+                            bsAlert.close();
+                        }
+                    } else { 
+                        alert.style.opacity = '0';
+                        setTimeout(() => alert.remove(), 500);
+                    }
+                }, 7000);
+            });
+        });
+    </script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

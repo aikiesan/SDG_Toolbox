@@ -1,0 +1,456 @@
+{% extends "base.html" %}
+
+{% block title %}SDG Analysis - SDG {{ sdg.number }}{% endblock %}
+
+{% block styles %}
+<style>
+  .sdg-header {
+    padding: 20px;
+    color: white;
+    border-radius: 0;
+    margin-bottom: 20px;
+  }
+  .sdg-badge {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    border-radius: 50%;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  .sdg-dropdown {
+    max-width: 300px;
+  }
+  .chart-container {
+    height: 300px;
+    position: relative;
+  }
+  .top-projects {
+    height: 100%;
+  }
+  .project-score-bar {
+    height: 30px;
+    margin-bottom: 10px;
+    position: relative;
+    border-radius: 0;
+    overflow: hidden;
+    background-color: #f0f0f0;
+  }
+  .project-score-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    color: white;
+    font-weight: bold;
+  }
+  .project-score-label {
+    position: absolute;
+    right: 10px;
+    top: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+  }
+  .score-badge {
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    border-radius: 50%;
+    font-weight: bold;
+    display: inline-block;
+    margin-right: 10px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-lg py-5">
+  <div class="row gx-md-5">
+    <!-- Sidebar -->
+    <div class="col-12 col-lg-2">
+      <div class="sticky-top pt-2">
+        <span class="sdg-section-header d-block mb-3">Select SDG</span>
+        <form action="{{ url_for('dashboard.sdg_analysis') }}" method="get">
+          <select class="form-select" name="sdg" id="sdgSelect" onchange="this.form.submit()">
+            {% for s in all_sdgs %}
+            <option value="{{ s.number }}" {% if s.number == sdg.number %}selected{% endif %}>
+              SDG {{ s.number }}: {{ s.name }}
+            </option>
+            {% endfor %}
+          </select>
+        </form>
+        <div class="mt-4">
+          <a href="{{ url_for('dashboard.index') }}" class="btn btn-uia-outline w-100 text-start">
+            <i class="bi bi-arrow-left"></i> Dashboard
+          </a>
+        </div>
+      </div>
+    </div>
+    <!-- Main Content -->
+    <div class="col-12 col-lg-10">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0" style="text-transform: uppercase; font-weight: 800;">SDG Analysis</h1>
+  </div>
+
+  <!-- SDG Header -->
+  <div class="sdg-header" style="background-color: {{ sdg.color_code }};">
+    <div class="d-flex align-items-center">
+      <div class="sdg-badge" style="background-color: white; color: {{ sdg.color_code }};">
+        {{ sdg.number }}
+      </div>
+      <div>
+        <h2 class="mb-0">{{ sdg.name }}</h2>
+        <p class="mb-0">{{ sdg.description }}</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row">
+    <!-- Left Column - Performance Overview -->
+    <div class="col-lg-6">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white">
+          <h5 class="mb-0">Performance Overview</h5>
+        </div>
+        <div class="card-body">
+          <div class="d-flex justify-content-center mb-4">
+            <div class="text-center">
+              <div class="display-1 text-{% if avg_score >= 4 %}success{% elif avg_score >= 3 %}primary{% elif avg_score >= 2 %}warning{% else %}danger{% endif %}">
+                {{ avg_score|round(1) }}
+              </div>
+              <p class="text-muted">Average Score (0-5 scale)</p>
+            </div>
+          </div>
+          
+          <div class="progress mb-3" style="height: 25px;">
+            <div class="progress-bar bg-danger" role="progressbar" style="width: {{ (project_scores|selectattr('score', 'le', 1)|list|length / project_scores|length * 100)|round|int if project_scores|length else 0 }}%">
+              0-1
+            </div>
+            <div class="progress-bar bg-warning" role="progressbar" style="width: {{ (project_scores|selectattr('score', 'gt', 1)|selectattr('score', 'le', 2)|list|length / project_scores|length * 100)|round|int if project_scores|length else 0 }}%">
+              1-2
+            </div>
+            <div class="progress-bar bg-info" role="progressbar" style="width: {{ (project_scores|selectattr('score', 'gt', 2)|selectattr('score', 'le', 3)|list|length / project_scores|length * 100)|round|int if project_scores|length else 0 }}%">
+              2-3
+            </div>
+            <div class="progress-bar bg-primary" role="progressbar" style="width: {{ (project_scores|selectattr('score', 'gt', 3)|selectattr('score', 'le', 4)|list|length / project_scores|length * 100)|round|int if project_scores|length else 0 }}%">
+              3-4
+            </div>
+            <div class="progress-bar bg-success" role="progressbar" style="width: {{ (project_scores|selectattr('score', 'gt', 4)|list|length / project_scores|length * 100)|round|int if project_scores|length else 0 }}%">
+              4-5
+            </div>
+          </div>
+          
+          <div class="row text-center small mb-4">
+            <div class="col">
+              <span class="badge bg-danger">{{ (project_scores|selectattr('score', 'le', 1)|list|length / project_scores|length * 100)|round|int if project_scores|length else 0 }}%</span><br>
+              Poor
+            </div>
+            <div class="col">
+              <span class="badge bg-warning">{{ (project_scores|selectattr('score', 'gt', 1)|selectattr('score', 'le', 2)|list|length / project_scores|length * 100)|round|int if project_scores|length else 0 }}%</span><br>
+              Fair
+            </div>
+            <div class="col">
+              <span class="badge bg-info">{{ (project_scores|selectattr('score', 'gt', 2)|selectattr('score', 'le', 3)|list|length / project_scores|length * 100)|round|int if project_scores|length else 0 }}%</span><br>
+              Average
+            </div>
+            <div class="col">
+              <span class="badge bg-primary">{{ (project_scores|selectattr('score', 'gt', 3)|selectattr('score', 'le', 4)|list|length / project_scores|length * 100)|round|int if project_scores|length else 0 }}%</span><br>
+              Good
+            </div>
+            <div class="col">
+              <span class="badge bg-success">{{ (project_scores|selectattr('score', 'gt', 4)|list|length / project_scores|length * 100)|round|int if project_scores|length else 0 }}%</span><br>
+              Excellent
+            </div>
+          </div>
+          
+          <div class="chart-container mt-4">
+            <canvas id="scoreDistribution"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Right Column - Project Performance -->
+    <div class="col-lg-6">
+      <div class="card shadow-sm mb-4 top-projects">
+        <div class="card-header bg-white">
+          <h5 class="mb-0">Project Performance</h5>
+        </div>
+        <div class="card-body">
+          {% if project_scores %}
+          <div class="mb-3">
+            <h6>Score by Project</h6>
+            {% for project in project_scores %}
+            <div class="project-score-bar">
+              <div class="project-score-fill"
+                   style="width: {{ (project.score / 5 * 100)|round|int }}%; background-color: var(--uia-red);">
+                {{ project.project_name }}
+              </div>
+              <div class="project-score-label">{{ project.score }}</div>
+            </div>
+            {% endfor %}
+          </div>
+          
+          <div>
+            <h6>Implementation Notes</h6>
+            <div class="table-responsive">
+              <table class="table table-sm table-hover">
+                <thead>
+                  <tr>
+                    <th>Project</th>
+                    <th>Score</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for project in project_scores %}
+                  <tr>
+                    <td>{{ project.project_name }}</td>
+                    <td>
+                      <span class="score-badge" 
+                            style="background-color: {% if project.score >= 4 %}#198754{% elif project.score >= 3 %}#0d6efd{% elif project.score >= 2 %}#ffc107{% else %}#dc3545{% endif %}; 
+                                   color: {% if project.score >= 2 %}white{% else %}white{% endif %};">
+                        {{ project.score }}
+                      </span>
+                    </td>
+                    <td>{{ project.notes or 'No notes provided' }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          {% else %}
+          <div class="text-center py-5">
+            <i class="bi bi-bar-chart-line text-muted" style="font-size: 3rem;"></i>
+            <p class="text-muted mt-3">No project data available for SDG {{ sdg.number }}</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- SDG Resources -->
+  <div class="card shadow-sm">
+    <div class="card-header bg-white">
+      <h5 class="mb-0">Resources for SDG {{ sdg.number }}</h5>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-4">
+          <h6>Official Resources</h6>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <i class="bi bi-globe2 me-2"></i>
+              <a href="https://sdgs.un.org/goals/goal{{ sdg.number }}" target="_blank">
+                United Nations SDG {{ sdg.number }} Official Page
+              </a>
+            </li>
+            <li class="list-group-item">
+              <i class="bi bi-file-earmark-pdf me-2"></i>
+              <a href="https://www.un.org/sustainabledevelopment/{{ sdg.name|lower|replace(' ', '-') }}" target="_blank">
+                UN Sustainable Development Goal {{ sdg.number }} Brief
+              </a>
+            </li>
+            <li class="list-group-item">
+              <i class="bi bi-journal-text me-2"></i>
+              <a href="https://indicators.report/goals/goal-{{ sdg.number }}/" target="_blank">
+                SDG {{ sdg.number }} Indicators and Targets
+              </a>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="col-md-4">
+          <h6>Architectural Applications</h6>
+          <ul class="list-group list-group-flush">
+            {% if sdg.number == 1 %}
+            <li class="list-group-item">Affordable housing design principles</li>
+            <li class="list-group-item">Energy-efficient building for poverty reduction</li>
+            <li class="list-group-item">Inclusive design for informal settlements</li>
+            {% elif sdg.number == 2 %}
+            <li class="list-group-item">Urban agriculture integration</li>
+            <li class="list-group-item">Design for local food production</li>
+            <li class="list-group-item">Food storage and distribution facilities</li>
+            {% elif sdg.number == 3 %}
+            <li class="list-group-item">Healthy building design standards</li>
+            <li class="list-group-item">Healthcare facility design principles</li>
+            <li class="list-group-item">Biophilic design for wellbeing</li>
+            {% elif sdg.number == 4 %}
+            <li class="list-group-item">Educational facility design guidelines</li>
+            <li class="list-group-item">Flexible learning space design</li>
+            <li class="list-group-item">Digital learning infrastructure</li>
+            {% elif sdg.number == 5 %}
+            <li class="list-group-item">Gender-responsive design principles</li>
+            <li class="list-group-item">Safety in public spaces</li>
+            <li class="list-group-item">Inclusive sanitation facilities</li>
+            {% elif sdg.number == 6 %}
+            <li class="list-group-item">Water-sensitive urban design</li>
+            <li class="list-group-item">Rainwater harvesting systems</li>
+            <li class="list-group-item">Greywater recycling solutions</li>
+            {% elif sdg.number == 7 %}
+            <li class="list-group-item">Zero-energy building design</li>
+            <li class="list-group-item">Passive solar design strategies</li>
+            <li class="list-group-item">Renewable energy integration</li>
+            {% elif sdg.number == 8 %}
+            <li class="list-group-item">Sustainable construction practices</li>
+            <li class="list-group-item">Circular economy in building design</li>
+            <li class="list-group-item">Local materials and labor utilization</li>
+            {% elif sdg.number == 9 %}
+            <li class="list-group-item">Resilient infrastructure design</li>
+            <li class="list-group-item">Adaptive reuse strategies</li>
+            <li class="list-group-item">Innovation in construction techniques</li>
+            {% elif sdg.number == 10 %}
+            <li class="list-group-item">Universal design principles</li>
+            <li class="list-group-item">Social housing integration</li>
+            <li class="list-group-item">Accessible public space design</li>
+            {% elif sdg.number == 11 %}
+            <li class="list-group-item">Sustainable urban planning</li>
+            <li class="list-group-item">Transit-oriented development</li>
+            <li class="list-group-item">Cultural heritage preservation</li>
+            {% elif sdg.number == 12 %}
+            <li class="list-group-item">Material life cycle assessment</li>
+            <li class="list-group-item">Design for disassembly</li>
+            <li class="list-group-item">Waste reduction strategies</li>
+            {% elif sdg.number == 13 %}
+            <li class="list-group-item">Climate-resilient design</li>
+            <li class="list-group-item">Carbon-neutral architecture</li>
+            <li class="list-group-item">Adaptation strategies for extreme weather</li>
+            {% elif sdg.number == 14 %}
+            <li class="list-group-item">Coastal development best practices</li>
+            <li class="list-group-item">Marine pollution prevention</li>
+            <li class="list-group-item">Sustainable waterfront design</li>
+            {% elif sdg.number == 15 %}
+            <li class="list-group-item">Biodiversity-sensitive design</li>
+            <li class="list-group-item">Green roof and wall systems</li>
+            <li class="list-group-item">Habitat restoration in projects</li>
+            {% elif sdg.number == 16 %}
+            <li class="list-group-item">Transparent procurement processes</li>
+            <li class="list-group-item">Community engagement in design</li>
+            <li class="list-group-item">Inclusive decision-making frameworks</li>
+            {% elif sdg.number == 17 %}
+            <li class="list-group-item">Cross-sector collaboration methods</li>
+            <li class="list-group-item">Public-private partnership models</li>
+            <li class="list-group-item">Knowledge sharing platforms</li>
+            {% endif %}
+          </ul>
+        </div>
+        
+        <div class="col-md-4">
+          <h6>Best Practices & Case Studies</h6>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <i class="bi bi-book me-2"></i>
+              <a href="https://www.uia-architectes.org/en/resource/sustainable-development-goals/" target="_blank">
+                UIA SDG Resources for Architects
+              </a>
+            </li>
+            <li class="list-group-item">
+              <i class="bi bi-building me-2"></i>
+              <a href="https://www.archdaily.com/tag/sustainable-architecture" target="_blank">
+                Sustainable Architecture Examples
+              </a>
+            </li>
+            <li class="list-group-item">
+              <i class="bi bi-stars me-2"></i>
+              <a href="https://www.architecture2030.org/why-the-built-environment/" target="_blank">
+                Architecture 2030 Challenge
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+    </div><!-- end col-lg-10 -->
+  </div><!-- end row -->
+</div><!-- end container-lg -->
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Score Distribution Chart
+    const ctx = document.getElementById('scoreDistribution').getContext('2d');
+    
+    // Calculate score distribution
+    const scores = [
+      {% for project in project_scores %}
+        {{ project.score }},
+      {% endfor %}
+    ];
+    
+    // Prepare data for chart
+    const scoreDistribution = [0, 0, 0, 0, 0, 0];  // For scores 0-5
+    scores.forEach(score => {
+      // Round to nearest whole number for binning
+      const binIndex = Math.round(score);
+      if (binIndex >= 0 && binIndex <= 5) {
+        scoreDistribution[binIndex]++;
+      }
+    });
+    
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['0', '1', '2', '3', '4', '5'],
+        datasets: [{
+          label: 'Number of Projects',
+          data: scoreDistribution,
+          backgroundColor: [
+            '#dc3545',
+            '#dc3545',
+            '#ffc107',
+            '#0dcaf0',
+            '#0d6efd',
+            '#198754'
+          ],
+          borderColor: [
+            '#b02a37',
+            '#b02a37',
+            '#cc9a06',
+            '#0aa2c0',
+            '#0a58ca',
+            '#146c43'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              precision: 0
+            }
+          }
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: 'Score Distribution'
+          },
+          legend: {
+            display: false
+          }
+        }
+      }
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,510 @@
+/* Main styles for SDG Assessment Tool - UIA Design System */
+
+/* UIA Component Classes */
+.btn-uia-primary {
+    background: var(--uia-blue);
+    color: #fff;
+    border-radius: 999px;
+    border: 2px solid var(--uia-blue);
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 10px 25px;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+    font-family: 'Oswald', sans-serif;
+}
+.btn-uia-primary:hover {
+    background: var(--uia-grey-hover);
+    border-color: var(--uia-grey-hover);
+    color: #fff;
+}
+.btn-uia-outline {
+    background: transparent;
+    color: var(--uia-blue);
+    border-radius: 999px;
+    border: 1px solid var(--uia-dark);
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 10px 25px;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+    font-family: 'Oswald', sans-serif;
+}
+.btn-uia-outline:hover {
+    background: var(--uia-grey-hover);
+    color: white;
+    border-color: var(--uia-grey-border);
+}
+
+/* UIA Official Primary Button - Dark Grey Pattern */
+.btn-uia-dark {
+    background: #32373c;
+    color: #ffffff;
+    border-radius: 999px;
+    border: none;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 12px 28px;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    transition: background-color 0.2s ease;
+    font-family: 'Oswald', sans-serif;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-uia-dark:hover {
+    background: #1a1d1f;
+    color: #ffffff;
+}
+
+/* Dark outline variant */
+.btn-uia-dark-outline {
+    background: transparent;
+    color: #32373c;
+    border: 2px solid #32373c;
+    border-radius: 999px;
+    padding: 12px 28px;
+    font-size: 13px;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+    font-family: 'Oswald', sans-serif;
+}
+
+.btn-uia-dark-outline:hover {
+    background: #32373c;
+    color: #ffffff;
+    border-color: #32373c;
+}
+
+.sdg-card {
+    background: var(--uia-gray-light);
+    border: 1px solid var(--uia-dark);
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.sdg-section-header {
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--uia-blue);
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 0.05em;
+}
+
+/* Form inputs - boxy style */
+.form-control,
+.form-select {
+    border-radius: 6px !important;
+    border: 1px solid #e0e0e0;
+    padding: 15px;
+    background-color: #fff;
+    color: #000;
+}
+.form-control:focus,
+.form-select:focus {
+    box-shadow: none !important;
+    border-color: #32373c;
+    outline: 2px solid rgba(50, 55, 60, 0.1);
+}
+
+/* Progress bars - UIA grey */
+.progress-bar {
+    background-color: var(--uia-grey-hover) !important;
+}
+
+/* Checkboxes - UIA grey */
+.form-check-input:checked {
+    background-color: var(--uia-grey-hover);
+    border-color: var(--uia-grey-border);
+}
+
+/* Input groups */
+.input-group-text {
+    border-radius: 6px;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Merriweather', serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #000000;
+}
+
+footer {
+    margin-top: auto;
+}
+
+/* SDG colors */
+.sdg-1 { background-color: #E5243B; }
+.sdg-2 { background-color: #DDA63A; }
+.sdg-3 { background-color: #4C9F38; }
+.sdg-4 { background-color: #C5192D; }
+.sdg-5 { background-color: #FF3A21; }
+.sdg-6 { background-color: #26BDE2; }
+.sdg-7 { background-color: #FCC30B; }
+.sdg-8 { background-color: #A21942; }
+.sdg-9 { background-color: #FD6925; }
+.sdg-10 { background-color: #DD1367; }
+.sdg-11 { background-color: #FD9D24; }
+.sdg-12 { background-color: #BF8B2E; }
+.sdg-13 { background-color: #3F7E44; }
+.sdg-14 { background-color: #0A97D9; }
+.sdg-15 { background-color: #56C02B; }
+.sdg-16 { background-color: #00689D; }
+.sdg-17 { background-color: #19486A; }
+
+/* SDG badge */
+.sdg-badge {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: white;
+    text-align: center;
+    line-height: 40px;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+/* Assessment form styles */
+.assessment-form .form-section {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.assessment-form .sdg-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.assessment-form .sdg-title {
+    margin: 0;
+    color: #333;
+}
+
+.assessment-form .rating-options {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.assessment-form .rating-option input[type="radio"] {
+    display: none;
+}
+
+.assessment-form .rating-option label {
+    display: block;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    text-align: center;
+    line-height: 36px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.assessment-form .rating-option input[type="radio"]:checked + label {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white;
+}
+
+/* Project card overrides */
+.project-card {
+    border-radius: 8px !important;
+}
+.project-card-visual {
+    background-color: var(--uia-gray-light, #F7F6F6);
+}
+.project-card-visual i {
+    color: var(--uia-blue) !important;
+}
+.project-card-title a:hover {
+    color: var(--uia-grey-hover) !important;
+}
+.project-card-actions .btn {
+    border-radius: 999px !important;
+}
+
+/* Navbar enhancement */
+.navbar-custom {
+    font-family: 'Oswald', sans-serif;
+}
+
+/* Badge overrides */
+.badge.bg-primary {
+    background-color: var(--uia-blue) !important;
+}
+.badge.bg-primary-subtle {
+    background-color: rgba(87, 124, 179, 0.1) !important;
+    color: var(--uia-blue) !important;
+}
+
+/* Section label */
+.section-label {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
+    color: #6c757d;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.05em;
+}
+
+/* Page titles */
+.page-title {
+    font-weight: 700;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: #000;
+    text-transform: uppercase;
+}
+
+/* Labels */
+label {
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 8px;
+    color: var(--uia-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-family: 'Oswald', sans-serif;
+}
+
+/* Images: no radius, no shadow */
+img {
+    border-radius: 0;
+}
+
+/* Link hover: red, no underline, smooth */
+a {
+    transition: color 0.2s linear;
+}
+a:hover {
+    text-decoration: none;
+}
+
+/* --- MOBILE NAVIGATION ENHANCEMENTS --- */
+/* Additional mobile-specific improvements for better UX */
+@media (max-width: 991.98px) {
+    /* Smooth collapse animation */
+    .navbar-collapse {
+        transition: all 0.35s ease-in-out;
+    }
+    
+    /* Prevent horizontal scroll on mobile when menu is open */
+    body.navbar-open {
+        overflow-x: hidden;
+    }
+    
+    /* Add visual indicator for expandable dropdowns on mobile */
+    .navbar-nav .dropdown-toggle::after {
+        margin-left: auto;
+        transition: transform 0.2s ease;
+    }
+    
+    .navbar-nav .dropdown-toggle[aria-expanded="true"]::after {
+        transform: rotate(180deg);
+    }
+    
+    /* Improve touch targets for mobile */
+    .navbar-nav .nav-link {
+        min-height: 44px; /* iOS recommended touch target size */
+        display: flex;
+        align-items: center;
+    }
+    
+    /* Better spacing for mobile nav items */
+    .navbar-nav .nav-item {
+        margin-bottom: 0.25rem;
+    }
+    
+    .navbar-nav .nav-item:last-child {
+        margin-bottom: 0;
+    }
+}
+
+/* =========================================================
+   UIA Sub-page Integration (2026-02-18)
+   ========================================================= */
+
+.header-top a {
+    color: var(--uia-dark);
+    font-size: 13px;
+    font-weight: 600;
+    margin-left: 15px;
+    text-decoration: none;
+    transition: color 0.2s;
+    font-family: 'Oswald', sans-serif;
+}
+.header-top a:hover { color: var(--uia-grey-hover); }
+
+.progress-step {
+    display: block;
+    padding: 12px 0 12px 20px;
+    color: #6c757d;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.03em;
+    border-left: 4px solid #eee;
+    margin-bottom: 8px;
+    text-decoration: none;
+    cursor: default;
+    transition: all 0.2s ease;
+    font-family: 'Oswald', sans-serif;
+}
+.progress-step.active {
+    color: #000000;
+    border-left-color: var(--uia-red);
+    border-left-width: 5px;
+}
+.progress-step.completed {
+    color: #000;
+    border-left-color: #32373c;
+    cursor: pointer;
+}
+.progress-step.completed:hover {
+    color: var(--uia-red);
+    border-left-color: var(--uia-red);
+}
+
+.tool-section-title {
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: #000;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 12px;
+    margin-bottom: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+.social-circle-link {
+    width: 35px;
+    height: 35px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    color: #000;
+    margin: 0 5px;
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.2s, border-color 0.2s;
+}
+.social-circle-link:hover { color: var(--uia-grey-hover); border-color: var(--uia-grey-hover); }
+
+.minw-auto { min-width: auto !important; }
+
+/* =========================================================
+   UIA Arrow Graphic Component (Official Brand Element)
+   ========================================================= */
+
+.uia-arrow {
+    display: inline-block;
+    width: 80px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--uia-blue) 0%, var(--uia-violet) 100%);
+    clip-path: polygon(0 0, 75% 0, 100% 50%, 75% 100%, 0 100%, 25% 50%);
+    transition: transform 0.3s ease;
+}
+
+.uia-arrow:hover {
+    transform: translateX(5px);
+}
+
+/* Size variants */
+.uia-arrow-sm { width: 40px; height: 20px; }
+.uia-arrow-lg { width: 120px; height: 60px; }
+
+/* Color variants */
+.uia-arrow-red { background: var(--uia-red); }
+.uia-arrow-blue { background: var(--uia-blue); }
+.uia-arrow-violet { background: var(--uia-violet); }
+.uia-arrow-gradient {
+    background: linear-gradient(135deg, var(--uia-blue) 0%, var(--uia-violet) 50%, var(--uia-red) 100%);
+}
+
+/* Section divider with arrow */
+.uia-section-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.uia-section-divider::before,
+.uia-section-divider::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: var(--uia-dark);
+}
+
+.uia-section-divider .uia-arrow {
+    flex-shrink: 0;
+}
+
+/* =========================================================
+   UIA Featured Content Border System
+   Signature 5px accent borders (from UIA website pattern)
+   ========================================================= */
+
+.uia-featured-card {
+    border-left: 5px solid var(--uia-red);
+    background: #ffffff;
+    padding: 24px;
+    margin-bottom: 24px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.uia-featured-card:hover {
+    border-left-color: #32373c;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* Right-side variant */
+.uia-featured-card-right {
+    border-left: none;
+    border-right: 5px solid var(--uia-red);
+}
+
+/* Category color variants */
+.uia-featured-card[data-category="tools"],
+.uia-featured-card.tools {
+    border-left-color: var(--uia-blue);
+}
+
+.uia-featured-card[data-category="resources"],
+.uia-featured-card.resources {
+    border-left-color: var(--uia-violet);
+}
+
+.uia-featured-card[data-category="priority"],
+.uia-featured-card.priority {
+    border-left-color: var(--uia-red);
+}
+
+.uia-featured-card[data-category="neutral"],
+.uia-featured-card.neutral {
+    border-left-color: #32373c;
+}

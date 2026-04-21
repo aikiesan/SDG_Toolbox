@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}About - UIA SDG Assessment Tool{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 offset-lg-2">
+        <h1 class="mb-4">UIA Sustainable Development Goals Assessment Tool</h1>
+        
+        <p class="lead">
+            This official UIA tool helps architects evaluate and enhance their projects' contributions to the UN Sustainable Development Goals (SDGs), supporting the architectural profession's commitment to addressing global challenges.
+        </p>
+        
+        <div class="card mb-4">
+            <div class="card-body bg-light">
+                <h2 class="card-title h5">Developed in partnership with the International Union of Architects (UIA)</h2>
+                <p class="card-text">This assessment tool implements the UIA's sustainability framework, aligning architectural practice with global sustainability objectives while respecting regional contexts and needs.</p>
+            </div>
+        </div>
+        
+        <h2 class="mt-4">Architecture's Role in Sustainable Development</h2>
+        <p>
+            Architects shape the built environment which directly impacts 11 of the 17 SDGs. Through thoughtful design, architects can address climate action, create sustainable communities, ensure clean water and sanitation, promote responsible consumption, reduce inequalities, and improve health and wellbeing.
+        </p>
+        
+        <h2 class="mt-4">Tool Methodology</h2>
+        <p>
+            This assessment tool evaluates architectural projects through a comprehensive framework that:
+        </p>
+        <ul>
+            <li>Examines projects across all 17 SDGs with architecture-specific criteria</li>
+            <li>Balances quantitative scoring with qualitative evaluation</li>
+            <li>Recognizes interconnections between different sustainability goals</li>
+            <li>Provides actionable feedback for project improvement</li>
+            <li>Aligns with international sustainability certification systems</li>
+        </ul>
+        
+        <h2 class="mt-4">How to Use This Tool</h2>
+        <p>
+            As a UIA member or affiliated architect, you can:
+        </p>
+        <ul>
+            <li>Create secure profiles for your projects</li>
+            <li>Complete step-by-step SDG assessments</li>
+            <li>Receive detailed scorecards with visualization of results</li>
+            <li>Access recommendations based on UIA best practices</li>
+            <li>Generate comprehensive reports to share with clients and stakeholders</li>
+            <li>Track progress on sustainability objectives across your portfolio</li>
+        </ul>
+        
+        <div class="alert alert-info mt-4">
+            <h4 class="alert-heading h5">Start Your Assessment</h4>
+            <p>Begin evaluating your projects by <a href="{{ url_for('auth.login') }}" class="alert-link">logging in</a> or <a href="{{ url_for('auth.register') }}" class="alert-link">creating an account</a>.</p>
+            <hr>
+            <p class="mb-0">New users can explore our <a href="/sdg-information-hub" class="alert-link">resources section</a> for guidance on integrating SDGs into architectural practice.</p>
+        </div>
+        
+        <h2 class="mt-4">Contact & Support</h2>
+        <p>
+            For technical assistance with this tool, please contact <a href="mailto:sdgtool@uia-architectes.org">sdgtool@uia-architectes.org</a>. For more information about UIA's sustainability initiatives, visit the <a href="https://www.uia-architectes.org/en/sustainable-development/" target="_blank">UIA Sustainable Development page</a>.
+        </p>
+    </div>
+</div>
+{% endblock %}

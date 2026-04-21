@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Confirm Your Account - SDG Assessment Tool{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card text-center">
+            <div class="card-header">
+                <h4>Account Confirmation Needed</h4>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    Hello {{ current_user.name or 'User' }},<br>
+                    Thank you for registering! However, you need to confirm your email address before you can access all features.
+                </p>
+                <p class="card-text">
+                    An email has been sent to <strong>{{ current_user.email }}</strong> with confirmation instructions. Please check your inbox (and spam folder).
+                </p>
+                <p class="card-text">
+                    If you haven't received the email or need it sent again, click the button below.
+                </p>
+                <a href="{{ url_for('auth.resend_confirmation') }}" class="btn btn-primary">Resend Confirmation Email</a>
+                <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary ms-2">Logout</a>
+            </div>
+            <div class="card-footer text-muted">
+                Need help? Contact support.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

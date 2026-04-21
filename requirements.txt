@@ -1,0 +1,154 @@
+# ============================================================================
+# SDG Assessment Toolkit - Python Dependencies
+# ============================================================================
+# Installation: pip install -r requirements.txt
+# For development: pip install -r requirements.txt
+# For production: pip install -r requirements.txt --no-dev (after separating)
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# CORE WEB FRAMEWORK
+# ----------------------------------------------------------------------------
+Flask==2.3.3                # Lightweight WSGI web application framework
+Flask-WTF==1.2.1            # Simple integration of Flask and WTForms for form handling
+Flask-Login==0.6.3          # User session management and authentication
+Flask-Mail==0.9.1           # Email sending support for notifications and confirmations
+Werkzeug==2.3.7             # WSGI utility library (includes password hashing via generate_password_hash)
+
+# ----------------------------------------------------------------------------
+# DATABASE & ORM
+# ----------------------------------------------------------------------------
+Flask-SQLAlchemy==3.1.1     # Flask integration with SQLAlchemy ORM
+SQLAlchemy==2.0.30          # SQL toolkit and Object-Relational Mapping library
+Flask-Migrate==4.0.5        # Database migration support using Alembic
+alembic==1.13.1             # Database migration tool for SQLAlchemy
+
+# Default: SQLite (included in Python standard library, no installation needed)
+# For PostgreSQL production deployment:
+psycopg2-binary             # PostgreSQL adapter for Python (binary version for easy install)
+
+# ----------------------------------------------------------------------------
+# DATABASE ALTERNATIVES (Optional - Choose based on deployment needs)
+# ----------------------------------------------------------------------------
+# Uncomment ONE of the following based on your production database:
+#
+# For MySQL/MariaDB:
+# mysqlclient==2.2.0        # MySQL database connector (requires MySQL client libraries)
+# PyMySQL==1.1.0            # Pure Python MySQL client (alternative to mysqlclient)
+#
+# For Microsoft SQL Server:
+# pyodbc==5.0.1             # ODBC database connector for SQL Server
+# pymssql==2.2.8            # Pure Python MS SQL Server client
+#
+# For PostgreSQL (already included above):
+# psycopg2-binary           # Already listed in main dependencies
+
+# ----------------------------------------------------------------------------
+# SECURITY & AUTHENTICATION
+# ----------------------------------------------------------------------------
+PyJWT==2.8.0                # JSON Web Token implementation for API authentication
+bleach==6.1.0               # HTML sanitization library to prevent XSS attacks
+itsdangerous==2.1.2         # Cryptographically sign data (used for sessions and tokens)
+email-validator             # Email syntax validation for user registration
+
+# ----------------------------------------------------------------------------
+# UTILITIES & HELPERS
+# ----------------------------------------------------------------------------
+python-dotenv==1.0.0        # Load environment variables from .env files
+
+# ----------------------------------------------------------------------------
+# HTML PARSING (for testing and web scraping)
+# ----------------------------------------------------------------------------
+beautifulsoup4==4.12.3      # HTML/XML parser for testing and data extraction
+lxml==5.2.2                 # Fast XML/HTML parser (recommended backend for BeautifulSoup)
+
+# ----------------------------------------------------------------------------
+# TESTING FRAMEWORK
+# ----------------------------------------------------------------------------
+pytest==8.3.5               # Testing framework for Python applications
+pytest-cov==6.1.1           # Coverage plugin for pytest
+pytest-flask==1.2.0         # Flask-specific testing utilities
+
+# ----------------------------------------------------------------------------
+# PRODUCTION DEPLOYMENT
+# ----------------------------------------------------------------------------
+gunicorn==21.2.0            # WSGI HTTP server for running Flask in production
+
+# ----------------------------------------------------------------------------
+# API DOCUMENTATION
+# ----------------------------------------------------------------------------
+flasgger==0.9.7.1           # Automatic Swagger UI generation for Flask APIs
+
+# ----------------------------------------------------------------------------
+# DATA VISUALIZATION & REPORTING
+# ----------------------------------------------------------------------------
+matplotlib==3.8.0           # Plotting library for generating charts and graphs
+
+# ============================================================================
+# OPTIONAL DEPENDENCIES (install as needed)
+# ============================================================================
+#
+# PDF Export Support:
+# reportlab==4.0.7          # PDF generation library
+# WeasyPrint==60.1          # HTML to PDF converter
+#
+# Excel Export Support:
+# openpyxl==3.1.2           # Read/write Excel 2010 xlsx/xlsm files
+# xlsxwriter==3.1.9         # Create Excel XLSX files with charts
+#
+# Advanced Charting:
+# plotly==5.18.0            # Interactive charting library
+# seaborn==0.13.0           # Statistical data visualization
+#
+# Image Processing:
+# Pillow==10.1.0            # Python Imaging Library (PIL fork)
+#
+# Task Queue (for background jobs):
+# celery==5.3.4             # Distributed task queue
+
+# Redis (for caching and optional Celery broker)
+redis==5.0.1                # Redis client for caching
+
+# Caching:
+Flask-Caching==2.1.0        # Caching extension for Flask
+#
+# API Rate Limiting:
+# Flask-Limiter==3.5.0      # Rate limiting extension for Flask APIs
+#
+# Advanced Logging:
+# python-json-logger==2.0.7 # JSON formatted logging
+#
+# ============================================================================
+# DEVELOPMENT DEPENDENCIES (for development environment only)
+# ============================================================================
+#
+# Code Quality:
+# flake8==6.1.0             # Python linting tool
+# pylint==3.0.3             # Python code static checker
+# black==23.12.1            # Opinionated code formatter
+# isort==5.13.2             # Import statement sorter
+#
+# Type Checking:
+# mypy==1.7.1               # Static type checker for Python
+#
+# Documentation:
+# sphinx==7.2.6             # Documentation generator
+# sphinx-rtd-theme==2.0.0   # Read the Docs theme for Sphinx
+#
+# Database Tools:
+# flask-shell-ipython==0.4.1  # IPython support for Flask shell
+#
+# Debugging:
+# flask-debugtoolbar==0.14.1  # Debug toolbar for Flask
+# ipdb==0.13.13             # IPython-enabled pdb debugger
+#
+# ============================================================================
+# NOTES
+# ============================================================================
+# 1. Python Version: Requires Python 3.9 or higher
+# 2. Virtual Environment: Always use a virtual environment for installation
+# 3. System Dependencies: Some packages (like psycopg2, mysqlclient) may require
+#    system libraries. Refer to their documentation for installation.
+# 4. Security: Keep all dependencies up to date with security patches
+# 5. Production: Consider using pip-tools or poetry for dependency locking
+# ============================================================================

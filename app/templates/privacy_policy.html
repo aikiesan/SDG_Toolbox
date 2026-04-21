@@ -1,0 +1,37 @@
+<!-- app/templates/privacy_policy.html -->
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - SDG Assessment Tool{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4 text-center display-5 fw-bold">{{ title }}</h1>
+    <p class="lead text-center mb-5">Information about how we handle your data.</p>
+
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title">Our Commitment to Your Privacy</h2>
+            <p>This is where your privacy policy content will go. Please detail how user data is collected, used, stored, and protected.</p>
+            
+            <h3 class="mt-4">Information We Collect</h3>
+            <p>[Describe the types of information collected, e.g., account details, project data, assessment responses, usage analytics.]</p>
+
+            <h3 class="mt-4">How We Use Your Information</h3>
+            <p>[Explain the purposes for which data is used, e.g., to provide the service, improve the tool, for anonymized research.]</p>
+
+            <h3 class="mt-4">Data Sharing and Disclosure</h3>
+            <p>[Specify if and how data is shared with third parties.]</p>
+
+            <h3 class="mt-4">Data Security</h3>
+            <p>[Describe the security measures in place to protect user data.]</p>
+
+            <h3 class="mt-4">Your Rights</h3>
+            <p>[Inform users about their rights regarding their data, e.g., access, correction, deletion.]</p>
+
+            <h3 class="mt-4">Contact Us</h3>
+            <p>If you have any questions about this Privacy Policy, please <a href="{{ url_for('main.contact') }}">contact us</a>.</p>
+            {# Make sure you have a 'contact' route in main.py #}
+        </div>
+    </div>
+</div>
+{% endblock %}

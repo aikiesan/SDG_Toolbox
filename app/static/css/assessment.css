@@ -1,0 +1,102 @@
+/* Assessment Educational Content Styling - UIA Design System */
+
+/* UIA override: progress bar red */
+.progress-bar {
+  background-color: var(--uia-red) !important;
+}
+
+/* Evidence focus - UIA style */
+.evidence-field:focus {
+  border-color: var(--uia-blue) !important;
+  box-shadow: 0 0 0 2px rgba(87, 124, 179, 0.15) !important;
+}
+
+/* Educational Container */
+.educational-container {
+  border: 1px solid rgba(0,0,0,0.125);
+  box-shadow: none;
+  background-color: #F7F6F6;
+}
+
+.sdg-header {
+  transition: transform 0.2s ease;
+}
+
+.sdg-header:hover {
+  transform: translateX(5px);
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: rgba(0,0,0,0.03);
+}
+
+/* SDG Card Styling - UIA boxy */
+.sdg-card {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: none;
+  margin-bottom: 1.5rem;
+  background-color: #F7F6F6;
+}
+
+.sdg-card-header {
+  padding: 0.75rem 1rem;
+  color: white;
+}
+
+/* Evidence Field Styling */
+.evidence-field {
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  border-radius: 6px !important;
+}
+
+/* Rating Options Styling */
+.rating-options .btn {
+  min-width: 3rem;
+}
+
+.rating-options .btn-check:checked + .btn-outline-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+/* Evidence Quality Meter */
+.evidence-meter {
+  transition: width 0.3s ease;
+}
+
+/* Cross-cutting Section */
+.cross-cutting-section .card {
+  transition: transform 0.2s ease;
+}
+
+.cross-cutting-section .card:hover {
+  transform: translateY(-5px);
+}
+
+/* Resource Links */
+.resource-links a {
+  transition: color 0.15s ease-in-out;
+}
+
+.resource-links a:hover {
+  color: #0056b3;
+  text-decoration: none;
+}
+
+/* SDG Icons */
+.sdg-icon {
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .sdg-header {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .sdg-header img {
+    margin-bottom: 0.5rem;
+  }
+} 

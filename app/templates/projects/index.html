@@ -1,0 +1,391 @@
+{% extends "base.html" %}
+
+{% block title %}My Projects - SDG Assessment Tool{% endblock %}
+
+{% block head %}
+{{ super() }}
+<style>
+    /* --- Project List Page Enhancements --- */
+    .projects-page-header {
+        background: linear-gradient(135deg, var(--uia-blue) 0%, var(--uia-violet) 100%);
+        color: white;
+        border-radius: 0;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: none;
+        z-index: 1;
+        border-bottom: 4px solid var(--uia-red);
+    }
+    .projects-page-title { font-size: 2rem; font-weight: 800; margin-bottom: 0.25rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .projects-page-subtitle { opacity: 0.8; margin-bottom: 1.25rem; font-size: 1rem; }
+    .btn-new-project-header { padding: 0.7rem 1.5rem; font-weight: 700; font-size: 0.85rem; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .btn-new-project-header i { font-size: 1.1em; }
+
+    /* Controls Toolbar */
+    .controls-toolbar { margin-bottom: 2rem; }
+    .search-sort-wrapper { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; } /* Reduced gap */
+    .projects-search-form { flex-grow: 1; min-width: 200px; max-width: 320px; } /* Adjusted max-width */
+    .projects-search-input {
+        padding: 0.5rem 1rem 0.5rem 2.5rem;
+        border-radius: 0;
+        border: 1px solid #ccc; height: 42px;
+        box-shadow: none; font-size: 0.9rem;
+    }
+    .projects-search-input:focus {
+        border-color: var(--uia-blue);
+        box-shadow: 0 0 0 2px rgba(87, 124, 179, 0.15);
+    }
+    .projects-search-icon {
+        position: absolute; left: 0.9rem; top: 50%;
+        transform: translateY(-50%); color: var(--bs-secondary-color); font-size: 0.9rem; /* Adjusted size */
+    }
+    .sort-dropdown .btn {
+        border-radius: 0; padding: 0.5rem 1rem;
+        font-weight: 700; border: 1px solid #ccc;
+        background-color: #fff; font-size: 0.85rem;
+        color: var(--uia-blue); height: 42px;
+        text-transform: uppercase; letter-spacing: 0.03em;
+    }
+    .sort-dropdown .dropdown-menu {
+        border: 2px solid #000;
+        border-radius: 0;
+        box-shadow: 4px 4px 0 rgba(0,0,0,0.1); padding: 0.5rem 0;
+    }
+    .sort-dropdown .dropdown-item { font-size: 0.9rem; padding: 0.5rem 1rem; }
+    .sort-dropdown .dropdown-item.active, .sort-dropdown .dropdown-item:active {
+        background-color: var(--bs-primary); color: white;
+    }
+
+    /* --- NEW CARD GRID STYLING (INSPIRED BY REFERENCE) --- */
+    .project-grid { /* Wrapper for the cards row */
+        /* Using Bootstrap's row-cols for responsiveness, g-3 for spacing */
+    }
+
+    .project-card-wrapper { /* Bootstrap column, acts as wrapper for card */
+        display: flex; /* For height: 100% on child card */
+        padding-bottom: var(--bs-gutter-x, 1rem); /* Consistent bottom spacing like grid gap */
+    }
+
+    .project-card {
+        background-color: var(--bs-body-bg);
+        border: 1px solid var(--bs-border-color);
+        border-radius: var(--border-radius-lg, 0.75rem); /* Larger radius like reference */
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05); /* Subtle shadow */
+        transition: transform 0.25s ease-out, box-shadow 0.25s ease-out;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden; /* Important for rounded corners with visual */
+    }
+    .project-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+
+    .project-card-visual { /* Area for icon/image at the top */
+        height: 160px; /* Adjust height as needed */
+        background-color: var(--bs-tertiary-bg); /* Placeholder background */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 1px solid var(--bs-border-color);
+    }
+    .project-card-visual i { /* Icon styling within the visual area */
+        font-size: 3.5rem; /* Large icon */
+        color: var(--bs-primary);
+        opacity: 0.6;
+    }
+    /* If using actual images:
+    .project-card-visual img {
+        width: 100%; height: 100%; object-fit: cover;
+    } */
+
+    .project-card .card-body {
+        padding: 1rem 1.25rem; /* Adjusted padding */
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1; /* Takes available space */
+    }
+
+    .project-card-title {
+        font-size: 1.1rem; /* Title size like reference */
+        font-weight: 600;
+        color: var(--bs-body-color);
+        margin-bottom: 0.5rem; /* Space after title */
+        line-height: 1.3;
+        /* Truncation for title - 2 lines */
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-height: calc(1.1rem * 1.3 * 2); /* Ensures space for two lines */
+    }
+    .project-card-title a { color: inherit; text-decoration: none; }
+    .project-card-title a:hover { color: var(--bs-primary); }
+
+    .project-card-description { /* Corresponds to the placeholder lines in reference */
+        font-size: 0.875rem;
+        color: var(--bs-secondary-color);
+        line-height: 1.5;
+        margin-bottom: 1rem; /* Space after description */
+        /* Truncation for description - 3 lines */
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-height: calc(0.875rem * 1.5 * 3); /* Approx height for 3 lines */
+        flex-grow: 1; /* Allows description to take space before tags/button */
+    }
+    
+    .project-card-tags {
+        margin-bottom: 1rem; /* Space before button */
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+    }
+    .project-card-tags .badge {
+        font-size: 0.7rem; /* Smaller tags like reference */
+        font-weight: 500;
+        padding: 0.3em 0.6em;
+        background-color: var(--bs-secondary-bg-subtle); /* Subtle badge background */
+        color: var(--bs-secondary-text-emphasis);
+        border: 1px solid var(--bs-secondary-border-subtle);
+    }
+
+    .project-card-actions {
+        margin-top: auto; /* Pushes button to the bottom of card-body */
+    }
+    .project-card-actions .btn {
+        width: 100%; /* Full width button like reference */
+        font-size: 0.9rem;
+        font-weight: 600; /* Bolder button text */
+        padding: 0.6rem 1rem; /* Adjust button padding */
+    }
+    .project-card-actions .btn-edit { /* Specific style for edit if needed */
+        margin-top: 0.5rem; /* Space if you have two buttons */
+        background-color: transparent;
+        color: var(--bs-primary);
+        border-color: var(--bs-primary);
+    }
+    .project-card-actions .btn-edit:hover {
+        background-color: var(--bs-primary-bg-subtle);
+    }
+
+
+    /* Empty State & Count Badge (keep previous good styles) */
+    .empty-state-projects { /* ... */ }
+    .project-count-badge { /* ... */ }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Projects Page Header -->
+<div class="projects-page-header">
+    <div class="row align-items-center">
+        <div class="col-md-7 col-lg-8 mb-3 mb-md-0">
+            <h1 class="projects-page-title">
+                My Projects
+                {% if projects is defined %}
+                <span class="project-count-badge">{{ projects.total }}</span>
+                {% endif %}
+            </h1>
+            <p class="projects-page-subtitle">Organize, assess, and track the sustainability impact of your architectural designs.</p>
+        </div>
+        <div class="col-md-5 col-lg-4 text-md-end">
+            <a href="{{ url_for('projects.new_project') }}" class="btn btn-light btn-new-project-header">
+                <i class="bi bi-plus-lg me-1"></i> Create New Project
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container-lg py-4">
+  <div class="row gx-md-5">
+    <!-- Sidebar: Search & Filter -->
+    <div class="col-12 col-lg-2">
+      <div class="sticky-top pt-2">
+        <span class="sdg-section-header d-block mb-3">Filter</span>
+        {% if projects.items|length > 0 or search_term %}
+        <form action="{{ url_for('projects.index') }}" method="GET" role="search" class="mb-3">
+          <div class="position-relative">
+            <i class="bi bi-search projects-search-icon"></i>
+            <input type="search" class="form-control projects-search-input w-100"
+                   id="projectSearchInput" name="search" placeholder="Search..."
+                   value="{{ search_term|default('') }}" aria-label="Search projects">
+          </div>
+          <button type="submit" class="btn btn-uia-outline w-100 mt-2">Search</button>
+        </form>
+        {% endif %}
+
+        {% if projects.items|length > 1 %}
+        <span class="sdg-section-header d-block mb-2 mt-3">Sort By</span>
+        <div class="d-flex flex-column gap-1">
+          <a class="btn btn-sm btn-uia-outline text-start sort-option {% if current_sort == 'name' %}active{% endif %}" href="#" data-sort="name">Name (A-Z)</a>
+          <a class="btn btn-sm btn-uia-outline text-start sort-option {% if current_sort == 'name_desc' %}active{% endif %}" href="#" data-sort="name_desc">Name (Z-A)</a>
+          <a class="btn btn-sm btn-uia-outline text-start sort-option {% if current_sort == 'date_desc' %}active{% endif %}" href="#" data-sort="date_desc">Newest First</a>
+          <a class="btn btn-sm btn-uia-outline text-start sort-option {% if current_sort == 'date_asc' %}active{% endif %}" href="#" data-sort="date_asc">Oldest First</a>
+          <a class="btn btn-sm btn-uia-outline text-start sort-option {% if current_sort == 'assessment_count_desc' %}active{% endif %}" href="#" data-sort="assessment_count_desc">Most Assessed</a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    <!-- Main Content: Project Grid -->
+    <div class="col-12 col-lg-10">
+
+
+{% if projects.items|length > 0 %}
+<!-- Projects Grid -->
+<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3 project-grid" id="projectsGrid"> {# Adjusted row-cols for responsiveness, g-3 for gap #}
+    {% for project in projects.items %}
+    <div class="col project-card-wrapper"> 
+        <div class="card project-card">
+            <div class="project-card-visual">
+                {% set icon_class = 'bi-building-gear' %} {# Default icon #}
+                {% if project.project_type == 'residential' %}{% set icon_class = 'bi-house-door-fill' %}{% endif %}
+                {% if project.project_type == 'commercial' %}{% set icon_class = 'bi-shop' %}{% endif %}
+                {% if project.project_type == 'industrial' %}{% set icon_class = 'bi-buildings-fill' %}{% endif %}
+                {% if project.project_type == 'institutional' %}{% set icon_class = 'bi-bank2' %}{% endif %}
+                {% if project.project_type == 'mixed_use' %}{% set icon_class = 'bi-grid-1x2-fill' %}{% endif %}
+                {% if project.project_type == 'landscape' %}{% set icon_class = 'bi-tree-fill' %}{% endif %}
+                {% if project.project_type == 'urban_planning' %}{% set icon_class = 'bi-map-fill' %}{% endif %}
+                <i class="bi {{ icon_class }}"></i>
+            </div>
+            <div class="card-body">
+                <h3 class="project-card-title">
+                    <a href="{{ url_for('projects.show', id=project.id) }}" class="stretched-link" title="View details for {{ project.name }}">{{ project.name }}</a>
+                </h3>
+                <p class="project-card-description">
+                    {{ project.description|default('', true)|truncate(80) }}
+                </p>
+                <div class="project-card-tags">
+                    {% if project.project_type %}
+                    <span class="badge"><i class="bi {{ icon_class }} me-1"></i>{{ project.project_type.replace('_', ' ')|title }}</span>
+                    {% endif %}
+                    <span class="badge">
+                        <i class="bi bi-card-checklist me-1"></i>
+                        {{ project.assessment_count }} Assessment{{ 's' if project.assessment_count != 1 }}
+                    </span>
+                     {% if project.location %} {# Location as a tag #}
+                    <span class="badge"><i class="bi bi-geo-alt-fill me-1"></i>{{ project.location|truncate(15) }}</span>
+                    {% endif %}
+                </div>
+                <div class="project-card-actions">
+                    <a href="{{ url_for('projects.show', id=project.id) }}" class="btn btn-primary"> 
+                        <i class="bi bi-eye-fill me-1"></i>View & Assess
+                    </a>
+                    {# Consider moving Edit to project detail page or a dropdown if cards are too cluttered #}
+                    {# <a href="{{ url_for('projects.edit', id=project.id) }}" class="btn btn-outline-secondary btn-edit"> 
+                        <i class="bi bi-pencil-square me-1"></i>Edit
+                    </a> #}
+                </div>
+            </div>
+            {# Footer can be removed if date is not critical here, or integrated into tags #}
+            {# <div class="card-footer text-muted">
+                <small><i class="bi bi-calendar3 me-1"></i>Created: {{ project.created_at|format_date }}</small>
+            </div> #}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% elif search_term %}
+<!-- ... (empty state for search - looks good) ... -->
+<div class="empty-state-projects">
+    <div class="empty-state-icon"><i class="bi bi-binoculars-fill"></i></div>
+    <h3>No Projects Match "<strong>{{ search_term }}</strong>"</h3>
+    <p class="empty-state-text">
+        Try refining your search, or view all projects.
+    </p>
+    <a href="{{ url_for('projects.index') }}" class="btn btn-lg btn-primary"> 
+        <i class="bi bi-list-ul me-2"></i>View All Projects
+    </a>
+    <a href="{{ url_for('projects.new_project') }}" class="btn btn-lg btn-outline-secondary ms-2"> 
+        <i class="bi bi-plus-circle me-2"></i>Create New Project
+    </a>
+</div>
+{% else %}
+<!-- ... (empty state for no projects - looks good) ... -->
+<div class="empty-state-projects">
+    <div class="empty-state-icon"><i class="bi bi-collection-fill"></i></div>
+    <h3>Start Your Sustainability Journey!</h3>
+    <p class="empty-state-text">
+        You haven't created any projects yet. Add your first project to begin assessing its impact
+        on the Sustainable Development Goals.
+    </p>
+    <a href="{{ url_for('projects.new_project') }}" class="btn btn-lg btn-success"> 
+        <i class="bi bi-plus-circle-fill me-2"></i>Create Your First Project
+    </a>
+</div>
+{% endif %}
+
+    </div><!-- end col-lg-10 -->
+  </div><!-- end row -->
+</div><!-- end container-lg -->
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    // ... (JavaScript for sort and animations from previous version is fine) ...
+    document.addEventListener('DOMContentLoaded', function() {
+        const sortLinks = document.querySelectorAll('.sort-option');
+        const currentSortLabelSpan = document.querySelector('.current-sort-label');
+
+        sortLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const sortBy = this.getAttribute('data-sort');
+                const currentUrl = new URL(window.location.href);
+                const searchTerm = currentUrl.searchParams.get('search');
+                
+                const newUrl = new URL(currentUrl.origin + currentUrl.pathname);
+                newUrl.searchParams.set('sort', sortBy); 
+                if (searchTerm) {
+                    newUrl.searchParams.set('search', searchTerm);
+                }
+                
+                if (currentSortLabelSpan) {
+                    let newLabel = this.textContent;
+                    if (newLabel.includes('(')) {
+                        newLabel = newLabel.substring(0, newLabel.indexOf('(')).trim();
+                    }
+                    currentSortLabelSpan.textContent = newLabel;
+                }
+                window.location.href = newUrl.toString();
+            });
+        });
+
+        const header = document.querySelector('.projects-page-header');
+        const toolbar = document.querySelector('.controls-toolbar');
+        const projectCards = document.querySelectorAll('.project-card-wrapper'); // Target the wrapper
+        const emptyState = document.querySelector('.empty-state-projects');
+
+        function animateElement(element, delay = 0, transformY = '15px') {
+            if (element) {
+                element.style.opacity = '0';
+                element.style.transform = `translateY(${transformY})`;
+                setTimeout(() => {
+                    element.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, delay);
+            }
+        }
+
+        animateElement(header, 50);
+        animateElement(toolbar, 150);
+
+        projectCards.forEach((cardWrapper, index) => { // Animate the wrapper
+            animateElement(cardWrapper, 250 + (index * 60), '20px');
+        });
+
+        if (emptyState) {
+            animateElement(emptyState, 250, '10px');
+        }
+    });
+</script>
+{% endblock %}

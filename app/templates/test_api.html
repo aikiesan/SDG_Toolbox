@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test API</title>
+    <script>
+        function createProject() {
+            fetch('/api/projects', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: document.getElementById('name').value,
+                    description: document.getElementById('description').value,
+                    project_type: document.getElementById('project_type').value,
+                    location: document.getElementById('location').value,
+                    size_sqm: parseFloat(document.getElementById('size_sqm').value)
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                document.getElementById('result').textContent = 'Error: ' + error;
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Create Project</h1>
+    <form onsubmit="event.preventDefault(); createProject();">
+        <div>
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+        </div>
+        <div>
+            <label for="description">Description:</label>
+            <textarea id="description"></textarea>
+        </div>
+        <div>
+            <label for="project_type">Type:</label>
+            <select id="project_type">
+                <option value="residential">Residential</option>
+                <option value="commercial">Commercial</option>
+                <option value="industrial">Industrial</option>
+                <option value="institutional">Institutional</option>
+                <option value="mixed_use">Mixed Use</option>
+            </select>
+        </div>
+        <div>
+            <label for="location">Location:</label>
+            <input type="text" id="location">
+        </div>
+        <div>
+            <label for="size_sqm">Size (sq.m):</label>
+            <input type="number" id="size_sqm">
+        </div>
+        <button type="submit">Create Project</button>
+    </form>
+    <h2>Result:</h2>
+    <pre id="result"></pre>
+</body>
+</html>

@@ -1,0 +1,43 @@
+# Version control
+.git
+.gitignore
+.github
+
+# Environment / secrets
+.env
+.env.*
+!.env.production.template
+
+# Python artifacts
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Test & coverage
+.pytest_cache
+.coverage
+coverage.xml
+htmlcov/
+test-reports/
+tests/
+
+# Dev database & instance
+instance/
+*.db
+*.sqlite3
+
+# IDE
+.vscode/
+.idea/
+
+# Docs & scripts (not needed in image)
+docs/
+documentation/
+*.md
+!README.md
+scripts/
+
+# Plan files
+.claude/

@@ -1,0 +1,299 @@
+{% extends "base.html" %}
+
+{% block title %}Project Comparison{% endblock %}
+
+{% block styles %}
+<style>
+  .comparison-table th, .comparison-table td {
+    text-align: center;
+  }
+  .comparison-table th {
+    background-color: #F7F6F6;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    border-bottom: 2px solid #000;
+  }
+  .score-cell {
+    font-weight: bold;
+  }
+  .comparison-card {
+    transition: transform 0.3s;
+  }
+  .comparison-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .chart-container {
+    height: 400px;
+    position: relative;
+  }
+  .sdg-badge {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    border-radius: 50%;
+    color: white;
+    font-weight: bold;
+    margin-right: 5px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-lg py-5">
+  <div class="row gx-md-5">
+    <!-- Sidebar -->
+    <div class="col-12 col-lg-2">
+      <div class="sticky-top pt-2">
+        <span class="sdg-section-header d-block mb-3">Compare Projects</span>
+        <form action="{{ url_for('dashboard.project_comparison') }}" method="get" id="compareForm">
+          <select class="form-select mb-2" name="project_ids" multiple id="projectSelect" size="8">
+            {% for project in projects %}
+            <option value="{{ project.id }}" {% if project.id in selected_projects|map(attribute='id') %}selected{% endif %}>
+              {{ project.name }}
+            </option>
+            {% endfor %}
+          </select>
+          <div class="form-text mb-2">Ctrl/Cmd to multi-select (up to 5)</div>
+          <button type="submit" class="btn btn-uia-primary w-100">Compare</button>
+        </form>
+        <div class="mt-3">
+          <a href="{{ url_for('dashboard.index') }}" class="btn btn-uia-outline w-100 text-start">
+            <i class="bi bi-arrow-left"></i> Dashboard
+          </a>
+        </div>
+      </div>
+    </div>
+    <!-- Main Content -->
+    <div class="col-12 col-lg-10">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0" style="text-transform: uppercase; font-weight: 800;">Project Comparison</h1>
+  </div>
+  
+  {% if selected_projects %}
+  <!-- Radar Chart Comparison -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-white">
+      <h5 class="mb-0">SDG Performance Comparison</h5>
+    </div>
+    <div class="card-body">
+      <div class="chart-container">
+        <canvas id="radarChart"></canvas>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Project Cards -->
+  <div class="row mb-4">
+    {% for project in selected_projects %}
+    <div class="col-md-{% if selected_projects|length == 1 %}12{% elif selected_projects|length == 2 %}6{% elif selected_projects|length == 3 %}4{% else %}3{% endif %}">
+      <div class="card comparison-card shadow-sm h-100">
+        <div class="card-header bg-white">
+          <h5 class="mb-0">{{ project.name }}</h5>
+        </div>
+        <div class="card-body">
+          <table class="table table-sm">
+            <tbody>
+              <tr>
+                <th scope="row" class="text-start">Type:</th>
+                <td class="text-end">{{ project.type or 'N/A' }}</td>
+              </tr>
+              <tr>
+                <th scope="row" class="text-start">Location:</th>
+                <td class="text-end">{{ project.location or 'N/A' }}</td>
+              </tr>
+              <tr>
+                <th scope="row" class="text-start">Size:</th>
+                <td class="text-end">{% if project.size_sqm %}{{ project.size_sqm }} sqm{% else %}N/A{% endif %}</td>
+              </tr>
+              <tr>
+                <th scope="row" class="text-start">Overall Score:</th>
+                <td class="text-end">
+                  {% if project.assessment and project.assessment.overall_score %}
+                  <span class="badge bg-{% if project.assessment.overall_score >= 4 %}success{% elif project.assessment.overall_score >= 3 %}info{% elif project.assessment.overall_score >= 2 %}warning{% else %}danger{% endif %}">
+                    {{ project.assessment.overall_score|round(1) }}
+                  </span>
+                  {% else %}
+                  <span class="badge bg-secondary">N/A</span>
+                  {% endif %}
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="text-start">Status:</th>
+                <td class="text-end">
+                  {% if project.assessment %}
+                  <span class="badge bg-{% if project.assessment.status == 'completed' %}success{% else %}warning{% endif %}">
+                    {{ project.assessment.status|capitalize }}
+                  </span>
+                  {% else %}
+                  <span class="badge bg-secondary">No Assessment</span>
+                  {% endif %}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <a href="{{ url_for('projects.show', id=project.id) }}" class="btn btn-uia-outline btn-sm w-100">View Project</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  
+  <!-- SDG Scores Comparison Table -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-white">
+      <h5 class="mb-0">SDG Scores Comparison</h5>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover comparison-table">
+          <thead>
+            <tr>
+              <th scope="col">SDG</th>
+              {% for project in selected_projects %}
+              <th scope="col">{{ project.name }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for sdg_number in sdg_numbers %}
+            <tr>
+              <th scope="row">
+                <div class="d-flex align-items-center">
+                  <span class="sdg-badge" style="background-color: 
+                    {% if sdg_number == 1 %}#e5243b{% elif sdg_number == 2 %}#dda63a
+                    {% elif sdg_number == 3 %}#4c9f38{% elif sdg_number == 4 %}#c5192d
+                    {% elif sdg_number == 5 %}#ff3a21{% elif sdg_number == 6 %}#26bde2
+                    {% elif sdg_number == 7 %}#fcc30b{% elif sdg_number == 8 %}#a21942
+                    {% elif sdg_number == 9 %}#fd6925{% elif sdg_number == 10 %}#dd1367
+                    {% elif sdg_number == 11 %}#fd9d24{% elif sdg_number == 12 %}#bf8b2e
+                    {% elif sdg_number == 13 %}#3f7e44{% elif sdg_number == 14 %}#0a97d9
+                    {% elif sdg_number == 15 %}#56c02b{% elif sdg_number == 16 %}#00689d
+                    {% elif sdg_number == 17 %}#19486a{% endif %}">
+                    {{ sdg_number }}
+                  </span>
+                  <span>
+                    {% if sdg_number == 1 %}No Poverty
+                    {% elif sdg_number == 2 %}Zero Hunger
+                    {% elif sdg_number == 3 %}Good Health & Well-being
+                    {% elif sdg_number == 4 %}Quality Education
+                    {% elif sdg_number == 5 %}Gender Equality
+                    {% elif sdg_number == 6 %}Clean Water & Sanitation
+                    {% elif sdg_number == 7 %}Affordable & Clean Energy
+                    {% elif sdg_number == 8 %}Decent Work & Economic Growth
+                    {% elif sdg_number == 9 %}Industry, Innovation & Infrastructure
+                    {% elif sdg_number == 10 %}Reduced Inequalities
+                    {% elif sdg_number == 11 %}Sustainable Cities & Communities
+                    {% elif sdg_number == 12 %}Responsible Consumption & Production
+                    {% elif sdg_number == 13 %}Climate Action
+                    {% elif sdg_number == 14 %}Life Below Water
+                    {% elif sdg_number == 15 %}Life on Land
+                    {% elif sdg_number == 16 %}Peace, Justice & Strong Institutions
+                    {% elif sdg_number == 17 %}Partnerships for the Goals
+                    {% endif %}
+                  </span>
+                </div>
+              </th>
+              {% for project in selected_projects %}
+              <td class="score-cell">
+                {% set scores = project_sdg_scores.get(project.id, {}) %}
+                {% if scores and scores.get(sdg_number, {}).get('score') %}
+                <span class="badge bg-{% if scores[sdg_number]['score'] >= 4 %}success{% elif scores[sdg_number]['score'] >= 3 %}info{% elif scores[sdg_number]['score'] >= 2 %}warning{% else %}danger{% endif %} rounded-pill">
+                  {{ scores[sdg_number]['score'] }}
+                </span>
+                {% else %}
+                <span class="text-muted">—</span>
+                {% endif %}
+              </td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="alert alert-info">
+    <i class="bi bi-info-circle-fill me-2"></i> Please select at least one project to view comparison data.
+  </div>
+  {% endif %}
+
+    </div><!-- end col-lg-10 -->
+  </div><!-- end row -->
+</div><!-- end container-lg -->
+{% endblock %}
+
+{% block scripts %}
+{% if selected_projects %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Data transformation for radar chart
+    const projectNames = [{% for project in selected_projects %}'{{ project.name }}'{% if not loop.last %}, {% endif %}{% endfor %}];
+    const sdgScores = [];
+    
+    {% for project in selected_projects %}
+    const scores{{ loop.index }} = [];
+    {% for sdg_number in sdg_numbers %}
+    {% set scores = project_sdg_scores.get(project.id, {}) %}
+    scores{{ loop.index }}.push({{ scores.get(sdg_number, {}).get('score', 0) or 0 }});
+    {% endfor %}
+    
+    sdgScores.push({
+      label: '{{ project.name }}',
+      data: scores{{ loop.index }},
+      backgroundColor: 'rgba({{ (loop.index * 50) % 255 }}, {{ (loop.index * 100) % 255 }}, {{ (loop.index * 150) % 255 }}, 0.2)',
+      borderColor: 'rgba({{ (loop.index * 50) % 255 }}, {{ (loop.index * 100) % 255 }}, {{ (loop.index * 150) % 255 }}, 1)',
+      borderWidth: 2,
+      pointBackgroundColor: 'rgba({{ (loop.index * 50) % 255 }}, {{ (loop.index * 100) % 255 }}, {{ (loop.index * 150) % 255 }}, 1)'
+    });
+    {% endfor %}
+    
+    // Radar Chart
+    const radarCtx = document.getElementById('radarChart').getContext('2d');
+    new Chart(radarCtx, {
+      type: 'radar',
+      data: {
+        labels: [{% for sdg_number in sdg_numbers %}'SDG {{ sdg_number }}'{% if not loop.last %}, {% endif %}{% endfor %}],
+        datasets: sdgScores
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          r: {
+            beginAtZero: true,
+            max: 5,
+            ticks: {
+              stepSize: 1
+            }
+          }
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: 'SDG Scores Comparison (0-5 scale)'
+          },
+          legend: {
+            position: 'bottom'
+          },
+          tooltip: {
+            callbacks: {
+              title: function(tooltipItems) {
+                return tooltipItems[0].label;
+              }
+            }
+          }
+        }
+      }
+    });
+  });
+</script>
+{% endif %}
+{% endblock %}

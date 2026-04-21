@@ -1,0 +1,298 @@
+{% extends "base.html" %}
+
+{% block title %}Login - SDG Assessment Tool{% endblock %}
+
+{% block head %}
+<style>
+    .auth-container {
+        max-width: 480px;
+        margin: 2rem auto;
+    }
+    
+    .auth-card {
+        border-radius: var(--bs-border-radius-lg, 0.75rem);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+    
+    .auth-card .card-header {
+        background-color: var(--uia-primary, #4a5c9e);
+        color: white;
+        padding: 1.5rem;
+        text-align: center;
+        border-bottom: none;
+    }
+    
+    .auth-card .card-body {
+        padding: 2rem;
+    }
+    
+    .form-control {
+        padding: 0.75rem 1rem;
+        height: auto;
+        border-radius: var(--bs-border-radius-md, 0.5rem);
+        border: 1px solid var(--uia-border-color, #e0e0e0);
+        box-shadow: none;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        border-color: var(--uia-primary, #4a5c9e);
+        box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--uia-primary, #4a5c9e) 15%, transparent);
+    }
+    
+    .form-label {
+        font-weight: 500;
+        color: var(--uia-text-color, #495057);
+    }
+    
+    .btn-login {
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        border-radius: var(--bs-border-radius-md, 0.5rem);
+        background-color: var(--uia-primary, #4a5c9e);
+        border: none;
+        transition: all 0.3s ease;
+        color: white;
+    }
+    
+    .btn-login:hover, .btn-login:focus {
+        background-color: var(--uia-secondary, #2c7bbc);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .auth-divider {
+        position: relative;
+        text-align: center;
+        margin: 1.5rem 0;
+    }
+    
+    .auth-divider::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background-color: var(--uia-border-color, #e0e0e0);
+    }
+    
+    .auth-divider span {
+        position: relative;
+        padding: 0 1rem;
+        background-color: white;
+        color: var(--uia-text-muted, #6c757d);
+    }
+    
+    .auth-footer {
+        text-align: center;
+        margin-top: 1.5rem;
+    }
+    
+    .form-check-input:checked {
+        background-color: var(--uia-primary, #4a5c9e);
+        border-color: var(--uia-primary, #4a5c9e);
+    }
+
+    .input-group-text {
+        background-color: var(--uia-bg-light, #f8f9fa);
+        border-color: var(--uia-border-color, #e0e0e0);
+    }
+
+    .password-toggle {
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .remember-me-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+    }
+
+    .remember-me {
+        display: flex;
+        align-items: center;
+    }
+
+    .forgot-password {
+        font-size: 0.875rem;
+        color: var(--uia-primary, #4a5c9e);
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .forgot-password:hover {
+        color: var(--uia-secondary, #2c7bbc);
+        text-decoration: underline;
+    }
+
+    .auth-alt-option {
+        background-color: var(--uia-bg-light, #f8f9fa);
+        border-top: 1px solid var(--uia-border-color, #e0e0e0);
+        padding: 1.25rem;
+        text-align: center;
+    }
+
+    .auth-alt-option a {
+        color: var(--uia-primary, #4a5c9e);
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .auth-alt-option a:hover {
+        color: var(--uia-secondary, #2c7bbc);
+        text-decoration: underline;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .bi-arrow-repeat {
+        display: inline-block;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-lg py-5">
+  <div class="row">
+    <div class="col-12 col-lg-5 offset-lg-4">
+<div class="auth-container" style="max-width: 100%; margin: 0;">
+    <div class="card auth-card">
+        <div class="card-header">
+            <div class="text-center mb-4">
+                <img src="{{ url_for('static', filename='img/UIA_LOGO.png') }}" alt="UIA Logo" class="img-fluid mb-3" style="max-height: 60px;">
+                <h4 class="mb-0">Welcome Back</h4>
+                <p class="text-muted">Sign in to continue to your account</p>
+            </div>
+        </div>
+        
+        <div class="card-body">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            <form method="POST" action="{{ url_for('auth.login') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <!-- Email field -->
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email address</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                        <input type="email" class="form-control" id="email" name="email" 
+                               placeholder="e.g., yourname@example.com" required autofocus>
+                    </div>
+                </div>
+                
+                <!-- Password field with visibility toggle -->
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <input type="password" class="form-control" id="password" name="password" 
+                               placeholder="Enter your password" required>
+                        <span class="input-group-text password-toggle" onclick="togglePasswordVisibility()">
+                            <i class="bi bi-eye" id="toggleIcon"></i>
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Remember me and forgot password -->
+                <div class="remember-me-wrapper">
+                    <div class="remember-me">
+                        <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                        <label class="form-check-label ms-2" for="remember">Remember me</label>
+                    </div>
+                    <div>
+                        <a href="{{ url_for('auth.forgot_password') }}" class="forgot-password text-decoration-none">Forgot password?</a>
+                    </div>
+                </div>
+                
+                <!-- Submit button -->
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-login" id="loginButton">
+                        <i class="bi bi-box-arrow-in-right me-2"></i><span class="button-text">Sign In</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Register link section -->
+        <div class="auth-alt-option">
+            <p class="mb-0">Don't have an account? <a href="{{ url_for('auth.register') }}" class="fw-semibold">Register Now</a></p>
+        </div>
+    </div>
+</div><!-- end auth-container -->
+    </div><!-- end col -->
+  </div><!-- end row -->
+</div><!-- end container-lg -->
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Function to toggle password visibility
+    function togglePasswordVisibility() {
+        const passwordInput = document.getElementById('password');
+        const toggleIcon = document.getElementById('toggleIcon');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleIcon.classList.remove('bi-eye');
+            toggleIcon.classList.add('bi-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            toggleIcon.classList.remove('bi-eye-slash');
+            toggleIcon.classList.add('bi-eye');
+        }
+    }
+    
+    // Focus the email field on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('email').focus();
+        
+        // Animate the login card on page load
+        const authCard = document.querySelector('.auth-card');
+        authCard.style.transform = 'translateY(30px)';
+        authCard.style.opacity = '0';
+        
+        setTimeout(() => {
+            authCard.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.5s ease-out';
+            authCard.style.transform = 'translateY(0)';
+            authCard.style.opacity = '1';
+        }, 100);
+    });
+
+    // Handle missing logo.svg gracefully
+    function handleImgError(img) {
+        img.style.display = 'none';
+    }
+
+    // Login form submission handling
+    const loginForm = document.querySelector('form[action="{{ url_for('auth.login')|tojson|safe }}"]');
+    const loginButton = document.getElementById('loginButton');
+    const buttonText = loginButton.querySelector('.button-text');
+    const buttonIcon = loginButton.querySelector('i');
+
+    if (loginForm && loginButton && buttonText) {
+        loginForm.addEventListener('submit', function(e) {
+            loginButton.disabled = true;
+            buttonText.textContent = 'Signing In...';
+            
+            if (buttonIcon) {
+                buttonIcon.classList.remove('bi-box-arrow-in-right');
+                buttonIcon.classList.add('bi-arrow-repeat');
+                buttonIcon.style.animation = 'spin 1s linear infinite';
+            }
+        });
+    }
+</script>
+{% endblock %}

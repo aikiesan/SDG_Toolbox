@@ -1,0 +1,689 @@
+{% extends "base.html" %}
+
+{# --- DEFINE DEFAULT CONTEXT VARIABLES AT THE TOP --- #}
+{% set default_sdg_config = {
+    1: {'color': '#E5243B', 'title': 'No Poverty', 'subtitle': 'End poverty in all its forms everywhere'},
+    2: {'color': '#DDA63A', 'title': 'Zero Hunger', 'subtitle': 'End hunger, achieve food security and improved nutrition and promote sustainable agriculture'},
+    3: {'color': '#4C9F38', 'title': 'Good Health and Well-being', 'subtitle': 'Ensure healthy lives and promote well-being for all at all ages'},
+    4: {'color': '#C5192D', 'title': 'Quality Education', 'subtitle': 'Ensure inclusive and equitable quality education and promote lifelong learning opportunities for all'},
+    5: {'color': '#FF3A21', 'title': 'Gender Equality', 'subtitle': 'Achieve gender equality and empower all women and girls'},
+    6: {'color': '#26BDE2', 'title': 'Clean Water and Sanitation', 'subtitle': 'Ensure availability and sustainable management of water and sanitation for all'},
+    7: {'color': '#FCC30B', 'title': 'Affordable and Clean Energy', 'subtitle': 'Ensure access to affordable, reliable, sustainable and modern energy for all'},
+    8: {'color': '#A21942', 'title': 'Decent Work and Economic Growth', 'subtitle': 'Promote sustained, inclusive and sustainable economic growth, full and productive employment and decent work for all'},
+    9: {'color': '#FD6925', 'title': 'Industry, Innovation and Infrastructure', 'subtitle': 'Build resilient infrastructure, promote inclusive and sustainable industrialization and foster innovation'},
+    10: {'color': '#DD1367', 'title': 'Reduced Inequalities', 'subtitle': 'Reduce inequality within and among countries'},
+    11: {'color': '#FD9D24', 'title': 'Sustainable Cities and Communities', 'subtitle': 'Make cities and human settlements inclusive, safe, resilient and sustainable'},
+    12: {'color': '#BF8B2E', 'title': 'Responsible Consumption and Production', 'subtitle': 'Ensure sustainable consumption and production patterns'},
+    13: {'color': '#3F7E44', 'title': 'Climate Action', 'subtitle': 'Take urgent action to combat climate change and its impacts'},
+    14: {'color': '#0A97D9', 'title': 'Life Below Water', 'subtitle': 'Conserve and sustainably use the oceans, seas and marine resources for sustainable development'},
+    15: {'color': '#56C02B', 'title': 'Life on Land', 'subtitle': 'Protect, restore and promote sustainable use of terrestrial ecosystems, sustainably manage forests, combat desertification, and halt and reverse land degradation and halt biodiversity loss'},
+    16: {'color': '#00689D', 'title': 'Peace, Justice and Strong Institutions', 'subtitle': 'Promote peaceful and inclusive societies for sustainable development, provide access to justice for all and build effective, accountable and inclusive institutions at all levels'},
+    17: {'color': '#19486A', 'title': 'Partnerships for the Goals', 'subtitle': 'Strengthen the means of implementation and revitalize the Global Partnership for Sustainable Development'}
+} %}
+
+{#
+  Check if variables were passed from Flask AND if they are not empty.
+  Otherwise, use the defaults defined above.
+  The `is defined` check handles cases where Flask doesn't pass the variable at all.
+  The `and variable` check handles cases where Flask passes it as None or an empty dict/list.
+#}
+{% set sdg_config = sdg_config if (sdg_config is defined and sdg_config) else default_sdg_config %}
+{% set sdg_targets = sdg_targets if (sdg_targets is defined and sdg_targets) else {} %}
+{% set sdg_applications = sdg_applications if (sdg_applications is defined and sdg_applications) else {} %}
+{% set sdg_resources = sdg_resources if (sdg_resources is defined and sdg_resources) else {} %}
+{% set sdg_summaries = sdg_summaries if (sdg_summaries is defined and sdg_summaries) else {} %}
+{# --- END OF DEFAULT CONTEXT VARIABLES DEFINITION --- #}
+
+
+{% block title %}SDG Information Hub{% endblock %}
+
+{% block head %}
+{{ super() }} {# Includes head content from base.html #}
+<style>
+    /* --- Styles primarily for the restored sidebar look --- */
+    html {
+        scroll-behavior: smooth;
+        /* Ensure --header-height is defined in base.html or provide a fallback */
+        scroll-padding-top: calc(var(--header-height, 60px) + 1rem);
+    }
+
+    .sidebar {
+        position: sticky;
+        top: var(--header-height, 60px);
+        height: calc(100vh - var(--header-height, 60px));
+        overflow-y: auto;
+        z-index: 100;
+    }
+
+    @media (max-width: 767.98px) {
+        .sidebar {
+            position: static;
+            height: auto;
+            margin-bottom: 1.5rem;
+        }
+        html {
+            scroll-padding-top: 1rem;
+        }
+    }
+
+    .sidebar-heading {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    #sdg-sidebar-nav .nav-link {
+        font-weight: 500;
+        color: var(--bs-body-color, #212529); /* Use Bootstrap body color */
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+        margin-bottom: 2px;
+        transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: flex;
+        align-items: center;
+    }
+
+    #sdg-sidebar-nav .nav-link img.sdg-nav-icon {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+        margin-right: 8px;
+    }
+
+    #sdg-sidebar-nav .nav-link:hover,
+    #sdg-sidebar-nav .nav-link:focus-visible {
+        background-color: var(--bs-tertiary-bg, #e9ecef); /* Use BS tertiary bg */
+        color: var(--bs-primary, #0056b3);
+        outline: none;
+    }
+
+    #sdg-sidebar-nav .nav-link.active {
+        color: var(--bs-light, #fff); /* Use BS light for text on primary bg */
+        background-color: var(--bs-primary, #0056b3);
+    }
+
+    /* Scrollbar styling for sidebar (WebKit browsers) */
+    #sdg-sidebar-nav::-webkit-scrollbar { width: 8px; }
+    #sdg-sidebar-nav::-webkit-scrollbar-track { background: var(--bs-light, #f1f1f1); border-radius: 10px; }
+    #sdg-sidebar-nav::-webkit-scrollbar-thumb { background: var(--bs-secondary-bg-subtle, #ced4da); border-radius: 10px; }
+    #sdg-sidebar-nav::-webkit-scrollbar-thumb:hover { background: var(--bs-secondary-color, #adb5bd); }
+
+
+    /* --- Styles for the main content area (SDG Cards, Accordions etc.) --- */
+    .sdg-main-content-area {
+         padding-top: 0.5rem;
+    }
+
+    .sdg-card {
+        border: 1px solid var(--bs-border-color-translucent, rgba(0,0,0,0.1));
+        border-left-width: 6px;
+        border-radius: var(--bs-border-radius-lg, 0.5rem);
+        margin-bottom: 2.5rem !important; /* Ensure spacing */
+        background-color: var(--bs-body-bg, #fff);
+        box-shadow: var(--bs-box-shadow-sm, 0 .125rem .25rem rgba(0,0,0,.075));
+        transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+        scroll-margin-top: calc(var(--header-height, 60px) + 2rem); /* For in-page links */
+        overflow: hidden;
+    }
+    .sdg-card:hover {
+         box-shadow: var(--bs-box-shadow-lg, 0 1rem 3rem rgba(0,0,0,.175));
+         transform: translateY(-4px);
+    }
+
+    {# sdg_config is now globally available #}
+    {% for sdg_num, config_item in sdg_config.items() %}
+      #sdg{{ sdg_num }} { border-left-color: {{ config_item.color }}; }
+    {% endfor %}
+
+    .sdg-card-header {
+        display: flex;
+        align-items: center;
+        color: #fff;
+        padding: 1rem 1.25rem;
+    }
+    .sdg-card-header img.sdg-icon {
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.15);
+        padding: 0.3rem;
+        width: 50px;
+        height: 50px;
+        flex-shrink: 0;
+        margin-right: 1rem;
+    }
+    .sdg-card-header .sdg-title-group h2 {
+        font-size: 1.4rem;
+        margin-bottom: 0.125rem;
+        font-weight: 600;
+    }
+    .sdg-card-header .sdg-title-group p {
+        margin-bottom: 0;
+        opacity: 0.85;
+        font-size: 0.9rem;
+        font-weight: 400;
+    }
+
+    .sdg-summary {
+        font-size: 0.95rem;
+        background-color: var(--bs-tertiary-bg, #f8f9fa);
+        border-left: 4px solid var(--bs-secondary, #6c757d);
+        padding: 1rem 1.25rem;
+        border-radius: var(--bs-border-radius, 0.375rem);
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .sdg-summary .summary-heading {
+        font-weight: 600;
+        color: var(--bs-emphasis-color, var(--bs-dark, #212529));
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Accordion Styles (Ensure BS 5.2+ for optimal variable use) */
+    .accordion-item {
+        background-color: var(--bs-body-bg, #fff);
+        border: 1px solid var(--bs-border-color, #dee2e6);
+    }
+    .accordion-item:first-of-type { border-top-left-radius: var(--bs-border-radius, 0.375rem); border-top-right-radius: var(--bs-border-radius, 0.375rem); }
+    .accordion-item:last-of-type { border-bottom-left-radius: var(--bs-border-radius, 0.375rem); border-bottom-right-radius: var(--bs-border-radius, 0.375rem); }
+    .accordion-item:not(:first-of-type) { border-top: 0; }
+
+    .accordion-button {
+        font-weight: 500;
+        padding: 1rem 1.25rem;
+        color: var(--bs-accordion-btn-color, #212529);
+    }
+    .accordion-button:not(.collapsed) {
+        color: var(--bs-accordion-active-color, var(--bs-primary-text-emphasis, #052c65));
+        background-color: var(--bs-accordion-active-bg, var(--bs-primary-bg-subtle, #cfe2ff));
+        box-shadow: inset 0 -1px 0 var(--bs-accordion-border-color, rgba(0,0,0,.125));
+    }
+     .accordion-button:focus {
+        box-shadow: var(--bs-focus-ring-x, 0) var(--bs-focus-ring-y, 0) var(--bs-focus-ring-blur, 0) var(--bs-focus-ring-width) var(--bs-focus-ring-color);
+        border-color: var(--bs-primary);
+        z-index: 3;
+    }
+    .accordion-button i.bi {
+        transition: transform 0.2s ease-in-out;
+        color: var(--bs-secondary-color, #6c757d);
+        margin-right: 0.5rem;
+    }
+    .accordion-button:not(.collapsed) i.bi {
+         color: var(--bs-primary, #0056b3);
+    }
+    .accordion-body { padding: 1rem 1.25rem; }
+
+    .list-group-item {
+        border: none;
+        padding: 0.5rem 0;
+        background-color: transparent;
+        font-size: 0.9rem;
+    }
+    .list-group-item strong { color: var(--bs-emphasis-color, var(--bs-dark, #212529)); }
+
+    /* Resource Link Specific Styles */
+    .resource-link {
+        border: 1px solid var(--bs-border-color, #dee2e6);
+        margin-bottom: 0.5rem;
+        border-radius: var(--bs-border-radius, 0.375rem);
+        padding: 0.75rem 1rem;
+        transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background-color: var(--bs-body-bg, #fff);
+        color: var(--bs-body-color, #212529);
+        text-decoration: none;
+    }
+    .resource-link:hover,
+    .resource-link:focus-visible {
+        background-color: var(--bs-tertiary-bg, #f8f9fa);
+        border-color: var(--bs-primary, #0056b3);
+        color: var(--bs-emphasis-color, var(--bs-dark, #212529));
+        transform: translateY(-2px);
+        box-shadow: var(--bs-box-shadow-sm, 0 .125rem .25rem rgba(0,0,0,.075));
+        outline: none;
+    }
+    .resource-link .resource-text-group { flex-grow: 1; }
+    .resource-link .external-link-icon {
+        transition: transform 0.2s ease-in-out;
+        opacity: 0.6;
+        color: var(--bs-secondary-color, #6c757d);
+    }
+    .resource-link:hover .external-link-icon,
+    .resource-link:focus-visible .external-link-icon {
+        transform: scale(1.1) translateX(3px);
+        opacity: 1;
+        color: var(--bs-primary, #0056b3);
+    }
+    .resource-link .bi:not(.external-link-icon) {
+        color: var(--bs-primary, #0056b3);
+        font-size: 1.25rem;
+    }
+
+    /* --- STYLES FOR THE INTERACTIVE SDG GRID --- */
+    .interactive-sdg-grid-section {
+        background-color: var(--bs-tertiary-bg, #f8f9fa);
+        padding: 2rem;
+        border-radius: var(--bs-border-radius-lg, 0.5rem);
+        margin-bottom: 2.5rem;
+        border: 1px solid var(--bs-border-color-translucent, rgba(0,0,0,0.1));
+    }
+
+    .interactive-sdg-grid-section h3.section-heading { /* Added class for better targeting */
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        color: var(--bs-emphasis-color, var(--bs-dark, #212529));
+    }
+
+    .sdg-goals-grid-interactive {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+        gap: 10px;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .sdg-goal-item-interactive {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border-radius: 8px;
+        overflow: hidden;
+        cursor: pointer;
+        border: 2px solid transparent;
+    }
+    .sdg-goal-item-interactive:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .sdg-goal-item-interactive.active {
+        border-color: var(--bs-primary, #0056b3);
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 4px 12px rgba(0, 86, 179, 0.2);
+    }
+    .sdg-goal-item-interactive img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .sdg-detail-panel-interactive {
+        background-color: var(--bs-body-bg, #fff);
+        border: 1px solid var(--bs-border-color-translucent, rgba(0,0,0,0.05));
+        border-radius: var(--bs-border-radius, 0.375rem);
+        padding: 1.25rem;
+        margin-top: 1.5rem;
+        box-shadow: var(--bs-box-shadow-sm, 0 .125rem .25rem rgba(0,0,0,.075));
+        transition: all 0.3s ease;
+        min-height: 100px;
+    }
+    .sdg-detail-panel-interactive .sdg-detail-title-interactive {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--bs-primary, #0056b3);
+        transition: opacity 0.2s ease;
+    }
+    .sdg-detail-panel-interactive .sdg-detail-description-interactive {
+        color: var(--bs-body-secondary-color, #6c757d); /* BS 5.3 variable */
+        font-size: 0.9rem;
+        transition: opacity 0.2s ease;
+        line-height: 1.5;
+    }
+    .sdg-detail-panel-interactive .sdg-detail-link {
+        display: inline-block;
+        margin-top: 0.75rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+    .sdg-detail-panel-interactive .sdg-detail-link i {
+        font-size: 0.8rem;
+    }
+
+    @media (max-width: 576px) {
+        .sdg-goals-grid-interactive {
+            grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+            gap: 6px;
+        }
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Sidebar Navigation -->
+    <nav id="sdg-sidebar-nav" class="col-md-3 col-lg-2 d-md-block bg-light sidebar pt-3">
+        <div class="position-sticky">
+            <h4 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-muted">
+                <span>SDG Navigation</span>
+            </h4>
+            <ul class="nav flex-column nav-pills px-2">
+                {# sdg_config is now globally available #}
+                {% for i in range(1, 18) %}
+                    {% if i in sdg_config %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="#sdg{{ i }}">
+                                <img src="{{ url_for('static', filename='img/sdg-icons/E-WEB-Goal-{:02d}.png'.format(i)) }}" alt="" class="sdg-nav-icon" aria-hidden="true">
+                                <span class="sdg-nav-text">SDG {{ i }}</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                 <li class="nav-item mt-3 border-top pt-3 mx-2">
+                    <a class="nav-link back-to-top" href="#page-top">
+                        <i class="bi bi-arrow-up-circle me-2" aria-hidden="true"></i>Back to Top
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 sdg-main-content-area" id="page-top">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
+            <h1 class="h2">Sustainable Development Goals Hub</h1>
+        </div>
+
+        <div class="alert alert-primary d-flex align-items-start mb-5" role="alert">
+            <i class="bi bi-info-circle-fill flex-shrink-0 me-3 fs-4" aria-hidden="true"></i>
+            <div>
+                <h2 class="alert-heading h4 mb-1">Welcome!</h2>
+                <p>Explore the 17 Sustainable Development Goals and their relevance to architecture and the built environment. Use the sidebar to navigate or scroll through the goals.</p>
+                <hr class="my-2">
+                <p class="mb-0 small text-muted">Each section provides summaries, UN targets, architectural strategies, and further resources where available.</p>
+            </div>
+        </div>
+
+        <!-- Interactive SDG Grid Section -->
+        <section class="interactive-sdg-grid-section">
+            <h3 class="section-heading">Quick Explore: The 17 SDGs</h3>
+            <div class="sdg-goals-grid-interactive mb-4">
+                {% for i in range(1, 18) %}
+                <div class="sdg-goal-item-interactive" data-sdg-interactive="{{ i }}" role="button" tabindex="0" aria-label="View details for SDG {{i}}">
+                    <img src="{{ url_for('static', filename='img/sdg-icons/E-WEB-Goal-' + '%02d' % i + '.png') }}" alt="SDG Goal {{ i }} Icon" class="img-fluid">
+                </div>
+                {% endfor %}
+            </div>
+        
+            <div class="sdg-detail-panel-interactive">
+                <h4 class="sdg-detail-title-interactive">Select a goal to learn more</h4>
+                <p class="sdg-detail-description-interactive mb-0">
+                    The Sustainable Development Goals provide a framework for addressing global challenges through architectural design. Click an icon above to see a brief overview.
+                </p>
+                <a href="#" class="sdg-detail-link d-none btn btn-sm btn-outline-primary mt-2">
+                    Go to full details for SDG <span class="sdg-detail-link-number"></span> <i class="bi bi-arrow-right-short"></i>
+                </a>
+            </div>
+        </section>
+
+        {# Detailed SDG Cards - sdg_config, sdg_targets etc. are globally available #}
+        {% for sdg_num in range(1, 18) %}
+            {% if sdg_num in sdg_config %}
+                {% set config = sdg_config[sdg_num] %}
+                {% set targets = sdg_targets.get(sdg_num, []) %}
+                {% set applications = sdg_applications.get(sdg_num, []) %}
+                {% set resources = sdg_resources.get(sdg_num, []) %}
+                {% set summary = sdg_summaries.get(sdg_num) %}
+
+                <section class="sdg-card" id="sdg{{ sdg_num }}" aria-labelledby="sdgHeading{{ sdg_num }}">
+                    <header class="sdg-card-header" style="background-color: {{ config.color }};">
+                        <img src="{{ url_for('static', filename='img/sdg-icons/E-WEB-Goal-{:02d}.png'.format(sdg_num)) }}" alt="SDG {{ sdg_num }} Icon" class="sdg-icon" aria-hidden="true">
+                        <div class="sdg-title-group">
+                            <h2 id="sdgHeading{{ sdg_num }}">SDG {{ sdg_num }}: {{ config.title }}</h2>
+                            <p class="mb-0">{{ config.subtitle }}</p>
+                        </div>
+                    </header>
+
+                    <div class="card-body p-3 p-lg-4">
+                        {% if summary %}
+                        <div class="sdg-summary">
+                            <h3 class="summary-heading h5"><i class="bi bi-card-text me-2" aria-hidden="true"></i>Overview</h3>
+                            <p class="mb-0">{{ summary | safe }}</p>
+                        </div>
+                        {% elif targets or applications or resources %}
+                        <div class="sdg-summary">
+                            <h3 class="summary-heading h5"><i class="bi bi-card-text me-2" aria-hidden="true"></i>Overview</h3>
+                            <p class="mb-0 fst-italic text-muted">A detailed overview for this SDG is being prepared. Explore available targets, strategies, and resources below.</p>
+                        </div>
+                        {% endif %}
+
+                        {% if targets or applications or resources %}
+                        <div class="accordion" id="sdg{{ sdg_num }}Accordion">
+                            {% if targets %}
+                            <div class="accordion-item">
+                                <h3 class="accordion-header h4" id="headingTargets{{ sdg_num }}">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sdg{{ sdg_num }}Targets" aria-expanded="false" aria-controls="sdg{{ sdg_num }}Targets">
+                                        <i class="bi bi-bullseye" aria-hidden="true"></i>Key UN Targets
+                                    </button>
+                                </h3>
+                                <div id="sdg{{ sdg_num }}Targets" class="accordion-collapse collapse" aria-labelledby="headingTargets{{ sdg_num }}" data-bs-parent="#sdg{{ sdg_num }}Accordion">
+                                    <div class="accordion-body">
+                                        <ul class="list-group list-group-flush">
+                                            {% for target_item in targets %}
+                                                <li class="list-group-item">
+                                                    {% if target_item.code %}<strong>{{ target_item.code }}:</strong> {% endif %}{{ target_item.text | safe }}
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if applications %}
+                            <div class="accordion-item">
+                                <h3 class="accordion-header h4" id="headingApps{{ sdg_num }}">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sdg{{ sdg_num }}Applications" aria-expanded="false" aria-controls="sdg{{ sdg_num }}Applications">
+                                        <i class="bi bi-buildings" aria-hidden="true"></i>Architectural Strategies
+                                    </button>
+                                </h3>
+                                <div id="sdg{{ sdg_num }}Applications" class="accordion-collapse collapse" aria-labelledby="headingApps{{ sdg_num }}" data-bs-parent="#sdg{{ sdg_num }}Accordion">
+                                    <div class="accordion-body">
+                                        <ul class="list-group list-group-flush">
+                                            {% for app_item in applications %}
+                                                <li class="list-group-item">
+                                                    <i class="bi bi-check2-circle text-success me-2 small" aria-hidden="true"></i>
+                                                    {% if app_item is mapping and app_item.text %}
+                                                        {{ app_item.text | safe }}
+                                                        {% if app_item.details %}
+                                                            <small class="d-block text-muted ps-4">{{ app_item.details | safe }}</small>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        {{ app_item | safe }}
+                                                    {% endif %}
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if resources %}
+                            <div class="accordion-item">
+                                <h3 class="accordion-header h4" id="headingResources{{ sdg_num }}">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sdg{{ sdg_num }}Resources" aria-expanded="false" aria-controls="sdg{{ sdg_num }}Resources">
+                                        <i class="bi bi-journal-richtext" aria-hidden="true"></i>Resources & Further Reading
+                                    </button>
+                                </h3>
+                                <div id="sdg{{ sdg_num }}Resources" class="accordion-collapse collapse" aria-labelledby="headingResources{{ sdg_num }}" data-bs-parent="#sdg{{ sdg_num }}Accordion">
+                                    <div class="accordion-body">
+                                        <div class="list-group">
+                                            {% for resource_item in resources %}
+                                            <a href="{{ resource_item.url }}" target="_blank" rel="noopener noreferrer" class="list-group-item list-group-item-action resource-link">
+                                                <i class="bi bi-{{ resource_item.icon | default('link-45deg') }}" aria-hidden="true"></i>
+                                                <div class="resource-text-group">
+                                                    {{ resource_item.title }}
+                                                    {% if resource_item.source %}
+                                                        <small class="d-block text-muted mt-1">Source: {{ resource_item.source }}</small>
+                                                    {% endif %}
+                                                </div>
+                                                <i class="bi bi-box-arrow-up-right ms-auto external-link-icon" aria-hidden="true"></i>
+                                            </a>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% elif not summary %}
+                            <p class="text-muted fst-italic p-3 text-center">Detailed information for SDG {{sdg_num}} is currently being compiled. Please check back later.</p>
+                        {% endif %}
+                    </div>
+                </section>
+            {% endif %}
+        {% endfor %}
+    </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // --- Sidebar scrollspy logic ---
+    const sdgSections = document.querySelectorAll('.sdg-card[id^="sdg"]');
+    const sidebarLinks = document.querySelectorAll('#sdg-sidebar-nav .nav-link:not(.back-to-top)');
+    
+    let headerHeight = 60; 
+    const headerHeightVar = getComputedStyle(document.documentElement).getPropertyValue('--header-height').trim();
+    if (headerHeightVar && !isNaN(parseInt(headerHeightVar, 10))) { // Added check for NaN
+        headerHeight = parseInt(headerHeightVar, 10);
+    }
+    // Adjust scrollOffset based on headerHeight; ensure it's a positive number
+    const scrollOffset = Math.max(0, headerHeight) + (window.innerWidth < 768 ? 16 : 32);
+
+
+    function highlightActiveLink() {
+        let currentSectionId = null;
+        const viewportTopOffset = window.scrollY + scrollOffset;
+
+        sdgSections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionBottom = sectionTop + section.offsetHeight;
+
+            if (sectionTop <= viewportTopOffset && sectionBottom > viewportTopOffset) {
+                currentSectionId = section.getAttribute('id');
+            }
+        });
+        
+        if (!currentSectionId && sdgSections.length > 0) {
+            let minDistance = Infinity;
+            for (let section of sdgSections) {
+                const distance = Math.abs(section.offsetTop - viewportTopOffset);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    currentSectionId = section.getAttribute('id');
+                }
+                if (section.getBoundingClientRect().top >=0 && section.getBoundingClientRect().top < 50) {
+                     currentSectionId = section.getAttribute('id');
+                     break;
+                }
+            }
+        }
+
+        sidebarLinks.forEach(link => {
+            const isActive = link.getAttribute('href') === `#${currentSectionId}`;
+            link.classList.toggle('active', isActive);
+            if (isActive) {
+                link.setAttribute('aria-current', 'page');
+            } else {
+                link.removeAttribute('aria-current');
+            }
+        });
+    }
+
+    let scrollTimeout;
+    window.addEventListener('scroll', () => {
+        if (scrollTimeout) clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(highlightActiveLink, 60);
+    }, { passive: true });
+    
+    setTimeout(highlightActiveLink, 100); // Initial call
+    window.addEventListener('resize', highlightActiveLink); // Adjust on resize
+
+
+    // --- Interactive SDG Grid Logic ---
+    const interactiveGoalItems = document.querySelectorAll('.sdg-goal-item-interactive');
+    const interactiveDetailTitle = document.querySelector('.sdg-detail-title-interactive');
+    const interactiveDetailDescription = document.querySelector('.sdg-detail-description-interactive');
+    const interactiveDetailLink = document.querySelector('.sdg-detail-panel-interactive .sdg-detail-link');
+    const interactiveDetailLinkNumber = document.querySelector('.sdg-detail-panel-interactive .sdg-detail-link-number');
+
+    // sdg_config and sdg_summaries are now globally available from Jinja rendering at the top
+    const interactiveSdgData = {
+        {% for sdg_num, config in sdg_config.items() %}
+            {{ sdg_num }}: {
+                title: "{{ config.title | escape }}",
+                description: "{{ (sdg_summaries.get(sdg_num, config.subtitle) | striptags | truncate(150, True, '...') | replace('"', '\\"') | replace('\n', ' ') | replace('\r', ' ')) | escape }}"
+            },
+        {% endfor %}
+    };
+    
+    interactiveGoalItems.forEach(item => {
+        item.addEventListener('click', function() {
+            handleSdgInteraction(this);
+        });
+        item.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                handleSdgInteraction(this);
+            }
+        });
+    });
+
+    function handleSdgInteraction(element) {
+        const sdgNumber = element.getAttribute('data-sdg-interactive');
+        
+        interactiveGoalItems.forEach(el => el.classList.remove('active'));
+        element.classList.add('active');
+        
+        if (interactiveSdgData[sdgNumber]) {
+            interactiveDetailTitle.style.opacity = '0';
+            interactiveDetailDescription.style.opacity = '0';
+            interactiveDetailLink.classList.add('d-none');
+            
+            setTimeout(() => {
+                interactiveDetailTitle.textContent = `SDG ${sdgNumber}: ${interactiveSdgData[sdgNumber].title}`;
+                interactiveDetailDescription.textContent = interactiveSdgData[sdgNumber].description;
+                
+                if (interactiveDetailLinkNumber) interactiveDetailLinkNumber.textContent = sdgNumber;
+                interactiveDetailLink.setAttribute('href', `#sdg${sdgNumber}`);
+                interactiveDetailLink.classList.remove('d-none');
+
+                interactiveDetailTitle.style.opacity = '1';
+                interactiveDetailDescription.style.opacity = '1';
+            }, 200);
+        }
+    }
+
+    if (interactiveDetailLink) {
+        interactiveDetailLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                // The `scroll-padding-top` CSS on `html` should handle the offset automatically
+                // for direct anchor jumps. For JS scroll, we calculate it.
+                const topPos = targetElement.getBoundingClientRect().top + window.pageYOffset - (scrollOffset - 16); // scrollOffset already includes header, reduce slightly for a bit more space
+
+                window.scrollTo({
+                    top: topPos,
+                    behavior: 'smooth'
+                });
+
+                targetElement.style.transition = 'box-shadow 0.3s ease-in-out';
+                targetElement.style.boxShadow = '0 0 0 3px var(--bs-primary)';
+                setTimeout(() => {
+                    targetElement.style.boxShadow = ''; 
+                }, 1500);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

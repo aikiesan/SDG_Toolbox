@@ -1,0 +1,389 @@
+{% extends "base.html" %}
+
+{% block title %}Create New Project - SDG Assessment Tool{% endblock %}
+
+{% block head %}
+{{ super() }} {# Include head content from base.html #}
+<style>
+    body { font-family: 'Merriweather', serif; }
+    .form-legend {
+        font-size: 0.8rem;
+        font-weight: 800;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid #000000;
+        color: var(--uia-blue);
+        font-family: 'Oswald', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: var(--uia-blue);
+        box-shadow: 0 0 0 2px rgba(87, 124, 179, 0.15);
+    }
+    .character-counter {
+        font-size: 0.8rem;
+        color: #6c757d;
+        text-align: right;
+        margin-top: 0.25rem;
+    }
+    .form-text {
+        font-size: 0.875rem;
+    }
+    .card {
+        border: 1px solid #e1e4e8;
+        box-shadow: none;
+        border-radius: 0;
+    }
+    .card-header {
+        background-color: #F7F6F6;
+        border-bottom: 2px solid #000000;
+        padding: 1rem 1.5rem;
+    }
+    .card-header h2 {
+        font-size: 0.85rem;
+        margin-bottom: 0;
+        font-weight: 800;
+        color: var(--uia-blue);
+        font-family: 'Oswald', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #dee2e6;
+    }
+    .form-actions .btn-primary {
+        border-radius: 999px;
+    }
+    .form-actions .btn-outline-secondary {
+        border-radius: 999px;
+    }
+    h1.h3 {
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #000000;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-lg my-4 my-md-5">
+    <div class="row">
+        <div class="col-12 col-lg-8 offset-lg-2">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                 <h1 class="h3 mb-0">Create New Project</h1>
+                 <a href="{{ url_for('projects.index') }}" class="btn btn-sm btn-outline-secondary">
+                     Back to Projects
+                 </a>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>Project Details</h2>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <form id="project-form" method="POST" action="{{ url_for('projects.new_project') }}" class="needs-validation" novalidate>
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    
+                        <fieldset class="mb-4">
+                            <legend class="form-legend">Basic Information</legend>
+
+                            {# --- Project Name --- #}
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Project Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control {% if form.name.errors %}is-invalid{% endif %}" 
+                                       id="name" name="name" value="{{ form.name.data or '' }}"
+                                       placeholder="e.g., Maple Street Community Center" required
+                                       maxlength="100" aria-describedby="nameHelp nameCounter">
+                                {% if form.name.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.name.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                <div class="invalid-feedback">Please provide a project name.</div>
+                                {% endif %}
+                                <div class="character-counter" id="nameCounter">
+                                    <span id="nameCount">0</span>/100 characters
+                                </div>
+                                <small id="nameHelp" class="form-text text-muted">
+                                    A clear, descriptive name for your project.
+                                </small>
+                            </div>
+
+                            {# --- Description --- #}
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" name="description" rows="4"
+                                          placeholder="Provide a brief overview of the project scope, goals, and key features..."
+                                          maxlength="500" aria-describedby="descHelp descCounter"></textarea>
+                                <div class="character-counter" id="descCounter">
+                                    <span id="descCount">0</span>/500 characters
+                                </div>
+                                <small id="descHelp" class="form-text text-muted">
+                                    Helps provide context for the SDG assessment. Include aspects relevant to sustainability if possible.
+                                </small>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="mb-4">
+                            <legend class="form-legend">Project Specifications</legend>
+                            <div class="row">
+                                {# --- Project Type (Using Select) --- #}
+                                <div class="col-md-6 mb-3">
+                                    <label for="project_type" class="form-label">Project Type <span class="text-danger">*</span></label>
+                                    <select class="form-select {% if form.project_type.errors %}is-invalid{% endif %}" 
+                                            id="project_type" name="project_type" required aria-describedby="typeHelp">
+                                        <option value="" selected disabled>Select a type...</option>
+                                        {% for value, label in form.project_type.choices %}
+                                        <option value="{{ value }}" {% if form.project_type.data == value %}selected{% endif %}>{{ label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {% if form.project_type.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.project_type.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% else %}
+                                    <div class="invalid-feedback">Please select a project type.</div>
+                                    {% endif %}
+                                    <small id="typeHelp" class="form-text text-muted">
+                                        Choose the category that best fits your project.
+                                    </small>
+                                </div>
+
+                                {# --- Location --- #}
+                                <div class="col-md-6 mb-3">
+                                    <label for="location" class="form-label">Location <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control {% if form.location.errors %}is-invalid{% endif %}" 
+                                           id="location" name="location" value="{{ form.location.data or '' }}"
+                                           placeholder="e.g., City, State/Province, Country" aria-describedby="locationHelp" required>
+                                    {% if form.location.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.location.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% else %}
+                                    <div class="invalid-feedback">Please provide a location.</div>
+                                    {% endif %}
+                                    <small id="locationHelp" class="form-text text-muted">
+                                        Helps identify relevant regional factors.
+                                    </small>
+                                </div>
+                            </div> {# End row #}
+
+                            {# --- Size (Simplified) --- #}
+                            <div class="mb-3">
+                                <label for="size_sqm" class="form-label">Approximate Project Area <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control {% if form.size_sqm.errors %}is-invalid{% endif %}" 
+                                           id="size_sqm" name="size_sqm" value="{{ form.size_sqm.data or '' }}"
+                                           step="any" min="0" placeholder="Enter area" aria-describedby="sizeHelp" required>
+                                    <span class="input-group-text">sqm</span>
+                                </div>
+                                {% if form.size_sqm.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.size_sqm.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                <div class="invalid-feedback">Please provide the project area.</div>
+                                {% endif %}
+                                <small id="sizeHelp" class="form-text text-muted">
+                                     Enter the approximate gross floor area or site area in square meters.
+                                </small>
+                            </div>
+                        </fieldset>
+                        
+                        <fieldset class="mb-4">
+                            <legend class="form-legend">Timeline & Budget</legend>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="start_date" class="form-label">Start Date</label>
+                                    <input type="date" class="form-control {% if form.start_date.errors %}is-invalid{% endif %}" 
+                                           id="start_date" name="start_date" value="{{ form.start_date.data.strftime('%Y-%m-%d') if form.start_date.data else '' }}"
+                                           aria-describedby="startDateHelp">
+                                    {% if form.start_date.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.start_date.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <small id="startDateHelp" class="form-text text-muted">
+                                        Planned or actual project start date.
+                                    </small>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="end_date" class="form-label">End Date</label>
+                                    <input type="date" class="form-control {% if form.end_date.errors %}is-invalid{% endif %}" 
+                                           id="end_date" name="end_date" value="{{ form.end_date.data.strftime('%Y-%m-%d') if form.end_date.data else '' }}"
+                                           aria-describedby="endDateHelp">
+                                    {% if form.end_date.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.end_date.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <small id="endDateHelp" class="form-text text-muted">
+                                        Expected project completion date (must be after start date).
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="budget" class="form-label">Budget</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="number" class="form-control {% if form.budget.errors %}is-invalid{% endif %}" 
+                                               id="budget" name="budget" value="{{ form.budget.data or '' }}"
+                                               step="0.01" min="0" placeholder="Enter budget" aria-describedby="budgetHelp">
+                                    </div>
+                                    {% if form.budget.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.budget.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <small id="budgetHelp" class="form-text text-muted">
+                                        Estimated total project budget.
+                                    </small>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="sector" class="form-label">Sector</label>
+                                    <select class="form-select {% if form.sector.errors %}is-invalid{% endif %}" 
+                                            id="sector" name="sector" aria-describedby="sectorHelp">
+                                        {% for value, label in form.sector.choices %}
+                                        <option value="{{ value }}" {% if form.sector.data == value %}selected{% endif %}>{{ label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {% if form.sector.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.sector.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <small id="sectorHelp" class="form-text text-muted">
+                                        Market sector or industry that the project serves.
+                                    </small>
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        {# --- Form Actions --- #}
+                        <div class="form-actions">
+                            <a href="{{ url_for('projects.index') }}" class="btn btn-outline-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">
+                                Create Project
+                            </button>
+                        </div>
+                    </form>
+                </div> {# End card-body #}
+            </div> {# End card #}
+        </div> {# End col #}
+    </div> {# End row #}
+</div> {# End container #}
+{% endblock %}
+
+{% block scripts %}
+{{ super() }} {# Include scripts from base.html #}
+<script>
+    // Function to update character counters
+    function updateCharCounter(inputId, counterId, maxLength) {
+        const input = document.getElementById(inputId);
+        const counterDisplay = document.getElementById(counterId); // The span showing the count
+        if (!input || !counterDisplay) return; // Exit if elements don't exist
+
+        const currentLength = input.value.length;
+        counterDisplay.textContent = currentLength; // Update the count display
+
+        // Optional: Add color feedback (adjust thresholds as needed)
+        const counterWrapper = document.getElementById(counterId.replace('Count', 'Counter')); // Assumes ID like 'nameCounter'
+        if (counterWrapper) {
+            if (currentLength >= maxLength) {
+                counterWrapper.style.color = '#dc3545'; // Red at limit
+            } else if (currentLength >= maxLength * 0.9) {
+                counterWrapper.style.color = '#fd7e14'; // Orange when nearing limit
+            } else {
+                counterWrapper.style.color = '#6c757d'; // Default color
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize character counters on page load
+        updateCharCounter('name', 'nameCount', 100);
+        updateCharCounter('description', 'descCount', 500);
+
+        // Add event listeners for typing in fields with counters
+        const nameInput = document.getElementById('name');
+        const descriptionInput = document.getElementById('description');
+
+        if (nameInput) {
+            nameInput.addEventListener('input', () => updateCharCounter('name', 'nameCount', 100));
+        }
+        if (descriptionInput) {
+            descriptionInput.addEventListener('input', () => updateCharCounter('description', 'descCount', 500));
+        }
+
+        // Bootstrap form validation script
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.querySelectorAll('.needs-validation');
+
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+
+                    form.classList.add('was-validated');
+                }, false);
+            });
+
+        // Optional: Add entry animation
+        const mainCard = document.querySelector('.card');
+        if (mainCard) {
+            mainCard.style.opacity = '0';
+            mainCard.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                mainCard.style.transition = 'opacity 0.4s ease-out, transform 0.4s ease-out';
+                mainCard.style.opacity = '1';
+                mainCard.style.transform = 'translateY(0)';
+            }, 50); // Short delay
+        }
+    });
+</script>
+
+<!-- Client-side validation script -->
+<script src="{{ url_for('static', filename='js/validation.js') }}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('project-form');
+    if (form) {
+      form.addEventListener('submit', function(event) {
+        if (!window.FormValidation.validateProjectForm()) {
+          event.preventDefault();
+        }
+      });
+    }
+  });
+</script>
+{% endblock %}

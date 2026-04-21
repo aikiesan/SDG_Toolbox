@@ -1,0 +1,156 @@
+/* ==========================
+   Landing Page Specific Styles - UIA Design System
+   ========================== */
+
+/* Enhanced Hero Section */
+.hero-section-enhanced {
+    background: #000000; /* UIA: Black/white, no gradient */
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Adjust padding for different screen sizes if needed */
+.py-6 {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+}
+
+/* Enhanced Feature Cards */
+.card-feature-hover {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.card-feature-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important; /* Use !important carefully if needed */
+}
+
+.feature-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 4rem; /* Adjust size */
+    width: 4rem;  /* Adjust size */
+}
+
+/* How It Works - Step Indicator */
+.step-indicator {
+    color: #ffffff;
+    background-color: var(--uia-blue);
+    border-radius: 50% !important;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Optional: Hover effect for steps */
+/* .col-md-4:hover .step-indicator {
+    background-color: var(--bs-primary);
+    color: var(--bs-white);
+} */
+
+
+/* Optional: Timeline connector lines for 'How it Works' */
+/* .steps-timeline::before {
+    content: '';
+    position: absolute;
+    top: 35px; 
+    left: calc(16.66% + 15px);  /* Adjust based on column setup & icon size */
+/*    right: calc(16.66% + 15px); /* Adjust based on column setup & icon size */
+/*    height: 3px; 
+    background-color: #e0e0e0; 
+    z-index: -1; 
+} */
+
+/* Final CTA Section */
+.final-cta-enhanced {
+    background: #32373c; /* UIA dark grey (official button pattern) */
+}
+
+
+/* General Typography Refinements */
+h1, h2, h3, h4, h5, h6 {
+    /* Consider importing a specific font in base.html or here */
+    /* font-family: 'Your Preferred Font', sans-serif; */
+}
+
+.display-3, .display-4, .display-5, .display-6 {
+    margin-bottom: 1.5rem; /* Consistent heading bottom margin */
+}
+
+/* --- MOBILE-SPECIFIC LANDING PAGE IMPROVEMENTS --- */
+@media (max-width: 991.98px) {
+    /* Ensure hero section content is readable above mobile nav */
+    .hero-section {
+        /* Add extra top padding to account for navbar height on mobile */
+        padding-top: calc(var(--header-height, 72px) + 2rem);
+        min-height: 85vh; /* Slightly taller on mobile for better impact */
+    }
+    
+    .hero-section .container {
+        /* Ensure content is properly positioned */
+        padding-top: 1rem;
+        z-index: 1;
+    }
+    
+    /* Improve text contrast on mobile */
+    .hero-section .display-4,
+    .hero-section .lead {
+        text-shadow: 0 2px 8px rgba(0,0,0,0.5); /* Stronger shadow for mobile */
+    }
+    
+    /* Better button spacing on mobile */
+    .hero-ctas {
+        margin-top: 2rem;
+    }
+    
+    .hero-ctas .btn {
+        margin: 0.5rem auto;
+        display: block;
+        max-width: 280px;
+        width: 90%;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Further mobile optimizations */
+    .hero-section {
+        padding-top: calc(var(--header-height, 72px) + 1rem);
+        min-height: 80vh;
+        text-align: center;
+    }
+    
+    .hero-section .display-4 {
+        font-size: 2.25rem;
+        line-height: 1.2;
+        margin-bottom: 1rem;
+    }
+    
+    .hero-section .lead {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        padding: 0 1rem;
+    }
+    
+    .education-badge {
+        font-size: 0.9rem;
+        padding: 0.5rem 1.25rem;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Extra small devices */
+    .hero-section .display-4 {
+        font-size: 1.875rem;
+    }
+    
+    .hero-section .lead {
+        font-size: 1rem;
+        padding: 0 0.5rem;
+    }
+    
+    .hero-ctas .btn {
+        font-size: 1rem;
+        padding: 0.75rem 1.5rem;
+    }
+}

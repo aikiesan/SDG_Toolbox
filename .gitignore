@@ -1,0 +1,38 @@
+# Python Bytecode 
+__pycache__/ 
+*.py[cod] 
+*$py.class 
+ 
+# Environment files (never commit secrets)
+.env
+.env.local
+.env.production
+
+# Virtual Environment
+venv/
+.venv/
+env/
+.env/
+ENV/
+ 
+# Coverage reports 
+.coverage 
+coverage.xml 
+htmlcov/ 
+ 
+# Instance folder / Databases (BE CAREFUL - only if you don't want to track your dev db) 
+instance/sdgassessmentdev.db 
+sdgassessmentdev.db 
+sdg_assessment.db 
+ 
+# Debug and test output 
+debug_output/ 
+test_results.log 
+ 
+# Pytest cache 
+.pytest_cache/ 
+ 
+# IDE specific files (add more as needed) 
+.vscode/ 
+.idea/ 
+test-reports/
