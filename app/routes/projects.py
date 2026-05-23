@@ -264,6 +264,32 @@ def duplicate(id):
     flash('Project duplicated successfully', 'success')
     return redirect(url_for('projects.show', id=new_project.id))
 
+@projects_bp.route('/<int:id>/assessment/new', methods=['GET', 'POST'], strict_slashes=False)
+@login_required
+def new_assessment_singular(id):
+    """Alias route: create a new assessment (singular URL form used by some clients)."""
+    project = Project.query.filter_by(id=id, user_id=current_user.id).first()
+    if not project:
+        flash('Project not found or you don\'t have permission to access it', 'danger')
+        return redirect(url_for('projects.index'))
+
+    if request.method == 'POST':
+        assessment_type = request.form.get('assessment_type', 'standard')
+        assessment = Assessment(
+            project_id=id,
+            user_id=current_user.id,
+            status='draft',
+            assessment_type=assessment_type,
+            created_at=datetime.now(),
+            updated_at=datetime.now()
+        )
+        db.session.add(assessment)
+        db.session.commit()
+        return redirect(url_for('projects.show', id=id))
+
+    return redirect(url_for('projects.show', id=id))
+
+
 @projects_bp.route('/<int:id>/assessments/new', methods=['GET', 'POST'], strict_slashes=False)
 @login_required
 def new_assessment(id):

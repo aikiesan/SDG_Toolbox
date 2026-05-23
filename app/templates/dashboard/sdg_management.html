@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}SDG Management{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 style="text-transform: uppercase; font-weight: 800;">SDG Goal Management</h1>
+  <div class="row mt-4">
+    <div class="col-lg-6">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header"><h5 class="mb-0">SDG Goals</h5></div>
+        <div class="card-body p-0">
+          <div class="list-group list-group-flush">
+            {% for g in goals %}
+            <div class="list-group-item d-flex align-items-center gap-2">
+              <span class="badge" style="background-color: {{ g.color_code }}">SDG {{ g.number }}</span>
+              {{ g.name }}
+            </div>
+            {% else %}
+            <div class="list-group-item text-center text-muted">No SDG goals found.</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="card shadow-sm">
+        <div class="card-header"><h5 class="mb-0">Goal Relationships</h5></div>
+        <div class="card-body p-0">
+          <div class="list-group list-group-flush">
+            {% for r in relationships %}
+            <div class="list-group-item">
+              SDG {{ r.source_number }} → SDG {{ r.target_number }}
+              <span class="badge bg-secondary ms-2">{{ r.strength }}</span>
+            </div>
+            {% else %}
+            <div class="list-group-item text-center text-muted">No relationships defined.</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

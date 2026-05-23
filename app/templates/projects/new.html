@@ -122,9 +122,14 @@
                             {# --- Description --- #}
                             <div class="mb-3">
                                 <label for="description" class="form-label">Description</label>
-                                <textarea class="form-control" id="description" name="description" rows="4"
+                                <textarea class="form-control {% if form.description.errors %}is-invalid{% endif %}" id="description" name="description" rows="4"
                                           placeholder="Provide a brief overview of the project scope, goals, and key features..."
                                           maxlength="500" aria-describedby="descHelp descCounter"></textarea>
+                                {% if form.description.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.description.errors %}{{ error }}{% endfor %}
+                                </div>
+                                {% endif %}
                                 <div class="character-counter" id="descCounter">
                                     <span id="descCount">0</span>/500 characters
                                 </div>

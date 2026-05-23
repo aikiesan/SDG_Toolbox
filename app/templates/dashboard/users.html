@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Users{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 style="text-transform: uppercase; font-weight: 800;">Users</h1>
+  <div class="table-responsive mt-4">
+    <table class="table table-hover">
+      <thead>
+        <tr><th>Name</th><th>Email</th><th>Admin</th><th>Projects</th><th>Assessments</th></tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td><a href="{{ url_for('dashboard.user_detail', user_id=u.id) }}">{{ u.name }}</a></td>
+          <td>{{ u.email }}</td>
+          <td>{{ 'Yes' if u.is_admin else 'No' }}</td>
+          <td>{{ u.project_count }}</td>
+          <td>{{ u.assessment_count }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="text-center text-muted">No users found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
