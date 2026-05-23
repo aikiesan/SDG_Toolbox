@@ -25,9 +25,15 @@ instance/sdgassessmentdev.db
 sdgassessmentdev.db 
 sdg_assessment.db 
  
-# Debug and test output 
-debug_output/ 
-test_results.log 
+# Debug and test output
+debug_output/
+test_results.log
+test_output_baseline.txt
+
+# Dev/data artifacts (classification pipeline outputs)
+projects_classified.json
+projects_for_classification.json
+projects_list.json
  
 # Pytest cache 
 .pytest_cache/ 

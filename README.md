@@ -1,8 +1,10 @@
 # SDG Assessment Toolkit
 
-**Version:** 1.0.0
-**Last Updated:** 2025-12-01
-**Maintained by:** Lucas Nakamura ([lucassnakamura@gmail.com](mailto:lucassnakamura@gmail.com))
+**Version:** 1.1.0
+**Last Updated:** 2026-05-23
+**Live URL:** [https://atlasle.uia-architectes.org](https://atlasle.uia-architectes.org)
+**Maintained by:** Lucas Nakamura — [lucasnc@unicamp.br](mailto:lucasnc@unicamp.br)
+**Hosted by:** UIA IT (Patrick Savoyaud — psavoyaud@siteparc.fr)
 
 A comprehensive web-based toolkit for architects, urban planners, and sustainability professionals to evaluate how their projects align with the United Nations Sustainable Development Goals (SDGs). The system provides both guided questionnaire-based assessments and expert-level direct assessment capabilities.
 
@@ -278,8 +280,8 @@ The SDG Assessment Toolkit is a Flask-based web application that enables profess
 
 #### 1. Clone the Repository
 ```bash
-git clone https://github.com/aikiesan/sdg-assessment.git
-cd sdg-assessment
+git clone https://github.com/aikiesan/SDG_Toolbox.git
+cd SDG_Toolbox
 ```
 
 #### 2. Create Virtual Environment
@@ -380,7 +382,7 @@ MAIL_USE_SSL=False
 MAIL_USERNAME=your-email@gmail.com
 MAIL_PASSWORD=your-app-password
 MAIL_DEFAULT_SENDER=your-email@gmail.com
-ADMIN_EMAIL=lucassnakamura@gmail.com
+ADMIN_EMAIL=cidblanco@uol.com.br
 
 # Application Settings
 APP_NAME=SDG Assessment Toolkit
@@ -598,9 +600,15 @@ sdg-assessment/
 │   └── test_models.py           # Model tests
 │
 ├── scripts/                     # Utility scripts
-│   ├── populate_relationships.py # Populate SDG relationships
-│   ├── create_test_user.py      # Create test users
-│   └── check_test_data.py       # Verify test data
+│   ├── populate_relationships.py  # Populate SDG relationships
+│   ├── create_test_user.py        # Create test users
+│   ├── check_test_data.py         # Verify test data
+│   ├── extract_translations.py    # i18n: extract keys from templates
+│   ├── extract_standard_en.py     # i18n: extract Standard assessment keys
+│   ├── add_ui_keys.py             # i18n: add UI keys to translation files
+│   ├── inject_keys_to_template.py # i18n: inject keys into HTML templates
+│   ├── final_template_injection.py # i18n: final pass template injection
+│   └── update_json_keys.py        # i18n: update/merge JSON translation files
 │
 ├── documentation/               # Additional documentation
 │   ├── README.md                # Documentation index
@@ -934,8 +942,10 @@ This project is licensed under the MIT License. See [LICENSE](./LICENSE) for det
 - [FAQ](./documentation/FAQ.md)
 
 ### Contact
-- **Email:** [lucassnakamura@gmail.com](mailto:lucassnakamura@gmail.com)
-- **GitHub Issues:** [https://github.com/aikiesan/sdg-assessment/issues](https://github.com/aikiesan/sdg-assessment/issues)
+- **Developer:** Lucas Nakamura — [lucasnc@unicamp.br](mailto:lucasnc@unicamp.br)
+- **Project lead:** Cid Blanco Jr — [cidblanco@uol.com.br](mailto:cidblanco@uol.com.br)
+- **UIA IT (hosting):** Patrick Savoyaud — [psavoyaud@siteparc.fr](mailto:psavoyaud@siteparc.fr)
+- **GitHub Issues:** [https://github.com/aikiesan/SDG_Toolbox/issues](https://github.com/aikiesan/SDG_Toolbox/issues)
 
 ### Reporting Bugs
 Please include:
@@ -960,4 +970,3 @@ Open an issue on GitHub with the "enhancement" label.
 ---
 
 **Made with ❤️ for a sustainable future**
-"# UIA_SDG_Toolbox" 
