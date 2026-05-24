@@ -176,6 +176,29 @@ def test_delete_requires_login(client, test_assessment):
     assert resp.status_code in (302, 401, 403)
 
 
+def test_view_shared_valid_token(client, test_user, test_project, test_assessment, session):
+    from datetime import datetime, timedelta
+    test_assessment.share_token = 'test-share-token-abc123'
+    test_assessment.share_expires = datetime.utcnow() + timedelta(days=30)
+    session.flush()
+    resp = client.get('/assessments/shared/test-share-token-abc123')
+    assert resp.status_code == 200
+
+
+def test_view_shared_invalid_token(client, session):
+    resp = client.get('/assessments/shared/nonexistent-token', follow_redirects=True)
+    assert resp.status_code == 200
+
+
+def test_view_shared_expired_token(client, test_assessment, session):
+    from datetime import datetime, timedelta
+    test_assessment.share_token = 'expired-token-xyz'
+    test_assessment.share_expires = datetime.utcnow() - timedelta(days=1)
+    session.flush()
+    resp = client.get('/assessments/shared/expired-token-xyz', follow_redirects=True)
+    assert resp.status_code == 200
+
+
 def test_delete_nonexistent_assessment_returns_404(client, test_user, auth):
     auth.login(email=test_user.email, password='password')
     resp = client.post('/assessments/999999/delete', follow_redirects=False)

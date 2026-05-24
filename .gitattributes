@@ -1,0 +1,7 @@
+# Force LF for files that must not have CRLF in Docker/Linux containers
+*.sh        text eol=lf
+Dockerfile* text eol=lf
+entrypoint* text eol=lf
+
+# Default behavior for everything else
+*           text=auto

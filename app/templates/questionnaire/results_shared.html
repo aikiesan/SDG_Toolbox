@@ -90,8 +90,10 @@
         // Set global variables for JavaScript
         window.assessmentId = {{ assessment.id }};
         window.projectId = {{ assessment.project_id }};
-        window.projectName = "{{ project.name }}";
+        window.projectName = "{{ project.name | tojson }}";
         window.readOnlyMode = true;  // Indicate this is read-only
+        window.sdgScoresData = {{ sdg_scores | tojson }};
+        window.overallScore = {{ overall_score_display }};
     </script>
     <script src="{{ url_for('static', filename='js/sdg_charts.js') }}"></script>
     <script src="{{ url_for('static', filename='js/results_page.js') }}"></script>

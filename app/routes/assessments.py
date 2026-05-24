@@ -275,7 +275,7 @@ def finalize(id):
         
         assessment.status = 'completed'
         assessment.completed_at = datetime.now()
-        assessment.overall_direct_score = overall_direct_score
+        assessment.overall_score = overall_direct_score
         assessment.updated_at = datetime.now()
         
         db.session.commit()
@@ -903,11 +903,41 @@ def view_shared(token):
         flash('This share link has expired.', 'error')
         return redirect(url_for('main.index'))
 
+    # Build serialized score list (same shape as the regular results route)
+    sdg_scores_orm = SdgScore.query.filter_by(assessment_id=assessment.id)\
+        .join(SdgGoal).order_by(SdgGoal.number).all()
+
+    sdg_scores_data = []
+    for score_obj in sdg_scores_orm:
+        goal_obj = score_obj.sdg_goal
+        sdg_scores_data.append({
+            'id': score_obj.id,
+            'assessment_id': score_obj.assessment_id,
+            'sdg_id': score_obj.sdg_id,
+            'direct_score': float(score_obj.direct_score or 0.0),
+            'bonus_score': float(score_obj.bonus_score or 0.0),
+            'total_score': float(score_obj.total_score or 0.0),
+            'raw_score': float(score_obj.raw_score or 0.0),
+            'max_possible': float(score_obj.max_possible or 0.0),
+            'percentage_score': float(score_obj.percentage_score or 0.0),
+            'question_count': int(score_obj.question_count or 0),
+            'response_text': score_obj.response_text or '',
+            'notes': score_obj.notes or '',
+            'number': goal_obj.number if goal_obj else None,
+            'name': goal_obj.name if goal_obj else '',
+            'color_code': goal_obj.color_code if goal_obj else '',
+            'description': goal_obj.description if goal_obj else '',
+        })
+
+    overall_score = float(assessment.overall_score or 0.0)
+
     # Render results page in read-only mode
     return render_template(
         'questionnaire/results_shared.html',
         assessment=assessment,
         project=assessment.project,
+        sdg_scores=sdg_scores_data,
+        overall_score_display=overall_score,
         read_only=True
     )
 

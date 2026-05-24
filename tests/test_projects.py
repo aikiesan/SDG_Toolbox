@@ -8,6 +8,13 @@ from werkzeug.security import generate_password_hash
 from flask import url_for, session as flask_session
 from datetime import datetime, timedelta
 
+def test_export_pdf_graceful_error(client, auth, test_user, test_project):
+    """PDF export should flash a warning and redirect (WeasyPrint not installed)."""
+    auth.login(email=test_user.email)
+    resp = client.get(f'/projects/{test_project.id}/export?format=pdf', follow_redirects=True)
+    assert resp.status_code == 200
+
+
 def test_projects_page_unauthenticated(client):
     """Accessing projects requires login and should redirect."""
     response = client.get('/projects/')
