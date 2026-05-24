@@ -225,15 +225,19 @@ def export(id):
             headers={'Content-Disposition': f'attachment; filename=project_{id}.csv'}
         )
     elif format == 'pdf':
-        # Generate PDF
-        from weasyprint import HTML
-        html = render_template('projects/export_pdf.html', project=project)
-        pdf = HTML(string=html).write_pdf()
-        return current_app.response_class(
-            pdf,
-            mimetype='application/pdf',
-            headers={'Content-Disposition': f'attachment; filename=project_{id}.pdf'}
-        )
+        try:
+            from weasyprint import HTML
+            html = render_template('projects/export_pdf.html', project=project)
+            pdf = HTML(string=html).write_pdf()
+            return current_app.response_class(
+                pdf,
+                mimetype='application/pdf',
+                headers={'Content-Disposition': f'attachment; filename=project_{id}.pdf'}
+            )
+        except (ImportError, Exception) as e:
+            current_app.logger.error(f"PDF export failed: {e}")
+            flash('PDF export is not available at this time. Please use CSV export instead.', 'warning')
+            return redirect(url_for('projects.show', id=id))
     else:
         abort(400)  # Bad Request
 

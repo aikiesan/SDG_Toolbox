@@ -138,7 +138,7 @@ def populate_relationships():
                              relationship = SdgRelationship(
                                  source_sdg_id=source_id,
                                  target_sdg_id=actual_target_id,
-                                 relationship_strength=strength
+                                 strength=strength
                              )
                              db.session.add(relationship)
                              added_count += 1
@@ -151,7 +151,7 @@ def populate_relationships():
                         relationship = SdgRelationship(
                             source_sdg_id=source_id,
                             target_sdg_id=target_id,
-                            relationship_strength=strength
+                            strength=strength
                         )
                         db.session.add(relationship)
                         added_count += 1
