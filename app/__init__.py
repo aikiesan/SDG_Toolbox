@@ -1,6 +1,7 @@
 import os
 from datetime import datetime, timezone
 from flask import Flask
+from werkzeug.middleware.proxy_fix import ProxyFix
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
@@ -47,6 +48,9 @@ def create_app(config_name=None):
     else:
         config_class = config_name
     app.config.from_object(config_class)
+
+    # Trust Nginx's X-Forwarded-* headers so url_for(_external=True) uses https
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
 
     import logging
