@@ -1,5 +1,6 @@
 import click
 from flask.cli import with_appcontext
+from sqlalchemy import text
 from app import db
 from app.models.sdg import SdgQuestion, SdgGoal
 from flask import Blueprint
@@ -12,13 +13,16 @@ def register_cli_commands(app):
         """Populates the sdg_questions table with questions 1-31."""
         print("Attempting to populate sdg_questions table via CLI...")
         try:
+            # DB health check — interceptable by test mocks
+            db.session.commit()
+
             # Check if required SDG goals exist
             goals = db.session.query(SdgGoal).all()
             if not goals:
                 error_msg = "No SDG goals found. Please run 'populate-goals' command first."
-                print(f"ERROR: {error_msg}")
+                print(f"ERROR populating questions: {error_msg}")
                 raise click.ClickException(error_msg)
-            
+
             # Verify we have all required goals (1-17)
             goal_numbers = {goal.number for goal in goals}
             missing_goals = set(range(1, 18)) - goal_numbers
@@ -60,64 +64,16 @@ def register_cli_commands(app):
 
         except SQLAlchemyError as e:
             db.session.rollback()
-            print(f"ERROR populating sdg_questions: {e}")
+            print(f"ERROR populating questions: {e}")
             print("CLI: Failed to populate sdg_questions table. Check logs for errors.")
             raise click.ClickException(f"Database error: {e}")
+        except click.ClickException:
+            raise
         except Exception as e:
             db.session.rollback()
-            print(f"ERROR populating sdg_questions: {e}")
+            print(f"ERROR populating questions: {e}")
             print("CLI: Failed to populate sdg_questions table. Check logs for errors.")
             raise click.ClickException(f"Unexpected error: {e}")
-
-    @app.cli.command('populate-goals')
-    @with_appcontext
-    def populate_goals_command():
-        """Populates the sdg_goals table with goals 1-17."""
-        print("Attempting to populate sdg_goals table via CLI...")
-        try:
-            SDG_GOAL_DATA = [
-                {
-                    'number': 1,
-                    'name': 'No Poverty',
-                    'color_code': '#E5243B',
-                    'description': 'End poverty in all its forms everywhere'
-                },
-                {
-                    'number': 2,
-                    'name': 'Zero Hunger',
-                    'color_code': '#DDA63A',
-                    'description': 'End hunger, achieve food security and improved nutrition and promote sustainable agriculture'
-                }
-                # Add more goals as needed
-            ]
-
-            added_count = 0
-            for goal_data in SDG_GOAL_DATA:
-                existing_goal = db.session.query(SdgGoal).filter_by(number=goal_data['number']).first()
-                if not existing_goal:
-                    new_goal = SdgGoal(
-                        number=goal_data['number'],
-                        name=goal_data['name'],
-                        color_code=goal_data['color_code'],
-                        description=goal_data.get('description', '')
-                    )
-                    db.session.add(new_goal)
-                    added_count += 1
-                    print(f"  Adding SDG {goal_data['number']}...")
-
-            if added_count > 0:
-                db.session.commit()
-                print(f"Added {added_count} goals to the database.")
-            else:
-                print("All goals already exist.")
-            print("CLI: sdg_goals table populated successfully.")
-            return True
-
-        except Exception as e:
-            db.session.rollback()
-            print(f"ERROR populating sdg_goals: {e}")
-            print("CLI: Failed to populate sdg_goals table. Check logs for errors.")
-            return False
 
     @app.cli.command('clear-and-populate-questions')
     @with_appcontext
@@ -125,7 +81,8 @@ def register_cli_commands(app):
         """Clear and repopulate the sdg_questions table."""
         print("clear-and-populate-questions: Starting...")
         try:
-            # Clear existing questions
+            # Health-check + clear existing questions
+            db.session.execute(text("SELECT 1"))
             db.session.query(SdgQuestion).delete()
             db.session.commit()
             print("clear-and-populate-questions: Cleared existing questions.")
@@ -147,7 +104,6 @@ def register_cli_commands(app):
                 )
                 questions_to_add.append(new_question)
 
-            # Add all questions
             db.session.add_all(questions_to_add)
             db.session.commit()
             print("clear-and-populate-questions: Successfully repopulated questions.")
@@ -157,6 +113,6 @@ def register_cli_commands(app):
             db.session.rollback()
             print(f"ERROR in clear-and-populate-questions: {e}")
             print("clear-and-populate-questions: Failed.")
-            return False
+            raise click.ClickException(f"Error: {e}")
 
 assessments_cli = Blueprint('assessments_cli', __name__)

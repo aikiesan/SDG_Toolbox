@@ -99,7 +99,7 @@ class ProjectForm(FlaskForm):
     budget = FloatField('Budget', validators=[
         Optional(),
         NumberRange(min=0.01, message='Budget must be a positive number'),
-        NumberRange(max=1_000_000_000, message='Budget must be less than 1,000,000,000'),
+        NumberRange(max=999_999_999, message='Budget must be less than 1,000,000,000'),
     ])
 
     sector = SelectField('Sector', validators=[

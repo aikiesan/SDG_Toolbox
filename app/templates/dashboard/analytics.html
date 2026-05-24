@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Analytics{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 style="text-transform: uppercase; font-weight: 800;">Analytics</h1>
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header"><h5 class="mb-0">SDG Goal Performance</h5></div>
+        <div class="card-body">
+          <table class="table">
+            <thead><tr><th>SDG</th><th>Goal</th><th>Avg Score</th></tr></thead>
+            <tbody>
+              {% for s in sdg_scores %}
+              <tr>
+                <td>SDG {{ s.number }}</td>
+                <td>{{ s.name }}</td>
+                <td>{{ s.avg_score|round(2) if s.avg_score else '—' }}</td>
+              </tr>
+              {% else %}
+              <tr><td colspan="3" class="text-center text-muted">No SDG score data yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

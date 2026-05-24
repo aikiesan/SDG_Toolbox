@@ -34,7 +34,7 @@ class TestAssessmentWorkflow:
             'location': 'Test City',
             'size_sqm': 1000.0,
             'budget': 50000.0,
-            'sector': 'Technology'
+            'sector': 'technology'
         }, follow_redirects=True)
 
         assert response.status_code == 200
@@ -104,7 +104,7 @@ class TestAssessmentWorkflow:
         # Test navigation through steps (if your app has multi-step assessment)
         steps = [1, 2, 3, 4, 5]
         for step in steps:
-            response = client.get(f'/assessments/{assessment.id}/step/{step}')
+            response = client.get(f'/assessments/projects/{test_project.id}/questionnaire/{assessment.id}/step/{step}')
             # Adjust assertion based on your app's behavior
             assert response.status_code in [200, 302]  # 200 for step exists, 302 for redirect
 

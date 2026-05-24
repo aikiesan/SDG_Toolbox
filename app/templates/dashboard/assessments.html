@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Assessments{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 style="text-transform: uppercase; font-weight: 800;">Assessments</h1>
+  <div class="table-responsive mt-4">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Project</th>
+          <th>User</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Score</th>
+          <th>Created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in assessments %}
+        <tr>
+          <td>{{ a.project_name }}</td>
+          <td>{{ a.user_name }}</td>
+          <td>{{ a.assessment_type }}</td>
+          <td><span class="badge bg-{{ 'success' if a.status == 'completed' else 'warning' }}">{{ a.status }}</span></td>
+          <td>{{ a.overall_score|round(1) if a.overall_score else '—' }}</td>
+          <td>{{ a.created_at|format_date }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-center text-muted">No assessments yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

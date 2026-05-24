@@ -93,12 +93,22 @@ def show(id):
     assessment = db.session.get(Assessment, id)
     if not assessment:
         abort(404)
-    
+
     project = db.session.get(Project, assessment.project_id)
     if not project or project.user_id != current_user.id:
         abort(403)
-    
+
     return render_template('assessments/show.html', assessment=assessment, project=project)
+
+
+@assessments_bp.route('/<int:assessment_id>/results')
+@login_required
+def results_shortcut(assessment_id):
+    """Short-form results URL — delegates to the canonical results view."""
+    assessment = db.session.get(Assessment, assessment_id)
+    if not assessment:
+        abort(404)
+    return results(project_id=assessment.project_id, assessment_id=assessment_id)
 
 
 @assessments_bp.route('/projects/<int:project_id>/new', methods=['GET', 'POST'])

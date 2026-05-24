@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}User Detail{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 style="text-transform: uppercase; font-weight: 800;">{{ user.name }}</h1>
+    <a href="{{ url_for('dashboard.edit_user', user_id=user.id) }}" class="btn btn-uia-outline">Edit</a>
+  </div>
+  <p class="text-muted">{{ user.email }} {% if user.is_admin %}<span class="badge bg-danger">Admin</span>{% endif %}</p>
+
+  <h2 class="mt-4">Projects</h2>
+  <div class="list-group mb-4">
+    {% for p in projects %}
+    <div class="list-group-item">{{ p.name }} — {{ p.project_type }}</div>
+    {% else %}
+    <div class="list-group-item text-muted">No projects.</div>
+    {% endfor %}
+  </div>
+
+  <h2>Assessments</h2>
+  <div class="list-group">
+    {% for a in assessments %}
+    <div class="list-group-item">{{ a.project_name }} — {{ a.status }}</div>
+    {% else %}
+    <div class="list-group-item text-muted">No assessments.</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
