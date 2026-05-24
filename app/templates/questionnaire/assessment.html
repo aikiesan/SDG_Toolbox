@@ -1937,11 +1937,8 @@
                      if (currentSubmitBtn) currentSubmitBtn.style.display = (currentSection === totalSections) ? 'inline-block' : 'none';
 
 
-                    // Scroll to top of container
-                    const container = document.querySelector('.container');
-                    if (container) {
-                        container.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
+                    // Scroll to top of page
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                     console.log(`Successfully navigated to section ${currentSection}`);
                 } else {
                     console.error(`Could not find section element for section ${sectionNum}`);
