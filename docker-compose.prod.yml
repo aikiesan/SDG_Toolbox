@@ -18,6 +18,20 @@ services:
     networks:
       - app-network
 
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--save", "60", "1", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
   web:
     build:
       context: .
@@ -26,14 +40,24 @@ services:
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       - SECRET_KEY=${SECRET_KEY}
+      # FLASK_ENV=production selects ProductionConfig (DEBUG off, secure cookies,
+      # https URL scheme) and the production Gunicorn config.
       - FLASK_ENV=production
+      - REDIS_URL=redis://redis:6379/0
+      # Secure cookies require HTTPS to be terminated at the proxy. Set to False
+      # only for an initial HTTP-only bootstrap before TLS is configured.
+      - SESSION_COOKIE_SECURE=${SESSION_COOKIE_SECURE:-True}
       - MAIL_SERVER=${MAIL_SERVER}
       - MAIL_PORT=${MAIL_PORT}
       - MAIL_USE_TLS=${MAIL_USE_TLS}
       - MAIL_USERNAME=${MAIL_USERNAME}
       - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - MAIL_DEFAULT_SENDER=${MAIL_DEFAULT_SENDER}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
     depends_on:
       db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     networks:
       - app-network
@@ -57,6 +81,7 @@ services:
 
 volumes:
   postgres_data:
+  redis_data:
 
 networks:
   app-network:

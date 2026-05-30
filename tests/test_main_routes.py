@@ -41,12 +41,10 @@ def test_sdg_information_hub(client):
     assert b'SDG' in resp.data
 
 
-def test_debug_database_endpoint(client):
-    resp = client.get('/debug/database')
-    assert resp.status_code == 200
-    data = resp.get_json()
-    assert 'database_path' in data
-
+def test_debug_endpoints_removed(client):
+    # These unauthenticated schema-disclosure endpoints were removed for security.
+    assert client.get('/debug/database').status_code == 404
+    assert client.get('/debug/db').status_code == 404
 
 
 def test_sdg_hub_contains_all_17_goals(client):

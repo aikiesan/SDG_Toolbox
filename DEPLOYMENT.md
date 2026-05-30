@@ -202,6 +202,8 @@ web_1   | Environment: production
 web_1   | ====================
 web_1   | Database is up!
 web_1   | Migrations complete!
+web_1   | Seeding SDG reference data...
+web_1   | Seeding complete!
 web_1   | Starting Gunicorn server...
 web_1   | [2026-02-20 10:00:00 +0000] [1] [INFO] Starting gunicorn 21.2.0
 web_1   | [2026-02-20 10:00:00 +0000] [1] [INFO] Listening at: http://0.0.0.0:5000 (1)
@@ -226,6 +228,38 @@ curl http://your-vps-ip
 ```
 
 **Expected:** HTML content from the landing page.
+
+> **Note on SDG reference data:** On first boot the entrypoint automatically
+> runs `flask populate-goals` and `flask populate-questions` (idempotent) to
+> seed the 17 SDG goals and 31 question rows the questionnaire requires. To
+> skip this (e.g. you seed via SQL), set `SKIP_SEED=true` in the environment.
+> To seed manually: `docker-compose -f docker-compose.prod.yml exec web flask populate-goals && docker-compose -f docker-compose.prod.yml exec web flask populate-questions`.
+
+---
+
+## Production Readiness Notes
+
+These behaviours were hardened for the public release — keep them in mind when
+configuring the environment:
+
+- **SECRET_KEY is mandatory.** In production the app **refuses to start** if
+  `SECRET_KEY` is unset or left at the insecure development default. Generate
+  one with `python -c 'import secrets; print(secrets.token_urlsafe(32))'`.
+- **Config selection.** `FLASK_ENV=production` (set in `docker-compose.prod.yml`)
+  now selects `ProductionConfig` — `DEBUG` off, HTTPS URL scheme, and secure
+  session cookies. No separate `FLASK_CONFIG` variable is required.
+- **Secure cookies need HTTPS.** `SESSION_COOKIE_SECURE` defaults to `True` in
+  production, so cookies are only sent over HTTPS. Complete the SSL/HTTPS
+  section below before going live. For a temporary HTTP-only bootstrap, set
+  `SESSION_COOKIE_SECURE=False` and use the HTTP-only nginx fallback described
+  in `nginx.conf`.
+- **Redis** is now part of the stack (caching + cross-worker rate limiting).
+  It is provisioned automatically by `docker-compose.prod.yml`.
+- **Rate limiting** is applied to the login, registration and password-reset
+  endpoints (via Flask-Limiter) to mitigate brute-force attacks.
+- **Removed endpoints.** The unauthenticated `/debug/database`, `/debug/db`,
+  and `/assessments/admin/populate-database` routes were removed for security.
+  Seed data via the CLI commands above instead.
 
 ---
 
@@ -276,33 +310,26 @@ Key is saved at:         /etc/letsencrypt/live/yourdomain.com/privkey.pem
 
 ### 5. Update Nginx Configuration
 
+`nginx.conf` already ships HTTPS-active: an HTTP server that serves the ACME
+challenge and redirects everything else to HTTPS, plus an HTTPS server with
+HSTS and security headers. You only need to point it at your certificate and
+domain:
+
 ```bash
 nano nginx.conf
 ```
 
-**Uncomment the HTTPS server block** (lines 77-122) and update `server_name`:
+- Set `server_name` in the HTTPS block to your domain.
+- Set `ssl_certificate` / `ssl_certificate_key` to your certificate paths. The
+  defaults expect UIA certs at `/etc/nginx/certs/uia_certificate.crt` and
+  `/etc/nginx/certs/uia_private.key` (mounted from `./certs`). For Let's
+  Encrypt use `/etc/letsencrypt/live/yourdomain.com/fullchain.pem` and
+  `.../privkey.pem` instead.
 
-```nginx
-server {
-    listen 443 ssl http2;
-    server_name yourdomain.com www.yourdomain.com;  # ← Update this
-
-    # SSL configuration
-    ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
-    # ... rest of config
-}
-```
-
-**Also uncomment HTTP → HTTPS redirect** (lines 40-42):
-
-```nginx
-location / {
-    return 301 https://$host$request_uri;
-}
-```
-
-**And comment out the HTTP proxy block** (lines 45-60).
+> **Bootstrap before certs exist:** nginx will fail to start if the configured
+> certificate files are missing. Until TLS is ready, follow the BOOTSTRAP NOTE
+> at the top of `nginx.conf` (serve over plain HTTP) and set
+> `SESSION_COOKIE_SECURE=False` in `.env`.
 
 **Save and exit.**
 

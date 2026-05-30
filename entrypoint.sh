@@ -31,6 +31,17 @@ timeout 60 flask db upgrade || {
 
 echo "Migrations complete!"
 
+# Seed required SDG reference data (idempotent — skips if already present).
+# Without this the questionnaire/goals are empty and the core feature fails.
+if [ "${SKIP_SEED:-false}" != "true" ]; then
+    echo "Seeding SDG reference data..."
+    flask populate-goals || echo "WARNING: populate-goals failed (continuing)"
+    flask populate-questions || echo "WARNING: populate-questions failed (continuing)"
+    echo "Seeding complete!"
+else
+    echo "SKIP_SEED=true — skipping SDG reference data seeding."
+fi
+
 # Start server with appropriate configuration based on environment
 echo "Starting Gunicorn server..."
 if [ "$FLASK_ENV" = "production" ]; then

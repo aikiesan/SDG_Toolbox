@@ -1,133 +1,110 @@
 from flask import abort
-from app.utils.db import get_db
+from app import db
+from app.models.project import Project
 import logging
 
 logger = logging.getLogger(__name__)
 
+
+def _to_dict(project):
+    """Serialize a Project ORM object to a plain dict."""
+    return {
+        'id': project.id,
+        'name': project.name,
+        'description': project.description,
+        'project_type': project.project_type,
+        'location': project.location,
+        'size_sqm': project.size_sqm,
+        'user_id': project.user_id,
+        'created_at': project.created_at,
+        'updated_at': project.updated_at,
+        'start_date': project.start_date,
+        'end_date': project.end_date,
+        'budget': project.budget,
+        'sector': project.sector,
+        'status': project.status,
+    }
+
+
 def get_projects(user_id, page=1, per_page=10, filters=None):
     """Get paginated projects for a user with optional filtering."""
-    conn = get_db()
-    sql = "SELECT * FROM projects WHERE user_id = ?"
-    params = [user_id]
+    query = Project.query.filter_by(user_id=user_id)
     if filters:
-        if 'project_type' in filters and filters['project_type']:
-            sql += " AND project_type = ?"
-            params.append(filters['project_type'])
-        if 'status' in filters and filters['status']:
-            sql += " AND status = ?"
-            params.append(filters['status'])
-        if 'search' in filters and filters['search']:
-            sql += " AND (name LIKE ? OR description LIKE ?)"
+        if filters.get('project_type'):
+            query = query.filter_by(project_type=filters['project_type'])
+        if filters.get('status'):
+            query = query.filter_by(status=filters['status'])
+        if filters.get('search'):
             search = f"%{filters['search']}%"
-            params.extend([search, search])
-    sql += " ORDER BY created_at DESC LIMIT ? OFFSET ?"
-    params.extend([per_page, (page - 1) * per_page])
-    projects = conn.execute(sql, tuple(params)).fetchall()
-    # conn.close() removed; teardown handles DB connection.
-    return [dict(row) for row in projects]
+            query = query.filter(
+                db.or_(Project.name.ilike(search), Project.description.ilike(search))
+            )
+    query = query.order_by(Project.created_at.desc())
+    projects = query.limit(per_page).offset((page - 1) * per_page).all()
+    return [_to_dict(p) for p in projects]
+
 
 def get_project(project_id, user_id=None):
     """Get a project by ID, optionally checking ownership."""
-    conn = get_db()
-    project = conn.execute('SELECT * FROM projects WHERE id = ?', (project_id,)).fetchone()
+    project = db.session.get(Project, project_id)
     if not project:
-        # conn.close() removed; teardown handles DB connection.
         abort(404)
-    if user_id is not None and project['user_id'] != user_id:
+    if user_id is not None and project.user_id != user_id:
         logger.warning(f"User {user_id} attempted to access project {project_id} without permission")
-        # conn.close() removed; teardown handles DB connection.
         abort(403)
-    result = dict(project)
-    # conn.close() removed; teardown handles DB connection.
-    return result
+    return _to_dict(project)
+
 
 def create_project(data, user_id):
     """Create a new project."""
-    conn = get_db()
     try:
-        conn.execute(
-            'INSERT INTO projects (name, description, project_type, location, size_sqm, user_id) VALUES (?, ?, ?, ?, ?, ?)',
-            (
-                data['name'],
-                data.get('description', ''),
-                data.get('project_type'),
-                data.get('location'),
-                data.get('size_sqm'),
-                user_id
-            )
+        project = Project(
+            name=data['name'],
+            description=data.get('description', ''),
+            project_type=data.get('project_type'),
+            location=data.get('location'),
+            size_sqm=data.get('size_sqm'),
+            user_id=user_id,
         )
-        conn.commit()
-        project = conn.execute('SELECT * FROM projects WHERE rowid = last_insert_rowid()').fetchone()
-        logger.info(f"Project {project['id']} created by user {user_id}")
-        result = dict(project)
-        # conn.close() removed; teardown handles DB connection.
-        return result
+        db.session.add(project)
+        db.session.commit()
+        logger.info(f"Project {project.id} created by user {user_id}")
+        return _to_dict(project)
     except Exception as e:
-        conn.rollback()
+        db.session.rollback()
         logger.error(f"Error creating project: {str(e)}")
-        # conn.close() removed; teardown handles DB connection.
         raise
+
 
 def update_project(project_id, data, user_id):
     """Update an existing project."""
-    conn = get_db()
-    project = conn.execute('SELECT * FROM projects WHERE id = ?', (project_id,)).fetchone()
-    if not project or project['user_id'] != user_id:
-        # conn.close() removed; teardown handles DB connection.
+    project = db.session.get(Project, project_id)
+    if not project or project.user_id != user_id:
         abort(403)
     try:
-        fields = []
-        params = []
-        if 'name' in data:
-            fields.append('name = ?')
-            params.append(data['name'])
-        if 'description' in data:
-            fields.append('description = ?')
-            params.append(data['description'])
-        if 'project_type' in data:
-            fields.append('project_type = ?')
-            params.append(data['project_type'])
-        if 'location' in data:
-            fields.append('location = ?')
-            params.append(data['location'])
-        if 'size_sqm' in data:
-            fields.append('size_sqm = ?')
-            params.append(data['size_sqm'])
-        if 'status' in data:
-            fields.append('status = ?')
-            params.append(data['status'])
-        if not fields:
-            # conn.close() removed; teardown handles DB connection.
-            return dict(project)
-        params.append(project_id)
-        conn.execute(f"UPDATE projects SET {', '.join(fields)} WHERE id = ?", tuple(params))
-        conn.commit()
+        for field in ('name', 'description', 'project_type', 'location', 'size_sqm', 'status'):
+            if field in data:
+                setattr(project, field, data[field])
+        db.session.commit()
         logger.info(f"Project {project_id} updated by user {user_id}")
-        updated_project = conn.execute('SELECT * FROM projects WHERE id = ?', (project_id,)).fetchone()
-        result = dict(updated_project)
-        # conn.close() removed; teardown handles DB connection.
-        return result
+        return _to_dict(project)
     except Exception as e:
-        conn.rollback()
+        db.session.rollback()
         logger.error(f"Error updating project {project_id}: {str(e)}")
-        # conn.close() removed; teardown handles DB connection.
         raise
+
 
 def delete_project(project_id, user_id):
     """Delete a project."""
-    conn = get_db()
-    project = conn.execute('SELECT * FROM projects WHERE id = ?', (project_id,)).fetchone()
-    if not project or project['user_id'] != user_id:
-        # conn.close() removed; teardown handles DB connection.
+    project = db.session.get(Project, project_id)
+    if not project or project.user_id != user_id:
         abort(403)
     try:
-        conn.execute('DELETE FROM projects WHERE id = ?', (project_id,))
-        conn.commit()
+        db.session.delete(project)
+        db.session.commit()
         logger.info(f"Project {project_id} deleted by user {user_id}")
-        # conn.close() removed; teardown handles DB connection.
         return True
     except Exception as e:
-        conn.rollback()
+        db.session.rollback()
         logger.error(f"Error deleting project {project_id}: {str(e)}")
-        # conn.close() removed; teardown handles DB connection.
         raise

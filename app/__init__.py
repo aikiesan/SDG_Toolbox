@@ -19,6 +19,32 @@ mail = Mail()
 csrf = CSRFProtect()
 cache = Cache()
 
+
+# --- Rate limiting ---
+# Use Flask-Limiter when available; otherwise fall back to a no-op shim so the
+# app still runs in environments where the optional dependency is absent.
+try:
+    from flask_limiter import Limiter as _Limiter
+    from flask_limiter.util import get_remote_address as _get_remote_address
+
+    limiter = _Limiter(key_func=_get_remote_address, default_limits=[])
+    _LIMITER_AVAILABLE = True
+except ImportError:  # pragma: no cover - exercised only when dependency missing
+    _LIMITER_AVAILABLE = False
+
+    class _NoopLimiter:
+        """Minimal stand-in that makes @limiter.limit(...) a passthrough."""
+
+        def init_app(self, app):
+            return None
+
+        def limit(self, *args, **kwargs):
+            def decorator(func):
+                return func
+            return decorator
+
+    limiter = _NoopLimiter()
+
 @login_manager.user_loader
 def load_user(user_id):
     """Load user by ID."""
@@ -41,13 +67,27 @@ def create_app(config_name=None):
 
 
     if config_name is None:
-        config_name = os.environ.get('FLASK_CONFIG', 'default')
+        # FLASK_CONFIG takes precedence; otherwise fall back to FLASK_ENV
+        # (production/development/testing) so a single FLASK_ENV var selects
+        # the right Config class. Defaults to development.
+        config_name = os.environ.get('FLASK_CONFIG') or os.environ.get('FLASK_ENV') or 'default'
 
     if isinstance(config_name, str):
         config_class = config.get(config_name, Config)
     else:
         config_class = config_name
     app.config.from_object(config_class)
+
+    # Fail fast in production if the SECRET_KEY is missing or still the insecure
+    # development default — a known key allows session/CSRF/token forgery.
+    from config import INSECURE_DEFAULT_SECRET_KEY
+    is_production = not app.config.get('DEBUG') and not app.config.get('TESTING')
+    if is_production and (not os.environ.get('SECRET_KEY')
+                          or app.config.get('SECRET_KEY') == INSECURE_DEFAULT_SECRET_KEY):
+        raise RuntimeError(
+            "SECRET_KEY must be set to a strong, unique value in production. "
+            "Generate one with: python -c 'import secrets; print(secrets.token_urlsafe(32))'"
+        )
 
     # Trust Nginx's X-Forwarded-* headers so url_for(_external=True) uses https
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
@@ -136,7 +176,6 @@ def create_app(config_name=None):
     app.cli.add_command(update_schema_command)
 
 
-    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', app.config.get('SECRET_KEY', 'your-default-secret-key'))
     # --- Database URI Configuration ---
     database_url = os.environ.get('DATABASE_URL')
     if database_url:
@@ -182,6 +221,19 @@ def create_app(config_name=None):
     cache.init_app(app)
     app.logger.info(f"Cache initialized: {app.config['CACHE_TYPE']}")
 
+    # --- Initialize rate limiter ---
+    if _LIMITER_AVAILABLE:
+        # Use Redis for shared limits across Gunicorn workers when available;
+        # otherwise per-process in-memory storage (fine for single worker/dev).
+        if redis_url and not app.config.get('TESTING'):
+            app.config.setdefault('RATELIMIT_STORAGE_URI', redis_url)
+        # Disable enforcement in tests to keep the suite deterministic.
+        app.config.setdefault('RATELIMIT_ENABLED', not app.config.get('TESTING', False))
+        limiter.init_app(app)
+        app.logger.info("Rate limiter initialized")
+    else:
+        app.logger.warning("Flask-Limiter not installed, rate limiting disabled")
+
     @app.before_request
     def check_db_connection():
         """Verify database connection before each request."""
@@ -216,6 +268,11 @@ def create_app(config_name=None):
     @app.context_processor
     def inject_now():
         return {'now': datetime.now(timezone.utc)}
+
+    # Expose url_for_project_routes() to all templates (used by profile.html
+    # and others). This was previously defined but never registered.
+    from app.utils.context_processors import utility_processor
+    app.context_processor(utility_processor)
 
 
     @app.teardown_appcontext
