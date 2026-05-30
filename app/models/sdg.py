@@ -3,8 +3,6 @@ SDG Goal model.
 Represents Sustainable Development Goals and their relationships.
 """
 
-from app.utils.db import get_db
-
 from app import db
 from datetime import datetime
 

@@ -6,7 +6,11 @@ from threading import Thread
 
 def send_async_email(app, msg):
     with app.app_context():
-        mail.send(msg)  # This mail reference comes from the app context
+        try:
+            mail.send(msg)
+        except Exception as e:
+            # Runs in a background thread; log instead of crashing silently.
+            app.logger.error(f"Failed to send email: {str(e)}")
 
 def send_email(subject, recipients, html_body, text_body=None):
     sender = current_app.config['MAIL_DEFAULT_SENDER']

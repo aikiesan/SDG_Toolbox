@@ -1,51 +1,35 @@
 # tests/test_project_service.py
+"""Tests for the project service layer (SQLAlchemy ORM backed)."""
 import pytest
-from unittest.mock import patch, MagicMock
 from werkzeug.exceptions import NotFound, Forbidden
 
-
-class FakeRow(dict):
-    """Minimal sqlite3.Row substitute — supports dict() conversion and key access."""
-
-    def keys(self):
-        return super().keys()
+from app.models.project import Project
+from app.services.project_service import (
+    get_projects, get_project, create_project, update_project, delete_project,
+)
 
 
-def make_conn(*rows):
-    """Return a mock DB connection whose cursor returns the given FakeRow dicts."""
-    mock_conn = MagicMock()
-    mock_cursor = MagicMock()
-
-    fake_rows = [FakeRow(r) for r in rows]
-    mock_cursor.fetchall.return_value = fake_rows
-    mock_cursor.fetchone.return_value = fake_rows[0] if fake_rows else None
-    mock_conn.execute.return_value = mock_cursor
-    return mock_conn
+def _make_project(session, user_id, name='Proj', **kwargs):
+    project = Project(name=name, user_id=user_id, **kwargs)
+    session.add(project)
+    session.commit()
+    return project
 
 
 # ---------------------------------------------------------------------------
 # get_projects
 # ---------------------------------------------------------------------------
 
-def test_get_projects_returns_list(app):
-    row = {'id': 1, 'name': 'Proj', 'user_id': 1, 'project_type': 'commercial',
-           'description': '', 'location': '', 'size_sqm': None, 'status': 'active',
-           'created_at': None, 'budget': None, 'sector': None,
-           'start_date': None, 'end_date': None}
-    with app.app_context():
-        with patch('app.services.project_service.get_db', return_value=make_conn(row)):
-            from app.services.project_service import get_projects
-            result = get_projects(user_id=1)
+def test_get_projects_returns_list(session, test_user):
+    _make_project(session, test_user.id, name='Proj', project_type='commercial')
+    result = get_projects(user_id=test_user.id)
     assert isinstance(result, list)
     assert len(result) == 1
     assert result[0]['name'] == 'Proj'
 
 
-def test_get_projects_empty(app):
-    with app.app_context():
-        with patch('app.services.project_service.get_db', return_value=make_conn()):
-            from app.services.project_service import get_projects
-            result = get_projects(user_id=1)
+def test_get_projects_empty(session, test_user):
+    result = get_projects(user_id=test_user.id)
     assert result == []
 
 
@@ -53,62 +37,65 @@ def test_get_projects_empty(app):
 # get_project
 # ---------------------------------------------------------------------------
 
-def test_get_project_found(app):
-    row = {'id': 5, 'name': 'My Proj', 'user_id': 7, 'project_type': 'residential',
-           'description': '', 'location': 'Paris', 'size_sqm': 200.0, 'status': 'active',
-           'created_at': None, 'budget': None, 'sector': None,
-           'start_date': None, 'end_date': None}
-    with app.app_context():
-        with patch('app.services.project_service.get_db', return_value=make_conn(row)):
-            from app.services.project_service import get_project
-            result = get_project(project_id=5, user_id=7)
-    assert result['id'] == 5
+def test_get_project_found(session, test_user):
+    project = _make_project(session, test_user.id, name='My Proj',
+                            project_type='residential', location='Paris', size_sqm=200.0)
+    result = get_project(project_id=project.id, user_id=test_user.id)
+    assert result['id'] == project.id
     assert result['name'] == 'My Proj'
 
 
-def test_get_project_not_found_raises_404(app):
-    with app.app_context():
-        with patch('app.services.project_service.get_db', return_value=make_conn()):
-            from app.services.project_service import get_project
-            with pytest.raises(NotFound):
-                get_project(project_id=999)
+def test_get_project_not_found_raises_404(session):
+    with pytest.raises(NotFound):
+        get_project(project_id=999999)
 
 
-def test_get_project_wrong_user_raises_403(app):
-    row = {'id': 5, 'name': 'Other Proj', 'user_id': 99, 'project_type': 'commercial',
-           'description': '', 'location': '', 'size_sqm': None, 'status': 'active',
-           'created_at': None, 'budget': None, 'sector': None,
-           'start_date': None, 'end_date': None}
-    with app.app_context():
-        with patch('app.services.project_service.get_db', return_value=make_conn(row)):
-            from app.services.project_service import get_project
-            with pytest.raises(Forbidden):
-                get_project(project_id=5, user_id=1)  # user_id=1 ≠ row['user_id']=99
+def test_get_project_wrong_user_raises_403(session, test_user):
+    project = _make_project(session, test_user.id, name='Other Proj')
+    with pytest.raises(Forbidden):
+        get_project(project_id=project.id, user_id=test_user.id + 1)
+
+
+# ---------------------------------------------------------------------------
+# create / update
+# ---------------------------------------------------------------------------
+
+def test_create_project(session, test_user):
+    result = create_project({'name': 'Created', 'project_type': 'commercial'}, test_user.id)
+    assert result['name'] == 'Created'
+    assert result['user_id'] == test_user.id
+    assert Project.query.filter_by(name='Created').count() == 1
+
+
+def test_update_project(session, test_user):
+    project = _make_project(session, test_user.id, name='Before')
+    result = update_project(project.id, {'name': 'After'}, test_user.id)
+    assert result['name'] == 'After'
+
+
+def test_update_project_wrong_user_raises_403(session, test_user):
+    project = _make_project(session, test_user.id, name='X')
+    with pytest.raises(Forbidden):
+        update_project(project.id, {'name': 'Y'}, test_user.id + 1)
 
 
 # ---------------------------------------------------------------------------
 # delete_project
 # ---------------------------------------------------------------------------
 
-def test_delete_project_success(app):
-    row = {'id': 3, 'name': 'Del Proj', 'user_id': 2, 'project_type': 'commercial',
-           'description': '', 'location': '', 'size_sqm': None, 'status': 'active',
-           'created_at': None, 'budget': None, 'sector': None,
-           'start_date': None, 'end_date': None}
-    with app.app_context():
-        with patch('app.services.project_service.get_db', return_value=make_conn(row)):
-            from app.services.project_service import delete_project
-            result = delete_project(project_id=3, user_id=2)
+def test_delete_project_success(session, test_user):
+    project = _make_project(session, test_user.id, name='Del Proj')
+    result = delete_project(project_id=project.id, user_id=test_user.id)
     assert result is True
+    assert get_project_silently(project.id) is None
 
 
-def test_delete_project_wrong_user_raises_403(app):
-    row = {'id': 3, 'name': 'Del Proj', 'user_id': 99, 'project_type': 'commercial',
-           'description': '', 'location': '', 'size_sqm': None, 'status': 'active',
-           'created_at': None, 'budget': None, 'sector': None,
-           'start_date': None, 'end_date': None}
-    with app.app_context():
-        with patch('app.services.project_service.get_db', return_value=make_conn(row)):
-            from app.services.project_service import delete_project
-            with pytest.raises(Forbidden):
-                delete_project(project_id=3, user_id=1)
+def test_delete_project_wrong_user_raises_403(session, test_user):
+    project = _make_project(session, test_user.id, name='Del Proj')
+    with pytest.raises(Forbidden):
+        delete_project(project_id=project.id, user_id=test_user.id + 1)
+
+
+def get_project_silently(project_id):
+    from app import db
+    return db.session.get(Project, project_id)

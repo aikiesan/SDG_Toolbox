@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, jsonify, current_app, request, abort
 import os
-import sqlite3
 from app import db
 from sqlalchemy import inspect, text
 from alembic.config import Config as AlembicConfig
@@ -8,32 +7,9 @@ from alembic import command as alembic_command
 
 main_bp = Blueprint('main', __name__)
 
-@main_bp.route('/debug/database')
-def debug_database():
-    db_path = os.path.join(current_app.instance_path, 'sdgassessmentdev.db')
-    results = {'database_path': db_path, 'exists': os.path.exists(db_path)}
-    
-    if not os.path.exists(db_path):
-        return jsonify(results)
-    
-    conn = sqlite3.connect(db_path)
-    tables = conn.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
-    results['tables'] = [t[0] for t in tables]
-    
-    if 'sdg_questions' in results['tables']:
-        columns = conn.execute("PRAGMA table_info(sdg_questions)").fetchall()
-        results['sdg_questions_columns'] = [c[1] for c in columns]
-    
-    conn.close()
-    return jsonify(results)
-
-@main_bp.route('/debug/db')
-def debug_db():
-    from app.utils.db import get_fresh_db
-    conn = get_fresh_db()
-    users_columns = [col[1] for col in conn.execute("PRAGMA table_info(users)").fetchall()]
-    conn.close()
-    return jsonify({"users_table_columns": users_columns})
+# NOTE: The previous /debug/database and /debug/db routes were removed — they
+# were unauthenticated and leaked database schema details, and they read a
+# hardcoded local SQLite file that does not exist in production (Postgres).
 
 @main_bp.route('/sdg-information-hub')
 def sdg_information_hub():
@@ -324,6 +300,12 @@ def about():
 def privacy_policy():
     """Renders the privacy policy page."""
     return render_template('privacy_policy.html', title='Privacy Policy')
+
+
+@main_bp.route('/terms')
+def terms():
+    """Renders the terms of service page."""
+    return render_template('terms.html', title='Terms of Service')
 
 @main_bp.route('/super-secret-db-initialize/<path:secret_key>')
 def initialize_database(secret_key):

@@ -188,27 +188,31 @@ def test_project_pagination(client, auth, test_user, session):
     """Test project pagination."""
     auth.login(email=test_user.email)
     
-    # Create 15 projects (more than default page size)
+    # Create 15 projects (more than default page size) with explicit, distinct
+    # created_at timestamps so ordering is deterministic. The default listing
+    # sort is created_at DESC, so Project 14 (newest) is first.
+    base = datetime(2024, 1, 1, 12, 0, 0)
     for i in range(15):
         project = Project(
             name=f'Project {i}',
             user_id=test_user.id,
-            project_type='residential'
+            project_type='residential',
+            created_at=base + timedelta(minutes=i),
         )
         session.add(project)
     session.commit()
-    
-    # Test first page
+
+    # Page 1 holds the 10 newest (Projects 5-14); Project 14 present, Project 0 absent.
     response = client.get('/projects/')
+    assert response.status_code == 200
+    assert b'Project 14' in response.data
+    assert b'Project 0' not in response.data
+
+    # Page 2 holds the oldest (Projects 0-4); Project 0 present, Project 14 absent.
+    response = client.get('/projects/?page=2')
     assert response.status_code == 200
     assert b'Project 0' in response.data
     assert b'Project 14' not in response.data
-    
-    # Test second page
-    response = client.get('/projects/?page=2')
-    assert response.status_code == 200
-    assert b'Project 0' not in response.data
-    assert b'Project 14' in response.data
 
 def test_project_export_csv(client, auth, test_user, test_project):
     """Test project CSV export functionality."""

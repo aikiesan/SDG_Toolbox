@@ -7,7 +7,9 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from urllib.parse import urlparse as url_parse
 from flask_login import login_user, logout_user, current_user, login_required
 from app.models.user import User
-from app import db
+from app.models.project import Project
+from app.models.assessment import Assessment
+from app import db, limiter
 from werkzeug.security import check_password_hash, generate_password_hash
 from app.utils.email_confirmed_required import email_confirmed_required
 from functools import wraps
@@ -27,6 +29,7 @@ def admin_required(f):
     return decorated_function
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
+@limiter.limit("10 per minute; 50 per hour", methods=["POST"])
 def login():
     if request.method == 'POST':
         email = request.form.get('email')
@@ -53,6 +56,7 @@ def logout():
     return redirect(url_for('main.index'))
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
+@limiter.limit("5 per minute; 20 per hour", methods=["POST"])
 def register():
     if request.method == 'POST':
         email = request.form.get('email')
@@ -93,21 +97,20 @@ def confirm_email(token):
     if not email:
         flash('The confirmation link is invalid or has expired.', 'danger')
         return redirect(url_for('auth.login'))
-    
-    conn = get_db()
-    user_row = conn.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
-    
-    if not user_row:
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
         flash('User not found.', 'danger')
         return redirect(url_for('auth.login'))
-    
-    if user_row.get('email_confirmed'):
+
+    if user.email_confirmed:
         flash('Account already confirmed. Please login.', 'info')
     else:
-        conn.execute('UPDATE users SET email_confirmed = 1 WHERE email = ?', (email,))
-        conn.commit()
+        user.email_confirmed = True
+        db.session.commit()
         flash('Your email has been confirmed. You can now log in.', 'success')
-    
+
     return redirect(url_for('auth.login'))
 
 @auth_bp.route('/unconfirmed')
@@ -126,11 +129,17 @@ def resend_confirmation():
         flash('Your email is already confirmed.', 'info')
         return redirect(url_for('main.index'))
     
-    send_confirmation_email(current_user)
-    flash('A new confirmation email has been sent.', 'info')
+    try:
+        send_confirmation_email(current_user)
+        flash('A new confirmation email has been sent.', 'info')
+    except Exception as e:
+        from flask import current_app
+        current_app.logger.error(f"Failed to send confirmation email: {e}")
+        flash('We could not send the confirmation email right now. Please try again later.', 'warning')
     return redirect(url_for('auth.unconfirmed'))
 
 @auth_bp.route('/forgot-password', methods=['GET', 'POST'])
+@limiter.limit("5 per hour", methods=["POST"])
 def forgot_password():
     """Handle password reset requests."""
     if current_user.is_authenticated:
@@ -138,14 +147,17 @@ def forgot_password():
     
     if request.method == 'POST':
         email = request.form.get('email')
-        
-        conn = get_db()
-        user_row = conn.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
-        
-        if user_row:
-            user_obj = User(id=user_row['id'], name=user_row['name'], email=user_row['email'])
-            send_password_reset_email(user_obj)
-        
+
+        user = User.query.filter_by(email=email).first()
+        if user:
+            try:
+                send_password_reset_email(user)
+            except Exception as e:
+                # Never leak mail-configuration errors to the user (and never
+                # reveal whether the email exists). Log and continue.
+                from flask import current_app
+                current_app.logger.error(f"Failed to send password reset email: {e}")
+
         # Always show success to prevent email enumeration
         flash('If your email is registered, you will receive a password reset link shortly.', 'info')
         return redirect(url_for('auth.login'))
@@ -162,74 +174,63 @@ def reset_password(token):
     if not email:
         flash('The password reset link is invalid or has expired.', 'danger')
         return redirect(url_for('auth.forgot_password'))
-    
-    conn = get_db()
-    user_row = conn.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
-    
-    if not user_row:
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
         flash('User not found.', 'danger')
         return redirect(url_for('auth.login'))
-    
+
     if request.method == 'POST':
         password = request.form.get('password')
         confirm_password = request.form.get('confirm_password')
-        
-        if password != confirm_password:
+
+        if not password or password != confirm_password:
             flash('Passwords do not match.', 'danger')
             return render_template('auth/reset_password.html', token=token)
-        
-        conn.execute(
-            'UPDATE users SET password_hash = ? WHERE email = ?',
-            (generate_password_hash(password), email)
-        )
-        conn.commit()
-        
+
+        user.password_hash = generate_password_hash(password)
+        db.session.commit()
+
         flash('Your password has been updated! You can now log in.', 'success')
         return redirect(url_for('auth.login'))
-    
+
     return render_template('auth/reset_password.html', token=token)
 
 @auth_bp.route('/admin')
 @login_required
 @admin_required
 def admin_dashboard():
-    """Admin dashboard page."""
-    conn = get_db()
-    users = conn.execute('SELECT * FROM users').fetchall()
-    user_objs = [User(id=row['id'], name=row['name'], email=row['email'], 
-                      is_admin=row.get('is_admin', 0)) for row in users]
-    
-    return render_template('auth/admin/dashboard.html', users=user_objs)
+    """Legacy admin entry point — redirect to the maintained user dashboard.
+
+    The previous implementation rendered a non-existent template and relied on
+    a User.created_at column that does not exist. The dashboard blueprint
+    provides the supported, admin-gated user management view.
+    """
+    return redirect(url_for('dashboard.users'))
 
 @auth_bp.route('/profile')
 @login_required
 @email_confirmed_required
 def profile():
     """Display user profile."""
-    conn = get_db()
-    user_row = conn.execute('SELECT * FROM users WHERE id = ?', (current_user.id,)).fetchone()
-    
-    if not user_row:
+    user = db.session.get(User, current_user.id)
+
+    if not user:
         flash('User not found', 'danger')
         return redirect(url_for('main.index'))
-    
-    user_obj = User(id=user_row['id'], name=user_row['name'], email=user_row['email'], 
-                    is_admin=user_row.get('is_admin', 0))
-    
+
     try:
-        projects_count = conn.execute('SELECT COUNT(*) FROM projects WHERE user_id = ?', 
-                                     (current_user.id,)).fetchone()[0]
-        assessments_count = conn.execute(
-            'SELECT COUNT(*) FROM assessments WHERE user_id = ?', 
-            (current_user.id,)).fetchone()[0]
+        projects_count = Project.query.filter_by(user_id=user.id).count()
+        assessments_count = Assessment.query.filter_by(user_id=user.id).count()
     except Exception as e:
         flash(f'Error fetching user data: {str(e)}', 'warning')
         projects_count = 0
         assessments_count = 0
-    
+
     return render_template(
         'profile.html',
-        user=user_obj,
+        user=user,
         projects_count=projects_count,
         assessments_count=assessments_count
     )

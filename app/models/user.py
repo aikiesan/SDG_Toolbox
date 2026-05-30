@@ -3,9 +3,15 @@ User model for authentication and authorization.
 """
 
 from app import db
+from flask import current_app
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash
 from itsdangerous import URLSafeTimedSerializer
+
+# Salts namespace the two token types so a confirmation token can never be
+# replayed as a password-reset token (and vice versa).
+_CONFIRM_SALT = 'email-confirm'
+_RESET_SALT = 'password-reset'
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -27,41 +33,29 @@ class User(db.Model, UserMixin):
         return check_password_hash(password_hash, password)
 
     @staticmethod
-    def generate_confirmation_token(email, secret_key, salt):
-        """Generate token for email confirmation."""
-        serializer = URLSafeTimedSerializer(secret_key)
-        return serializer.dumps(email, salt=salt)
+    def _serializer():
+        return URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+
+    def generate_confirmation_token(self):
+        """Generate a signed email-confirmation token for this user."""
+        return self._serializer().dumps(self.email, salt=_CONFIRM_SALT)
 
     @staticmethod
-    def verify_confirmation_token(token, secret_key, salt, expiration=3600):
-        """Verify an email confirmation token."""
-        serializer = URLSafeTimedSerializer(secret_key)
+    def verify_confirmation_token(token, expiration=3600):
+        """Return the email encoded in a valid confirmation token, else None."""
         try:
-            email = serializer.loads(
-                token,
-                salt=salt,
-                max_age=expiration
-            )
-            return email
+            return User._serializer().loads(token, salt=_CONFIRM_SALT, max_age=expiration)
         except Exception:
             return None
 
-    @staticmethod
-    def generate_reset_token(email, secret_key, salt):
-        """Generate token for password reset."""
-        serializer = URLSafeTimedSerializer(secret_key)
-        return serializer.dumps(email, salt=salt + 'reset')
+    def generate_reset_token(self):
+        """Generate a signed password-reset token for this user."""
+        return self._serializer().dumps(self.email, salt=_RESET_SALT)
 
     @staticmethod
-    def verify_reset_token(token, secret_key, salt, expiration=3600):
-        """Verify a password reset token."""
-        serializer = URLSafeTimedSerializer(secret_key)
+    def verify_reset_token(token, expiration=3600):
+        """Return the email encoded in a valid reset token, else None."""
         try:
-            email = serializer.loads(
-                token,
-                salt=salt + 'reset',
-                max_age=expiration
-            )
-            return email
+            return User._serializer().loads(token, salt=_RESET_SALT, max_age=expiration)
         except Exception:
             return None
