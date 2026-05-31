@@ -139,7 +139,7 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="budget" class="form-label">Budget</label>
-                                <input type="number" step="0.01" class="form-control {% if form.budget.errors %}is-invalid{% endif %}" 
+                                <input type="number" step="any" min="0" class="form-control {% if form.budget.errors %}is-invalid{% endif %}"
                                     id="budget" name="budget" value="{{ form.budget.data or project.budget }}">
                                 {% if form.budget.errors %}
                                 <div class="invalid-feedback">
@@ -150,13 +150,20 @@
                                 {% endif %}
                             </div>
                             <div class="col-md-6">
+                                {% set sector_values = form.sector.choices | map(attribute=0) | list %}
+                                {% set current_sector = form.sector.data or project.sector %}
+                                {% set is_custom_sector = current_sector and current_sector not in sector_values %}
                                 <label for="sector" class="form-label">Sector</label>
-                                <select class="form-select {% if form.sector.errors %}is-invalid{% endif %}" 
-                                    id="sector" name="sector">
+                                <select class="form-select {% if form.sector.errors %}is-invalid{% endif %}"
+                                    id="sector" name="sector" onchange="toggleSectorOther(this.value)">
                                     {% for value, label in form.sector.choices %}
-                                    <option value="{{ value }}" {% if form.sector.data == value or (not form.sector.data and project.sector == value) %}selected{% endif %}>{{ label }}</option>
+                                    <option value="{{ value }}" {% if value == current_sector or (is_custom_sector and value == 'other') %}selected{% endif %}>{{ label }}</option>
                                     {% endfor %}
                                 </select>
+                                <input type="text" class="form-control mt-2 {% if not is_custom_sector %}d-none{% endif %}"
+                                       id="sector_other" name="sector_other"
+                                       value="{% if is_custom_sector %}{{ current_sector }}{% endif %}"
+                                       placeholder="Please specify the sector" maxlength="100">
                                 {% if form.sector.errors %}
                                 <div class="invalid-feedback">
                                     {% for error in form.sector.errors %}
@@ -177,4 +184,21 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    // Show/hide the custom-sector text field when "Other" is selected.
+    function toggleSectorOther(value) {
+        const other = document.getElementById('sector_other');
+        if (!other) return;
+        if (value === 'other') {
+            other.classList.remove('d-none');
+        } else {
+            other.classList.add('d-none');
+            other.value = '';
+        }
+    }
+</script>
 {% endblock %}

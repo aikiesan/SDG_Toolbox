@@ -52,6 +52,40 @@ def test_create_project(client, auth, test_user, session):
     assert project.location == 'Test Location'
 
 
+def test_create_project_with_custom_other_sector(client, auth, test_user, session):
+    """Selecting 'Other' stores the user-supplied sector text."""
+    auth.login(email=test_user.email)
+    response = client.post('/projects/new', data=dict(
+        name='Custom Sector Project',
+        project_type='residential',
+        location='Test Location',
+        size_sqm='500',
+        sector='other',
+        sector_other='Aerospace & Defence',
+    ), follow_redirects=True)
+    assert response.status_code == 200
+    project = Project.query.filter_by(name='Custom Sector Project', user_id=test_user.id).first()
+    assert project is not None
+    assert project.sector == 'Aerospace & Defence'
+
+
+def test_create_project_other_sector_blank_falls_back(client, auth, test_user, session):
+    """'Other' with no custom text stored as the literal 'other' (no crash)."""
+    auth.login(email=test_user.email)
+    response = client.post('/projects/new', data=dict(
+        name='Blank Other Project',
+        project_type='residential',
+        location='Test Location',
+        size_sqm='500',
+        sector='other',
+        sector_other='',
+    ), follow_redirects=True)
+    assert response.status_code == 200
+    project = Project.query.filter_by(name='Blank Other Project', user_id=test_user.id).first()
+    assert project is not None
+    assert project.sector == 'other'
+
+
 @pytest.fixture(scope='function')
 def other_user(session):
     print("     -> Creating other user object...")

@@ -120,6 +120,12 @@ def new_project():
     """Create a new project."""
     form = ProjectForm()
     if form.validate_on_submit():
+        # When "Other" is chosen, store the user-supplied sector text instead.
+        sector_value = form.sector.data
+        if sector_value == 'other':
+            custom_sector = (request.form.get('sector_other') or '').strip()
+            if custom_sector:
+                sector_value = custom_sector
         project = Project(
             name=form.name.data,
             description=form.description.data,
@@ -129,7 +135,7 @@ def new_project():
             start_date=form.start_date.data,
             end_date=form.end_date.data,
             budget=form.budget.data,
-            sector=form.sector.data,
+            sector=sector_value,
             user_id=current_user.id
         )
         db.session.add(project)
@@ -151,6 +157,10 @@ def edit(id):
     form = ProjectForm(obj=project)
     if form.validate_on_submit():
         form.populate_obj(project)
+        # When "Other" is chosen, store the user-supplied sector text instead.
+        if form.sector.data == 'other':
+            custom_sector = (request.form.get('sector_other') or '').strip()
+            project.sector = custom_sector or 'other'
         db.session.commit()
         flash('Project updated successfully', 'success')
         return redirect(url_for('projects.show', id=project.id))

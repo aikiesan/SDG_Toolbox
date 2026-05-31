@@ -253,9 +253,9 @@
                                     <label for="budget" class="form-label">Budget</label>
                                     <div class="input-group">
                                         <span class="input-group-text">$</span>
-                                        <input type="number" class="form-control {% if form.budget.errors %}is-invalid{% endif %}" 
+                                        <input type="number" class="form-control {% if form.budget.errors %}is-invalid{% endif %}"
                                                id="budget" name="budget" value="{{ form.budget.data or '' }}"
-                                               step="0.01" min="0" placeholder="Enter budget" aria-describedby="budgetHelp">
+                                               step="any" min="0" placeholder="Enter budget" aria-describedby="budgetHelp">
                                     </div>
                                     {% if form.budget.errors %}
                                     <div class="invalid-feedback">
@@ -270,12 +270,17 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="sector" class="form-label">Sector</label>
-                                    <select class="form-select {% if form.sector.errors %}is-invalid{% endif %}" 
-                                            id="sector" name="sector" aria-describedby="sectorHelp">
+                                    <select class="form-select {% if form.sector.errors %}is-invalid{% endif %}"
+                                            id="sector" name="sector" aria-describedby="sectorHelp"
+                                            onchange="toggleSectorOther(this.value)">
                                         {% for value, label in form.sector.choices %}
                                         <option value="{{ value }}" {% if form.sector.data == value %}selected{% endif %}>{{ label }}</option>
                                         {% endfor %}
                                     </select>
+                                    <input type="text" class="form-control mt-2 {% if form.sector.data == 'other' %}{% else %}d-none{% endif %}"
+                                           id="sector_other" name="sector_other"
+                                           value="{{ request.form.get('sector_other', '') }}"
+                                           placeholder="Please specify the sector" maxlength="100">
                                     {% if form.sector.errors %}
                                     <div class="invalid-feedback">
                                         {% for error in form.sector.errors %}
@@ -308,6 +313,18 @@
 {% block scripts %}
 {{ super() }} {# Include scripts from base.html #}
 <script>
+    // Show/hide the custom-sector text field when "Other" is selected.
+    function toggleSectorOther(value) {
+        const other = document.getElementById('sector_other');
+        if (!other) return;
+        if (value === 'other') {
+            other.classList.remove('d-none');
+        } else {
+            other.classList.add('d-none');
+            other.value = '';
+        }
+    }
+
     // Function to update character counters
     function updateCharCounter(inputId, counterId, maxLength) {
         const input = document.getElementById(inputId);
