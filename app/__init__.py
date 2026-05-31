@@ -274,6 +274,21 @@ def create_app(config_name=None):
     from app.utils.context_processors import utility_processor
     app.context_processor(utility_processor)
 
+    # Provide csrf_token to templates as a callable string. Several templates
+    # render it bare ({{ csrf_token }}) while others call it ({{ csrf_token() }});
+    # this makes both forms emit the same valid token AND ensures the token is
+    # stored in the session at render time (a bare {{ csrf_token }} against
+    # Flask-WTF's function global rendered garbage and broke form submission).
+    from flask_wtf.csrf import generate_csrf
+
+    class _CallableCSRFToken(str):
+        def __call__(self):
+            return self
+
+    @app.context_processor
+    def inject_csrf_token():
+        return {'csrf_token': _CallableCSRFToken(generate_csrf())}
+
 
     @app.teardown_appcontext
     def shutdown_session(exception=None):
