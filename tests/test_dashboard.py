@@ -1,10 +1,8 @@
 """
 Tests for dashboard routes and admin functionality.
 
-NOTE: The dashboard admin panel uses a raw SQLite connection (app/utils/db.py) that is
-separate from the SQLAlchemy in-memory test database. Tests that verify specific data
-(user names, project names, counts) are skipped — they require integration testing
-against a real populated database. Access-control and page-load tests are fully covered.
+The dashboard is fully SQLAlchemy/ORM backed, so access-control, page-load, and
+data-rendering assertions all run against the seeded test database.
 """
 
 import pytest
@@ -13,11 +11,6 @@ from app.models.project import Project
 from app.models.assessment import Assessment, SdgScore
 from app.models.sdg import SdgGoal
 from datetime import datetime
-
-_SKIP_DATA = pytest.mark.skip(
-    reason="Dashboard uses raw SQLite (app/utils/db.py) separate from SQLAlchemy test DB; "
-           "requires integration testing against a real database."
-)
 
 
 class TestDashboardAccess:
@@ -71,17 +64,30 @@ class TestDashboardIndex:
 class TestDashboardUsers:
     """Test user management dashboard."""
 
-    @_SKIP_DATA
     def test_users_list_displays_all_users(self, client, admin_user, auth, test_user, other_user):
-        """Skipped: requires data in raw SQLite DB."""
+        """The users list shows every user's email."""
+        auth.login(email=admin_user.email, password='adminpass')
+        response = client.get('/dashboard/users')
+        assert response.status_code == 200
+        assert test_user.email.encode() in response.data
+        assert other_user.email.encode() in response.data
 
-    @_SKIP_DATA
     def test_users_list_shows_statistics(self, client, admin_user, auth, test_user, multiple_projects):
-        """Skipped: requires data in raw SQLite DB."""
+        """The users list renders per-user project counts."""
+        auth.login(email=admin_user.email, password='adminpass')
+        response = client.get('/dashboard/users')
+        assert response.status_code == 200
+        # test_user owns the 5 multiple_projects; the row should show them.
+        assert test_user.email.encode() in response.data
+        assert b'>5<' in response.data  # project_count cell
 
-    @_SKIP_DATA
     def test_user_detail_page(self, client, admin_user, auth, test_user, multiple_projects):
-        """Skipped: requires data in raw SQLite DB."""
+        """A user's detail page shows their name and project names."""
+        auth.login(email=admin_user.email, password='adminpass')
+        response = client.get(f'/dashboard/users/{test_user.id}')
+        assert response.status_code == 200
+        assert test_user.name.encode() in response.data
+        assert b'Test Project 1' in response.data
 
     def test_user_detail_not_found(self, client, admin_user, auth):
         """Test user detail page with non-existent user."""
@@ -89,13 +95,29 @@ class TestDashboardUsers:
         response = client.get('/dashboard/users/99999', follow_redirects=True)
         assert response.status_code == 200
 
-    @_SKIP_DATA
     def test_edit_user_page(self, client, admin_user, auth, test_user):
-        """Skipped: requires data in raw SQLite DB."""
+        """The edit form is pre-filled with the user's current values."""
+        auth.login(email=admin_user.email, password='adminpass')
+        response = client.get(f'/dashboard/users/{test_user.id}/edit')
+        assert response.status_code == 200
+        assert test_user.email.encode() in response.data
+        assert test_user.name.encode() in response.data
 
-    @_SKIP_DATA
     def test_edit_user_updates_information(self, client, admin_user, auth, test_user):
-        """Skipped: raw SQLite update does not propagate to SQLAlchemy test session."""
+        """Posting the edit form updates the user in the database."""
+        from app import db
+        from app.models.user import User
+        auth.login(email=admin_user.email, password='adminpass')
+        new_email = 'renamed_user@example.com'
+        response = client.post(
+            f'/dashboard/users/{test_user.id}/edit',
+            data={'name': 'Renamed User', 'email': new_email},
+            follow_redirects=True,
+        )
+        assert response.status_code == 200
+        updated = db.session.get(User, test_user.id)
+        assert updated.name == 'Renamed User'
+        assert updated.email == new_email
 
 
 class TestDashboardProjects:
@@ -107,14 +129,21 @@ class TestDashboardProjects:
         response = client.get('/dashboard/projects')
         assert response.status_code == 200
 
-    @_SKIP_DATA
     def test_projects_list_displays_all_projects(self, client, admin_user, auth, multiple_projects):
-        """Skipped: project data is in SQLAlchemy DB, dashboard reads from raw SQLite."""
+        """The projects list shows every project name."""
+        auth.login(email=admin_user.email, password='adminpass')
+        response = client.get('/dashboard/projects')
+        assert response.status_code == 200
+        assert b'Test Project 1' in response.data
+        assert b'Test Project 5' in response.data
 
-    @_SKIP_DATA
     def test_projects_list_shows_assessment_counts(self, client, admin_user, auth, test_project,
                                                     completed_assessment):
-        """Skipped: requires data in raw SQLite DB."""
+        """The projects list shows a project that has an assessment."""
+        auth.login(email=admin_user.email, password='adminpass')
+        response = client.get('/dashboard/projects')
+        assert response.status_code == 200
+        assert test_project.name.encode() in response.data
 
 
 class TestDashboardAssessments:
@@ -126,14 +155,20 @@ class TestDashboardAssessments:
         response = client.get('/dashboard/assessments')
         assert response.status_code == 200
 
-    @_SKIP_DATA
     def test_assessments_list_displays_all_assessments(self, client, admin_user, auth, completed_assessment):
-        """Skipped: requires data in raw SQLite DB."""
+        """The assessments list shows the completed assessment's status."""
+        auth.login(email=admin_user.email, password='adminpass')
+        response = client.get('/dashboard/assessments')
+        assert response.status_code == 200
+        assert b'completed' in response.data
 
-    @_SKIP_DATA
     def test_assessments_list_shows_project_names(self, client, admin_user, auth, test_project,
                                                    completed_assessment):
-        """Skipped: requires data in raw SQLite DB."""
+        """The assessments list shows the owning project's name."""
+        auth.login(email=admin_user.email, password='adminpass')
+        response = client.get('/dashboard/assessments')
+        assert response.status_code == 200
+        assert test_project.name.encode() in response.data
 
 
 class TestDashboardAnalytics:
@@ -152,13 +187,25 @@ class TestDashboardAnalytics:
         assert response.status_code == 200
         assert b'SDG' in response.data or b'Goal' in response.data
 
-    @_SKIP_DATA
     def test_analytics_shows_sdg_scores(self, client, admin_user, auth, completed_assessment):
-        """Skipped: requires data in raw SQLite DB."""
+        """With scored SDGs present, the analytics table renders goal names."""
+        from app import cache
+        cache.clear()  # analytics is @cache.cached; clear stale empty result
+        auth.login(email=admin_user.email, password='adminpass')
+        response = client.get('/dashboard/analytics')
+        assert response.status_code == 200
+        # completed_assessment scores the first 5 goals (incl. "No Poverty").
+        assert b'No Poverty' in response.data
+        assert b'No SDG score data yet' not in response.data
 
-    @_SKIP_DATA
     def test_analytics_shows_charts_data(self, client, admin_user, auth, completed_assessment):
-        """Skipped: requires data in raw SQLite DB."""
+        """The analytics score table is populated (not the empty-state row)."""
+        from app import cache
+        cache.clear()
+        auth.login(email=admin_user.email, password='adminpass')
+        response = client.get('/dashboard/analytics')
+        assert response.status_code == 200
+        assert b'No SDG score data yet' not in response.data
 
 
 class TestDashboardSDGManagement:

@@ -57,8 +57,11 @@ limit_request_fields = 100
 limit_request_field_size = 8190
 
 # Forwarded headers (when behind proxy/load balancer)
-forwarded_allow_ips = '*'
-proxy_allow_ips = '*'
+# Only trust forwarded headers from the reverse proxy. Defaults to the Docker
+# bridge ranges (nginx talks to gunicorn over the private app-network); override
+# with FORWARDED_ALLOW_IPS if your proxy sits elsewhere.
+forwarded_allow_ips = os.environ.get('FORWARDED_ALLOW_IPS', '10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,127.0.0.1')
+proxy_allow_ips = os.environ.get('PROXY_ALLOW_IPS', forwarded_allow_ips)
 
 # Callbacks
 def on_starting(server):
