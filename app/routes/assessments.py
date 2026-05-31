@@ -526,6 +526,11 @@ def submit_assessment(project_id, assessment_id):
             # Return JSON error for AJAX
             return jsonify({'success': False, 'message': 'Project not found or permission denied'}), 404
 
+        # Ownership check — prevent submitting to another user's project (IDOR).
+        if project.user_id != user_id:
+            current_app.logger.warning(f"Submit denied: user {user_id} does not own project {project_id}")
+            return jsonify({'success': False, 'message': 'Permission denied'}), 403
+
         assessment = db.session.get(Assessment, assessment_id)
         if not assessment or assessment.project_id != project_id:
             current_app.logger.warning(f"Submit failed: Assessment {assessment_id} not found or permission denied for user {user_id}")

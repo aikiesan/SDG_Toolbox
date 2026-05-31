@@ -185,7 +185,7 @@ def users():
 @admin_required
 def user_detail(user_id):
     """View user details."""
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     if not user:
         flash('User not found', 'danger')
         return redirect(url_for('dashboard.users'))
@@ -218,7 +218,7 @@ def user_detail(user_id):
 @admin_required
 def edit_user(user_id):
     """Edit user details."""
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     if not user:
         flash('User not found', 'danger')
         return redirect(url_for('dashboard.users'))

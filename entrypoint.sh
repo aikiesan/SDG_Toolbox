@@ -13,13 +13,13 @@ RETRIES=0
 until nc -z "${DB_HOST:-db}" "${DB_PORT:-5432}" 2>/dev/null; do
   RETRIES=$((RETRIES + 1))
   if [ "$RETRIES" -ge "$MAX_RETRIES" ]; then
-    echo "Could not reach database after $MAX_RETRIES attempts — proceeding anyway."
-    break
+    echo "ERROR: Could not reach database at ${DB_HOST:-db}:${DB_PORT:-5432} after $MAX_RETRIES attempts — aborting startup."
+    exit 1
   fi
   echo "Database is unavailable - sleeping ($RETRIES/$MAX_RETRIES)"
   sleep 2
 done
-echo "Database is up (or skipped wait)!"
+echo "Database is up!"
 
 # Run migrations with timeout
 echo "Running database migrations..."
